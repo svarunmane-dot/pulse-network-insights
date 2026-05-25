@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -314,16 +315,20 @@ function Index() {
           </div>
           <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Pulse</h1>
         </div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {(["Mobile", "Laptop"] as DeviceMode[]).map((d) => (
-            <Pill key={d} active={device === d} onClick={() => setDevice(d)}>
-              {d}
-            </Pill>
-          ))}
-          <Pill active={false} onClick={() => {}}>
-            🔗 Ping a friend
-          </Pill>
-        </div>
+        <Link
+          to="/ping"
+          className="font-mono-pulse"
+          style={{
+            padding: "6px 14px",
+            borderRadius: 20,
+            border: "1px solid #1a3045",
+            color: "#c8dae8",
+            fontSize: 12,
+            textDecoration: "none",
+          }}
+        >
+          🔗 Ping a friend
+        </Link>
       </header>
 
       {/* HERO */}
@@ -371,8 +376,24 @@ function Index() {
           flexWrap: "wrap",
         }}
       >
-        <Gauge label="Download" value={dl} max={300} unit="Mbps" color="#00e5b0" />
-        <Gauge label="Upload" value={ul} max={100} unit="Mbps" color="#2D8CFF" />
+        <Gauge
+          label="Download"
+          value={dl}
+          max={300}
+          unit="Mbps"
+          color="#00e5b0"
+          gradientId="gauge-dl"
+          gradientStops={["#00e5b0", "#2D8CFF"]}
+        />
+        <Gauge
+          label="Upload"
+          value={ul}
+          max={100}
+          unit="Mbps"
+          color="#2D8CFF"
+          gradientId="gauge-ul"
+          gradientStops={["#2D8CFF", "#a78bfa"]}
+        />
       </section>
 
       {/* PROGRESS */}
