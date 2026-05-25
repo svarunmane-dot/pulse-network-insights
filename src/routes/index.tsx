@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -16,10 +17,6 @@ export const Route = createFileRoute("/")({
 });
 
 type Status = "idle" | "testing" | "done";
-type DeviceMode = "Mobile" | "Laptop";
-
-const ARC_LEN = (240 / 360) * 2 * Math.PI * 88; // ~368.6
-const ARC_PATH = "M 23.79 144 A 88 88 0 1 1 176.21 144";
 
 const APPS = [
   { name: "Microsoft 365", ideal: 80, accent: "#0078D4" },
@@ -66,50 +63,71 @@ function Gauge({
   max,
   unit,
   color,
+  gradientId,
+  gradientStops,
 }: {
   label: string;
   value: number;
   max: number;
   unit: string;
   color: string;
+  gradientId: string;
+  gradientStops: [string, string];
 }) {
-  const pct = Math.min(value / max, 1);
-  const offset = ARC_LEN * (1 - pct);
+  const size = 200;
+  const stroke = 12;
+  const radius = (size - stroke) / 2;
+  const c = 2 * Math.PI * radius;
+  const arc = 0.75; // 270deg sweep
+  const dash = c * arc;
+  const ratio = Math.min(value / max, 1);
+  const filled = dash * ratio;
+  const active = value > 0;
   return (
-    <div className="relative" style={{ width: 200, height: 200 }}>
-      <svg width="200" height="200" viewBox="0 0 200 200">
-        <path
-          d={ARC_PATH}
+    <div className="relative flex flex-col items-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} style={{ transform: "rotate(-135deg)" }}>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
           fill="none"
           stroke="#1a2a3a"
-          strokeWidth={12}
+          strokeWidth={stroke}
+          strokeDasharray={`${dash} ${c}`}
           strokeLinecap="round"
         />
-        <path
-          d={ARC_PATH}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
           fill="none"
-          stroke={color}
-          strokeWidth={12}
+          stroke={`url(#${gradientId})`}
+          strokeWidth={stroke}
+          strokeDasharray={`${filled} ${c}`}
           strokeLinecap="round"
-          strokeDasharray={ARC_LEN}
-          strokeDashoffset={offset}
           style={{
-            filter: `drop-shadow(0 0 8px ${color}aa)`,
-            transition: "stroke-dashoffset 1.8s cubic-bezier(0.22, 1, 0.36, 1)",
+            transition: "stroke-dasharray 1.8s cubic-bezier(0.22, 1, 0.36, 1)",
+            filter: active ? `drop-shadow(0 0 10px ${color}b3)` : undefined,
           }}
         />
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor={gradientStops[0]} />
+            <stop offset="100%" stopColor={gradientStops[1]} />
+          </linearGradient>
+        </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
         <div
           className="font-mono-pulse"
-          style={{ fontSize: 11, color: "#7a9bb5", letterSpacing: 3, textTransform: "uppercase" }}
+          style={{ fontSize: 10, color: "#7a9bb5", letterSpacing: 3, textTransform: "uppercase" }}
         >
           {label}
         </div>
-        <div style={{ fontWeight: 800, fontSize: 38, color: "#fff", lineHeight: 1.1, marginTop: 4 }}>
+        <div style={{ fontWeight: 700, fontSize: 42, color: "#fff", lineHeight: 1.1, marginTop: 6, fontVariantNumeric: "tabular-nums" }}>
           {value.toFixed(value >= 100 ? 0 : 1)}
         </div>
-        <div className="font-mono-pulse" style={{ fontSize: 12, color: "#7a9bb5", marginTop: 2 }}>
+        <div className="font-mono-pulse" style={{ fontSize: 11, color: "#7a9bb5", marginTop: 4 }}>
           {unit}
         </div>
       </div>
@@ -174,7 +192,6 @@ function buildAiText(r: {
 
 function Index() {
   const [status, setStatus] = useState<Status>("idle");
-  const [device, setDevice] = useState<DeviceMode>("Mobile");
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<{
     download: number;
@@ -298,16 +315,20 @@ function Index() {
           </div>
           <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>Pulse</h1>
         </div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {(["Mobile", "Laptop"] as DeviceMode[]).map((d) => (
-            <Pill key={d} active={device === d} onClick={() => setDevice(d)}>
-              {d}
-            </Pill>
-          ))}
-          <Pill active={false} onClick={() => {}}>
-            🔗 Ping a friend
-          </Pill>
-        </div>
+        <Link
+          to="/ping"
+          className="font-mono-pulse"
+          style={{
+            padding: "6px 14px",
+            borderRadius: 20,
+            border: "1px solid #1a3045",
+            color: "#c8dae8",
+            fontSize: 12,
+            textDecoration: "none",
+          }}
+        >
+          🔗 Ping a friend
+        </Link>
       </header>
 
       {/* HERO */}
@@ -355,8 +376,24 @@ function Index() {
           flexWrap: "wrap",
         }}
       >
-        <Gauge label="Download" value={dl} max={300} unit="Mbps" color="#00e5b0" />
-        <Gauge label="Upload" value={ul} max={100} unit="Mbps" color="#2D8CFF" />
+        <Gauge
+          label="Download"
+          value={dl}
+          max={300}
+          unit="Mbps"
+          color="#00e5b0"
+          gradientId="gauge-dl"
+          gradientStops={["#00e5b0", "#2D8CFF"]}
+        />
+        <Gauge
+          label="Upload"
+          value={ul}
+          max={100}
+          unit="Mbps"
+          color="#2D8CFF"
+          gradientId="gauge-ul"
+          gradientStops={["#2D8CFF", "#a78bfa"]}
+        />
       </section>
 
       {/* PROGRESS */}
