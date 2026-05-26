@@ -145,32 +145,33 @@
 
 /* Pulse app styles */
 :root {
-  --pulse-bg: #050d16;
-  --pulse-surface: #0d1f2d;
-  --pulse-surface-deep: #0a1829;
-  --pulse-border: #1a3045;
+  --pulse-bg: #0A0E1A;
+  --pulse-surface: #131829;
+  --pulse-surface-deep: #0f1422;
+  --pulse-border: #1f2740;
   --pulse-text: #ffffff;
-  --pulse-text-sec: #c8dae8;
-  --pulse-text-muted: #4a7090;
-  --pulse-green: #00e5b0;
-  --pulse-blue: #2D8CFF;
+  --pulse-text-sec: #c8d0e0;
+  --pulse-text-muted: #6b7794;
+  --pulse-green: #00D4AA;
+  --pulse-blue: #9B8FE8;
   --pulse-amber: #f5a623;
   --pulse-red: #ff4d6d;
 }
 
 html, body {
-  background: linear-gradient(160deg, #050d16 0%, #07131f 50%, #050d16 100%);
+  background: radial-gradient(ellipse at top, #11172a 0%, #0A0E1A 60%, #06090f 100%);
   background-attachment: fixed;
   color: var(--pulse-text);
-  font-family: 'Syne', sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   min-height: 100vh;
 }
 
 .font-mono-pulse { font-family: 'DM Mono', monospace; }
+.font-num-pulse { font-family: 'DM Mono', monospace; font-variant-numeric: tabular-nums; }
 
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #050d16; }
-::-webkit-scrollbar-thumb { background: #1a3045; border-radius: 2px; }
+::-webkit-scrollbar-track { background: #0A0E1A; }
+::-webkit-scrollbar-thumb { background: #1f2740; border-radius: 2px; }
 
 @keyframes pulse-fadeUp {
   from { opacity: 0; transform: translateY(20px); }
