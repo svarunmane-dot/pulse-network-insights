@@ -1254,6 +1254,9 @@ function WebLayout(p: PanelProps) {
           <RouteTrace />
         </section>
       )}
+      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
+        <NetworkInfo />
+      </section>
     </>
   );
 }
