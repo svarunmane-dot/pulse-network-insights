@@ -1359,6 +1359,9 @@ function MobileLayout(p: PanelProps) {
           <RouteTrace />
         </section>
       )}
+      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
+        <NetworkInfo />
+      </section>
     </>
   );
 }
