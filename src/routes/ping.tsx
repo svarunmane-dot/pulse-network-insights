@@ -35,6 +35,8 @@ function PingPage() {
   const chRef = useRef<RealtimeChannel | null>(null);
   const pingTimerRef = useRef<number | null>(null);
   const pendingPingsRef = useRef<Map<number, number>>(new Map());
+  const offerSentRef = useRef(false);
+  const peerSeenRef = useRef(false);
 
   const stats = useMemo(() => {
     if (samples.length === 0) return null;
@@ -52,6 +54,8 @@ function PingPage() {
       pingTimerRef.current = null;
     }
     pendingPingsRef.current.clear();
+    offerSentRef.current = false;
+    peerSeenRef.current = false;
     dcRef.current?.close();
     dcRef.current = null;
     pcRef.current?.close();
@@ -164,6 +168,34 @@ function PingPage() {
       handleDataChannel(dc);
     }
 
+    const sendOfferIfNeeded = async () => {
+      if (!isOfferer || offerSentRef.current || !peerSeenRef.current) return;
+      offerSentRef.current = true;
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      ch.send({
+        type: "broadcast",
+        event: "offer",
+        payload: { from: myCode, sdp: pc.localDescription },
+      });
+      setStatus("Friend found — opening direct connection…");
+      setPhase("connecting");
+    };
+
+    ch.on("broadcast", { event: "hello" }, ({ payload }) => {
+      if (!payload || payload.from === myCode) return;
+      peerSeenRef.current = true;
+      // Re-announce so a late joiner also sees us
+      ch.send({ type: "broadcast", event: "hello-ack", payload: { from: myCode } });
+      sendOfferIfNeeded();
+    });
+
+    ch.on("broadcast", { event: "hello-ack" }, ({ payload }) => {
+      if (!payload || payload.from === myCode) return;
+      peerSeenRef.current = true;
+      sendOfferIfNeeded();
+    });
+
     ch.on("broadcast", { event: "offer" }, async ({ payload }) => {
       if (payload.from === myCode || isOfferer) return;
       await pc.setRemoteDescription(payload.sdp);
@@ -198,15 +230,6 @@ function PingPage() {
     await ch.subscribe(async (subStatus) => {
       if (subStatus !== "SUBSCRIBED") return;
       ch.send({ type: "broadcast", event: "hello", payload: { from: myCode } });
-      if (isOfferer) {
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        ch.send({
-          type: "broadcast",
-          event: "offer",
-          payload: { from: myCode, sdp: pc.localDescription },
-        });
-      }
     });
   };
 

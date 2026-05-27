@@ -912,6 +912,118 @@ function RouteTrace() {
   );
 }
 
+function NetworkInfo() {
+  const [info, setInfo] = useState<{
+    ip?: string;
+    org?: string;
+    asn?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    countryCode?: string;
+    timezone?: string;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        if (!res.ok) throw new Error("lookup failed");
+        const j = await res.json();
+        if (cancelled) return;
+        setInfo({
+          ip: j.ip,
+          org: j.org,
+          asn: j.asn,
+          city: j.city,
+          region: j.region,
+          country: j.country_name,
+          countryCode: j.country_code,
+          timezone: j.timezone,
+        });
+      } catch (e) {
+        if (!cancelled) setError("Could not detect your network details.");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const rows: { label: string; value?: string }[] = [
+    { label: "PUBLIC IP", value: info?.ip },
+    { label: "ISP / ORG", value: info?.org },
+    { label: "ASN", value: info?.asn },
+    {
+      label: "LOCATION",
+      value: info
+        ? [info.city, info.region, info.country].filter(Boolean).join(", ")
+        : undefined,
+    },
+    { label: "TIMEZONE", value: info?.timezone },
+  ];
+
+  return (
+    <div>
+      <SectionHeader label="YOUR NETWORK" right={info?.countryCode} />
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+          border: `1px solid ${BORDER}`,
+          borderRadius: 16,
+          padding: "18px 20px",
+        }}
+      >
+        {error ? (
+          <div
+            className="font-mono-pulse"
+            style={{ fontSize: 12, color: TEXT_MUTED }}
+          >
+            {error}
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: 12 }}>
+            {rows.map((r) => (
+              <div
+                key={r.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  gap: 12,
+                  borderBottom: `1px solid ${BORDER}`,
+                  paddingBottom: 8,
+                }}
+              >
+                <span
+                  className="font-mono-pulse"
+                  style={{ fontSize: 10, color: TEXT_MUTED, letterSpacing: 2 }}
+                >
+                  {r.label}
+                </span>
+                <span
+                  className="font-mono-pulse"
+                  style={{
+                    fontSize: 13,
+                    color: r.value ? "#fff" : TEXT_MUTED,
+                    textAlign: "right",
+                    fontWeight: 500,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {r.value ?? "—"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MetricCard({
   icon,
   label,
@@ -1142,6 +1254,9 @@ function WebLayout(p: PanelProps) {
           <RouteTrace />
         </section>
       )}
+      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
+        <NetworkInfo />
+      </section>
     </>
   );
 }
@@ -1244,6 +1359,9 @@ function MobileLayout(p: PanelProps) {
           <RouteTrace />
         </section>
       )}
+      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
+        <NetworkInfo />
+      </section>
     </>
   );
 }
