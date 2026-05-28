@@ -615,44 +615,323 @@ type PanelProps = {
 
 function Hero({ centered }: { centered: boolean }) {
   return (
-    <div style={{ textAlign: centered ? "center" : "left" }}>
-      <div
+    <div style={{ textAlign: centered ? "center" : "left", maxWidth: 640 }}>
+      <h1
         style={{
-          fontSize: centered ? 44 : 36,
-          fontWeight: 700,
+          fontSize: centered ? 40 : 44,
+          fontWeight: 800,
           letterSpacing: "-1.5px",
           lineHeight: 1.05,
+          margin: 0,
           color: "#fff",
         }}
       >
-        Check your connection
-      </div>
-      <div
-        style={{
-          fontSize: centered ? 44 : 36,
-          fontWeight: 700,
-          letterSpacing: "-1.5px",
-          lineHeight: 1.05,
-          background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        }}
-      >
-        in seconds
-      </div>
+        Internet Speed Test &{" "}
+        <span
+          style={{
+            background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
+          Ping Checker
+        </span>
+      </h1>
       <p
-        className="font-mono-pulse"
         style={{
-          fontSize: 13,
-          color: TEXT_MUTED,
+          fontSize: 16,
+          color: TEXT_SEC,
           marginTop: 14,
-          letterSpacing: 1,
+          lineHeight: 1.6,
         }}
       >
-        SPEED · REACHABILITY · AI ANALYSIS
+        Measure download speed, upload speed, ping, jitter and latency instantly.
       </p>
+      <TrustBadges centered={centered} />
     </div>
+  );
+}
+
+function TrustBadges({ centered }: { centered: boolean }) {
+  const badges = [
+    { icon: "🛠", label: "Built by a Network Architect" },
+    { icon: "🔒", label: "Privacy Focused" },
+    { icon: "🌐", label: "No App Installation Needed" },
+    { icon: "⚡", label: "Fast & Lightweight" },
+  ];
+  return (
+    <ul
+      aria-label="Trust badges"
+      style={{
+        listStyle: "none",
+        padding: 0,
+        margin: "20px 0 0",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 8,
+        justifyContent: centered ? "center" : "flex-start",
+      }}
+    >
+      {badges.map((b) => (
+        <li
+          key={b.label}
+          className="font-mono-pulse"
+          style={{
+            fontSize: 11,
+            padding: "6px 12px",
+            borderRadius: 999,
+            border: `1px solid ${BORDER}`,
+            background: SURFACE2,
+            color: TEXT_SEC,
+            letterSpacing: 0.5,
+          }}
+        >
+          <span aria-hidden style={{ marginRight: 6 }}>
+            {b.icon}
+          </span>
+          {b.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ============ SEO CONTENT + FAQ ============ */
+const SEO_SECTIONS: { h: string; body: string }[] = [
+  {
+    h: "What Is Internet Speed?",
+    body:
+      "Internet speed measures how quickly data moves between your device and the internet. Download speed determines how fast you can pull data (streaming, browsing, downloads), while upload speed governs how fast you can send data (video calls, cloud sync, gaming). Both are measured in megabits per second (Mbps), a unit of bandwidth. Higher Mbps means more headroom for simultaneous devices and richer media like 4K video.",
+  },
+  {
+    h: "What Is Ping and Latency?",
+    body:
+      "Ping is the round-trip time for a small packet to reach a server and return, expressed in milliseconds (ms). Latency is the underlying delay that ping measures. Gamers care about low ping because every millisecond delays their actions in competitive play. VoIP and video calls also rely on low latency to keep conversations natural — anything above 150 ms starts to feel laggy.",
+  },
+  {
+    h: "What Is Jitter?",
+    body:
+      "Jitter is the variation in packet arrival time. A connection can have great average speed but still suffer from jitter, which manifests as choppy voice calls, frozen video, or rubber-banding in games. Jitter is typically caused by network congestion, wireless interference or poorly tuned routers.",
+  },
+  {
+    h: "What Affects Internet Speed?",
+    body:
+      "Several factors influence real-world speed: WiFi interference from neighbours and household devices, ISP congestion during peak hours, VPN routing through distant servers, the quality and age of your router, and the physical distance between you and the test server. Older 2.4 GHz networks and outdated cabling are common bottlenecks.",
+  },
+  {
+    h: "How to Improve Internet Speed",
+    body:
+      "Use Ethernet for stationary devices, upgrade to Wi-Fi 6 or mesh on larger homes, place your router centrally and elevated, separate 2.4 GHz and 5 GHz SSIDs, restart equipment monthly, and run firmware updates. If problems persist, test at different times — sustained slow speeds during off-peak hours warrant a call to your ISP.",
+  },
+];
+
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "What is a good internet speed?",
+    a: "For most households, 100 Mbps download and 10 Mbps upload comfortably handles 4K streaming, video calls and multiple devices. Gamers benefit from low ping (under 60 ms) more than raw bandwidth.",
+  },
+  {
+    q: "Why is my ping high?",
+    a: "High ping is usually caused by long network paths, congested ISPs, weak Wi-Fi or VPN routing. Switching to Ethernet and choosing a closer server typically reduces ping.",
+  },
+  {
+    q: "What is jitter?",
+    a: "Jitter is the variation in delay between packets. High jitter causes choppy voice/video calls and unstable gaming even when speed looks fine.",
+  },
+  {
+    q: "Why is WiFi slower than Ethernet?",
+    a: "Wi-Fi shares airtime, suffers interference, and weakens with distance. Ethernet provides a dedicated, full-duplex link with consistent latency.",
+  },
+  {
+    q: "How accurate is Pulse Speed?",
+    a: "Pulse Speed measures real network performance from your browser using lightweight probes. Results closely match ISP-grade tools for everyday diagnostics.",
+  },
+  {
+    q: "What speed is good for gaming?",
+    a: "Online gaming needs only 15–25 Mbps, but ping below 60 ms and jitter below 10 ms matter far more than raw bandwidth.",
+  },
+  {
+    q: "How much speed do I need for streaming?",
+    a: "HD video needs ~5 Mbps, 4K streaming needs ~25 Mbps per device. For multiple simultaneous 4K streams aim for 100 Mbps or more.",
+  },
+];
+
+function SeoContent() {
+  return (
+    <>
+      <section
+        aria-labelledby="learn-heading"
+        style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <h2
+          id="learn-heading"
+          style={{
+            fontSize: 28,
+            fontWeight: 800,
+            margin: 0,
+            letterSpacing: "-0.5px",
+          }}
+        >
+          Understand your connection
+        </h2>
+        <p style={{ color: TEXT_MUTED, marginTop: 8, fontSize: 14 }}>
+          A quick primer on the numbers behind your speed test.
+        </p>
+        <div style={{ display: "grid", gap: 16, marginTop: 24 }}>
+          {SEO_SECTIONS.map((s) => (
+            <article
+              key={s.h}
+              style={{
+                background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+                border: `1px solid ${BORDER}`,
+                borderRadius: 16,
+                padding: "22px 24px",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: 18,
+                  margin: 0,
+                  color: "#fff",
+                  fontWeight: 700,
+                }}
+              >
+                {s.h}
+              </h3>
+              <p
+                style={{
+                  color: TEXT_SEC,
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  margin: "10px 0 0",
+                }}
+              >
+                {s.body}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="faq-heading"
+        style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <h2
+          id="faq-heading"
+          style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}
+        >
+          Frequently asked questions
+        </h2>
+        <div style={{ marginTop: 20, display: "grid", gap: 10 }}>
+          {FAQS.map((f, i) => (
+            <details
+              key={f.q}
+              style={{
+                background: SURFACE,
+                border: `1px solid ${BORDER}`,
+                borderRadius: 12,
+                padding: "14px 18px",
+              }}
+              open={i === 0}
+            >
+              <summary
+                style={{
+                  cursor: "pointer",
+                  fontWeight: 600,
+                  color: "#fff",
+                  fontSize: 15,
+                  listStyle: "none",
+                }}
+              >
+                {f.q}
+              </summary>
+              <p
+                style={{
+                  color: TEXT_SEC,
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  margin: "10px 0 0",
+                }}
+              >
+                {f.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="newsletter-heading"
+        style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <div
+          style={{
+            background: `linear-gradient(135deg, ${TEAL}15, ${PURPLE}15)`,
+            border: `1px solid ${TEAL}33`,
+            borderRadius: 20,
+            padding: 32,
+            textAlign: "center",
+          }}
+        >
+          <h2
+            id="newsletter-heading"
+            style={{ fontSize: 22, margin: 0, fontWeight: 700, color: "#fff" }}
+          >
+            Get networking tips in your inbox
+          </h2>
+          <p style={{ color: TEXT_SEC, marginTop: 8, fontSize: 14 }}>
+            Occasional deep dives on speed, latency and home network tuning.
+          </p>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            style={{
+              marginTop: 18,
+              display: "flex",
+              gap: 8,
+              maxWidth: 420,
+              margin: "18px auto 0",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            <label htmlFor="newsletter-email" style={{ position: "absolute", left: -9999 }}>
+              Email address
+            </label>
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              style={{
+                flex: "1 1 220px",
+                padding: "12px 16px",
+                borderRadius: 10,
+                border: `1px solid ${BORDER}`,
+                background: SURFACE2,
+                color: "#fff",
+                fontSize: 14,
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                padding: "12px 22px",
+                borderRadius: 10,
+                border: "none",
+                background: `linear-gradient(135deg, ${TEAL}, #00b894)`,
+                color: "#04150f",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+    </>
   );
 }
 
