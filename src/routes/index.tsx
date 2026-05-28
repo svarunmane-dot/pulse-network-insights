@@ -496,7 +496,7 @@ function Index() {
     ) : null;
 
   return (
-    <main
+    <div
       style={{
         maxWidth: viewMode === "web" ? 1180 : 480,
         margin: "0 auto",
@@ -504,59 +504,19 @@ function Index() {
         minHeight: "100vh",
       }}
     >
-      {/* HEADER */}
-      <header
+      {/* Page toolbar (global nav lives in root) */}
+      <div
         style={{
-          padding: viewMode === "web" ? "24px 32px" : "20px 24px",
+          padding: viewMode === "web" ? "20px 32px 0" : "16px 24px 0",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           gap: 12,
           flexWrap: "wrap",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 11,
-              background: `linear-gradient(135deg, ${TEAL}, ${PURPLE})`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 18,
-              color: "#04150f",
-              fontWeight: 800,
-              boxShadow: `0 0 20px ${TEAL}40`,
-            }}
-            aria-hidden
-          >
-            ⚡
-          </div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: "-0.5px" }}>
-            Pulse
-          </h1>
-        </div>
-
         <ViewSwitcher value={viewMode} onChange={setViewMode} />
-
-        <Link
-          to="/ping"
-          className="font-mono-pulse"
-          style={{
-            padding: "8px 16px",
-            borderRadius: 20,
-            border: `1px solid ${BORDER}`,
-            color: TEXT_SEC,
-            fontSize: 12,
-            textDecoration: "none",
-            background: SURFACE2,
-          }}
-        >
-          🔗 Ping a friend
-        </Link>
-      </header>
+      </div>
 
       {viewMode === "web" ? (
         <WebLayout
@@ -583,7 +543,9 @@ function Index() {
           progressBar={progressBar}
         />
       )}
-    </main>
+
+      <SeoContent />
+    </div>
   );
 }
 
