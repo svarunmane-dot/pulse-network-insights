@@ -5,11 +5,107 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Pulse — Internet Speed Test & Connection Analysis" },
+      { title: "Pulse Speed – Internet Speed Test, Ping & Latency Checker" },
       {
         name: "description",
         content:
-          "Pulse is a premium speed test with AI-powered analysis of your download, upload, ping, jitter, and app reachability.",
+          "Test your internet speed, ping, jitter and latency instantly with Pulse Speed. Fast, accurate and lightweight internet performance testing platform.",
+      },
+      { property: "og:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
+      {
+        property: "og:description",
+        content:
+          "Measure download speed, upload speed, ping, jitter and latency instantly. Free, accurate and lightweight.",
+      },
+      { property: "og:url", content: "/" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
+      {
+        name: "twitter:description",
+        content:
+          "Measure download speed, upload speed, ping, jitter and latency instantly.",
+      },
+    ],
+    links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Pulse Speed",
+          url: "/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "/?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What is a good internet speed?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "For most households, 100 Mbps download and 10 Mbps upload comfortably handles 4K streaming, video calls and multiple devices. Gamers benefit from low ping (under 60 ms) more than raw bandwidth.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Why is my ping high?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "High ping is usually caused by long network paths, congested ISPs, weak Wi-Fi or VPN routing. Switching to Ethernet and choosing a closer server typically reduces ping.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What is jitter?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Jitter is the variation in delay between packets. High jitter causes choppy voice/video calls and unstable gaming even when speed looks fine.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Why is WiFi slower than Ethernet?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Wi-Fi shares airtime, suffers interference, and weakens with distance. Ethernet provides a dedicated, full-duplex link with consistent latency.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "How accurate is Pulse Speed?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Pulse Speed measures real network performance from your browser using lightweight probes. Results closely match ISP-grade tools for everyday diagnostics.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What speed is good for gaming?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Online gaming needs only 15–25 Mbps, but ping below 60 ms and jitter below 10 ms matter far more than raw bandwidth.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "How much speed do I need for streaming?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "HD video needs ~5 Mbps, 4K streaming needs ~25 Mbps per device. For multiple simultaneous 4K streams aim for 100 Mbps or more.",
+              },
+            },
+          ],
+        }),
       },
     ],
   }),
