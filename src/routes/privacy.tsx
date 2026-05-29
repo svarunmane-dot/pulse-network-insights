@@ -28,7 +28,7 @@ function PrivacyPage() {
       <h2 style={{ color: "#fff", marginTop: 28 }}>Third parties</h2>
       <p>Network info lookups call ipapi.co. Their privacy terms apply to that request.</p>
       <h2 style={{ color: "#fff", marginTop: 28 }}>Contact</h2>
-      <p>Questions about privacy? Email hello@pulsespeed.app.</p>
+      <p>Questions about privacy? Email pulse.speeed@gmail.com.</p>
     </article>
   );
 }
