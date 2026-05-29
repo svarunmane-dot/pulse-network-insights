@@ -31,7 +31,7 @@ function ContactPage() {
 
       <div style={{ marginTop: 16, fontSize: 14, color: "#c8d0e0" }}>
         <div>
-          📧 <a href="mailto:hello@pulsespeed.app" style={{ color: "#00D4AA" }}>hello@pulsespeed.app</a>
+          📧 <a href="mailto:pulse.speeed@gmail.com" style={{ color: "#00D4AA" }}>pulse.speeed@gmail.com</a>
         </div>
         <div style={{ marginTop: 6 }}>
           🔗 <a href="#" style={{ color: "#00D4AA" }}>LinkedIn</a> ·{" "}
