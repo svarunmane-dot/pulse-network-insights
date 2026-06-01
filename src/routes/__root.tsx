@@ -214,7 +214,6 @@ function SiteHeader() {
           {[
             { to: "/", label: "Speed Test" },
             { to: "/ping", label: "Ping a Friend" },
-            { to: "/global", label: "Global Latency" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
