@@ -679,7 +679,6 @@ function Index() {
       )}
 
       <SeoContent />
-      <GlobalLatencySection />
     </div>
   );
 }
