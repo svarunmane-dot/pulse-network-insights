@@ -100,6 +100,10 @@ function haversine(a: { lat: number; lon: number }, b: { lat: number; lon: numbe
 }
 
 function GlobalLatencyPage() {
+  return <GlobalLatencySection />;
+}
+
+export function GlobalLatencySection() {
   const [user, setUser] = useState<{ lat: number; lon: number; city?: string } | null>(
     null,
   );

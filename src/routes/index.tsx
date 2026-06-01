@@ -1,5 +1,126 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { GlobalLatencySection } from "./global";
+
+/* ============ REAL SPEED TEST (Cloudflare) ============ */
+async function pingTest(): Promise<{ ping: number; jitter: number }> {
+  const samples: number[] = [];
+  for (let i = 0; i < 10; i++) {
+    const t0 = performance.now();
+    try {
+      await fetch(
+        `https://speed.cloudflare.com/__down?bytes=0&cb=${i}-${Date.now()}`,
+        { cache: "no-store" },
+      );
+      samples.push(performance.now() - t0);
+    } catch {
+      /* ignore */
+    }
+  }
+  if (!samples.length) return { ping: 0, jitter: 0 };
+  const sorted = [...samples].sort((a, b) => a - b);
+  // drop slowest as cold-start outlier
+  const trimmed = sorted.slice(0, Math.max(1, sorted.length - 1));
+  const ping = trimmed[Math.floor(trimmed.length / 2)];
+  let jitter = 0;
+  for (let i = 1; i < trimmed.length; i++)
+    jitter += Math.abs(trimmed[i] - trimmed[i - 1]);
+  jitter = trimmed.length > 1 ? jitter / (trimmed.length - 1) : 0;
+  return { ping: Math.max(1, Math.round(ping)), jitter: Math.round(jitter) };
+}
+
+async function downloadTest(
+  onProgress: (mbps: number, fracElapsed: number) => void,
+): Promise<number> {
+  const CHUNK = 25 * 1024 * 1024; // 25 MB
+  const PARALLEL = 8;
+  const DURATION_MS = 8000;
+  const controller = new AbortController();
+  let totalBytes = 0;
+  const t0 = performance.now();
+
+  const ticker = window.setInterval(() => {
+    const elapsed = (performance.now() - t0) / 1000;
+    if (elapsed > 0)
+      onProgress((totalBytes * 8) / elapsed / 1e6, Math.min(elapsed * 1000 / DURATION_MS, 1));
+    if (performance.now() - t0 > DURATION_MS) controller.abort();
+  }, 150);
+
+  const stream = async () => {
+    while (performance.now() - t0 < DURATION_MS) {
+      try {
+        const res = await fetch(
+          `https://speed.cloudflare.com/__down?bytes=${CHUNK}&cb=${Math.random()}`,
+          { cache: "no-store", signal: controller.signal },
+        );
+        const reader = res.body?.getReader();
+        if (!reader) break;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          totalBytes += value.byteLength;
+          if (performance.now() - t0 > DURATION_MS) {
+            try { await reader.cancel(); } catch { /* */ }
+            break;
+          }
+        }
+      } catch {
+        break;
+      }
+    }
+  };
+
+  await Promise.all(Array.from({ length: PARALLEL }, stream));
+  window.clearInterval(ticker);
+  const elapsed = (performance.now() - t0) / 1000;
+  return elapsed > 0 ? (totalBytes * 8) / elapsed / 1e6 : 0;
+}
+
+async function uploadTest(
+  onProgress: (mbps: number, fracElapsed: number) => void,
+): Promise<number> {
+  const SIZE = 8 * 1024 * 1024; // 8 MB per request
+  const PARALLEL = 6;
+  const DURATION_MS = 8000;
+  // Build payload once; full random would be slow, partial random is enough
+  const buf = new Uint8Array(SIZE);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    for (let off = 0; off < SIZE; off += 65536) {
+      crypto.getRandomValues(buf.subarray(off, Math.min(off + 65536, SIZE)));
+    }
+  }
+  const controller = new AbortController();
+  let totalBytes = 0;
+  const t0 = performance.now();
+
+  const ticker = window.setInterval(() => {
+    const elapsed = (performance.now() - t0) / 1000;
+    if (elapsed > 0)
+      onProgress((totalBytes * 8) / elapsed / 1e6, Math.min(elapsed * 1000 / DURATION_MS, 1));
+    if (performance.now() - t0 > DURATION_MS) controller.abort();
+  }, 150);
+
+  const stream = async () => {
+    while (performance.now() - t0 < DURATION_MS) {
+      try {
+        await fetch(`https://speed.cloudflare.com/__up`, {
+          method: "POST",
+          body: buf,
+          signal: controller.signal,
+          cache: "no-store",
+        });
+        totalBytes += SIZE;
+      } catch {
+        break;
+      }
+    }
+  };
+
+  await Promise.all(Array.from({ length: PARALLEL }, stream));
+  window.clearInterval(ticker);
+  const elapsed = (performance.now() - t0) / 1000;
+  return elapsed > 0 ? (totalBytes * 8) / elapsed / 1e6 : 0;
+}
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -359,7 +480,7 @@ function Index() {
   const dl = useCountUp(results?.download ?? 0, status === "done");
   const ul = useCountUp(results?.upload ?? 0, status === "done");
 
-  const runTest = () => {
+  const runTest = async () => {
     if (status === "testing") return;
     setStatus("testing");
     setProgress(0);
@@ -368,27 +489,36 @@ function Index() {
     setAiText("");
     if (aiTimerRef.current) window.clearInterval(aiTimerRef.current);
 
-    const start = performance.now();
-    const dur = 3200;
-    const tick = () => {
-      const p = Math.min((performance.now() - start) / dur, 1);
-      setProgress(p * 95);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    try {
+      // 1) Ping/jitter (0 -> 10%)
+      const pingRes = await pingTest();
+      setProgress(10);
 
-    window.setTimeout(() => {
+      // 2) Download (10 -> 55%)
+      const dlMbps = await downloadTest((_m, frac) => {
+        setProgress(10 + frac * 45);
+      });
+      setProgress(55);
+
+      // 3) Upload (55 -> 95%)
+      const ulMbps = await uploadTest((_m, frac) => {
+        setProgress(55 + frac * 40);
+      });
+      setProgress(100);
+
       const r = {
-        download: rand(80, 160) + Math.random(),
-        upload: rand(5, 35) + Math.random(),
-        ping: rand(30, 110),
-        jitter: rand(5, 25),
+        download: Math.max(0.1, dlMbps),
+        upload: Math.max(0.1, ulMbps),
+        ping: pingRes.ping,
+        jitter: pingRes.jitter,
       };
       setResults(r);
-      setProgress(100);
       setStatus("done");
 
-      const latencies = APPS.map(() => rand(20, 200));
+      // App latencies (kept as estimates relative to ping)
+      const latencies = APPS.map(() =>
+        Math.max(10, Math.round(pingRes.ping + rand(5, 80))),
+      );
       APPS.forEach((_, i) => {
         window.setTimeout(() => {
           setAppLatencies((prev) => {
@@ -396,10 +526,10 @@ function Index() {
             next[i] = latencies[i];
             return next;
           });
-        }, 400 + i * 350);
+        }, 200 + i * 220);
       });
 
-      const aiStartDelay = 400 + APPS.length * 350 + 200;
+      const aiStartDelay = 200 + APPS.length * 220 + 200;
       window.setTimeout(() => {
         const poorApps = APPS.filter(
           (a, i) => statusFor(latencies[i], a.ideal) === "poor",
@@ -415,7 +545,11 @@ function Index() {
           }
         }, 14);
       }, aiStartDelay);
-    }, 3200);
+    } catch (err) {
+      console.error("Speed test failed", err);
+      setStatus("idle");
+      setProgress(0);
+    }
   };
 
   useEffect(() => {
@@ -545,6 +679,7 @@ function Index() {
       )}
 
       <SeoContent />
+      <GlobalLatencySection />
     </div>
   );
 }
