@@ -480,7 +480,7 @@ function Index() {
   const dl = useCountUp(results?.download ?? 0, status === "done");
   const ul = useCountUp(results?.upload ?? 0, status === "done");
 
-  const runTest = () => {
+  const runTest = async () => {
     if (status === "testing") return;
     setStatus("testing");
     setProgress(0);
@@ -489,27 +489,36 @@ function Index() {
     setAiText("");
     if (aiTimerRef.current) window.clearInterval(aiTimerRef.current);
 
-    const start = performance.now();
-    const dur = 3200;
-    const tick = () => {
-      const p = Math.min((performance.now() - start) / dur, 1);
-      setProgress(p * 95);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    try {
+      // 1) Ping/jitter (0 -> 10%)
+      const pingRes = await pingTest();
+      setProgress(10);
 
-    window.setTimeout(() => {
+      // 2) Download (10 -> 55%)
+      const dlMbps = await downloadTest((_m, frac) => {
+        setProgress(10 + frac * 45);
+      });
+      setProgress(55);
+
+      // 3) Upload (55 -> 95%)
+      const ulMbps = await uploadTest((_m, frac) => {
+        setProgress(55 + frac * 40);
+      });
+      setProgress(100);
+
       const r = {
-        download: rand(80, 160) + Math.random(),
-        upload: rand(5, 35) + Math.random(),
-        ping: rand(30, 110),
-        jitter: rand(5, 25),
+        download: Math.max(0.1, dlMbps),
+        upload: Math.max(0.1, ulMbps),
+        ping: pingRes.ping,
+        jitter: pingRes.jitter,
       };
       setResults(r);
-      setProgress(100);
       setStatus("done");
 
-      const latencies = APPS.map(() => rand(20, 200));
+      // App latencies (kept as estimates relative to ping)
+      const latencies = APPS.map(() =>
+        Math.max(10, Math.round(pingRes.ping + rand(5, 80))),
+      );
       APPS.forEach((_, i) => {
         window.setTimeout(() => {
           setAppLatencies((prev) => {
@@ -517,10 +526,10 @@ function Index() {
             next[i] = latencies[i];
             return next;
           });
-        }, 400 + i * 350);
+        }, 200 + i * 220);
       });
 
-      const aiStartDelay = 400 + APPS.length * 350 + 200;
+      const aiStartDelay = 200 + APPS.length * 220 + 200;
       window.setTimeout(() => {
         const poorApps = APPS.filter(
           (a, i) => statusFor(latencies[i], a.ideal) === "poor",
@@ -536,7 +545,11 @@ function Index() {
           }
         }, 14);
       }, aiStartDelay);
-    }, 3200);
+    } catch (err) {
+      console.error("Speed test failed", err);
+      setStatus("idle");
+      setProgress(0);
+    }
   };
 
   useEffect(() => {
@@ -666,6 +679,7 @@ function Index() {
       )}
 
       <SeoContent />
+      <GlobalLatencySection />
     </div>
   );
 }
