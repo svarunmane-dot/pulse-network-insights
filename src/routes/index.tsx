@@ -93,10 +93,6 @@ async function downloadTest(
   return elapsed > 0 ? (totalBytes * 8) / elapsed / 1e6 : 0;
 }
 
-/* ============================================================
-   UPDATED UPLOAD TEST (REPLACED FULL FUNCTION)
-   ============================================================ */
-
 async function uploadTest(
   onProgress: (mbps: number, frac: number) => void,
 ): Promise<number> {
@@ -366,12 +362,14 @@ function statusFor(latency: number, ideal: number): "good" | "fair" | "poor" {
   if (latency <= ideal * 1.5) return "fair";
   return "poor";
 }
+
 const STATUS_COLOR: Record<string, string> = {
   good: TEAL,
   fair: AMBER,
   poor: RED,
   checking: TEXT_MUTED,
 };
+
 const STATUS_LABEL: Record<string, string> = {
   good: "Excellent",
   fair: "Fair",
@@ -382,10 +380,23 @@ const STATUS_LABEL: Record<string, string> = {
    COMPONENTS
    ============================================================ */
 function Gauge({
-  label, value, max, unit, color, gradientId, gradientStops, size = 220,
+  label,
+  value,
+  max,
+  unit,
+  color,
+  gradientId,
+  gradientStops,
+  size = 220,
 }: {
-  label: string; value: number; max: number; unit: string;
-  color: string; gradientId: string; gradientStops: [string, string]; size?: number;
+  label: string;
+  value: number;
+  max: number;
+  unit: string;
+  color: string;
+  gradientId: string;
+  gradientStops: [string, string];
+  size?: number;
 }) {
   const stroke = 14;
   const radius = (size - stroke) / 2;
@@ -394,17 +405,36 @@ function Gauge({
   const dash = c * arc;
   const filled = dash * Math.min(value / max, 1);
   return (
-    <div className="relative flex flex-col items-center" style={{ width: size, height: size }}>
+    <div
+      className="relative flex flex-col items-center"
+      style={{ width: size, height: size }}
+    >
       <svg width={size} height={size} style={{ transform: "rotate(-135deg)" }}>
-        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#1a2238"
-          strokeWidth={stroke} strokeDasharray={`${dash} ${c}`} strokeLinecap="round" />
-        <circle cx={size/2} cy={size/2} r={radius} fill="none"
-          stroke={`url(#${gradientId})`} strokeWidth={stroke}
-          strokeDasharray={`${filled} ${c}`} strokeLinecap="round"
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="#1a2238"
+          strokeWidth={stroke}
+          strokeDasharray={`${dash} ${c}`}
+          strokeLinecap="round"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={`url(#${gradientId})`}
+          strokeWidth={stroke}
+          strokeDasharray={`${filled} ${c}`}
+          strokeLinecap="round"
           style={{
             transition: "stroke-dasharray 0.4s ease-out",
-            filter: value > 0 ? `drop-shadow(0 0 14px ${color}cc)` : undefined,
-          }} />
+            filter:
+              value > 0 ? `drop-shadow(0 0 14px ${color}cc)` : undefined,
+          }}
+        />
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor={gradientStops[0]} />
@@ -413,15 +443,35 @@ function Gauge({
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <div className="font-mono-pulse"
-          style={{ fontSize: 10, color: TEXT_MUTED, letterSpacing: 3, textTransform: "uppercase" }}>
+        <div
+          className="font-mono-pulse"
+          style={{
+            fontSize: 10,
+            color: TEXT_MUTED,
+            letterSpacing: 3,
+            textTransform: "uppercase",
+          }}
+        >
           {label}
         </div>
-        <div className="font-num-pulse"
-          style={{ fontWeight: 600, fontSize: size > 220 ? 52 : 44, color: "#fff", lineHeight: 1.1, marginTop: 6 }}>
+        <div
+          className="font-num-pulse"
+          style={{
+            fontWeight: 600,
+            fontSize: size > 220 ? 52 : 44,
+            color: "#fff",
+            lineHeight: 1.1,
+            marginTop: 6,
+          }}
+        >
           {value.toFixed(value >= 100 ? 0 : 1)}
         </div>
-        <div className="font-mono-pulse" style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}>{unit}</div>
+        <div
+          className="font-mono-pulse"
+          style={{ fontSize: 11, color: TEXT_MUTED, marginTop: 4 }}
+        >
+          {unit}
+        </div>
       </div>
     </div>
   );
@@ -430,7 +480,10 @@ function Gauge({
 function useCountUp(target: number, run: boolean, duration = 1200) {
   const [val, setVal] = useState(0);
   useEffect(() => {
-    if (!run) { setVal(0); return; }
+    if (!run) {
+      setVal(0);
+      return;
+    }
     let raf = 0;
     const start = performance.now();
     const tick = (t: number) => {
@@ -445,35 +498,61 @@ function useCountUp(target: number, run: boolean, duration = 1200) {
 }
 
 function buildAiText(r: {
-  download: number; upload: number; ping: number; jitter: number; poorApps: string[];
+  download: number;
+  upload: number;
+  ping: number;
+  jitter: number;
+  poorApps: string[];
 }) {
   const parts: string[] = [];
   if (r.download > 100)
-    parts.push(`Your download speed of ${r.download.toFixed(1)} Mbps is fast and comfortably handles 4K streaming, large downloads, and multiple devices at once.`);
+    parts.push(
+      `Your download speed of ${r.download.toFixed(1)} Mbps is fast and comfortably handles 4K streaming, large downloads, and multiple devices at once.`,
+    );
   else if (r.download > 25)
-    parts.push(`Your download speed of ${r.download.toFixed(1)} Mbps is decent for HD streaming and everyday browsing, though 4K on multiple devices may stutter.`);
+    parts.push(
+      `Your download speed of ${r.download.toFixed(1)} Mbps is decent for HD streaming and everyday browsing, though 4K on multiple devices may stutter.`,
+    );
   else
-    parts.push(`Your download speed of ${r.download.toFixed(1)} Mbps is slow and will struggle with HD video and modern web apps.`);
+    parts.push(
+      `Your download speed of ${r.download.toFixed(1)} Mbps is slow and will struggle with HD video and modern web apps.`,
+    );
 
   if (r.upload < 10)
-    parts.push(`Upload at ${r.upload.toFixed(1)} Mbps is limited — video calls and screen sharing may degrade under load.`);
+    parts.push(
+      `Upload at ${r.upload.toFixed(1)} Mbps is limited — video calls and screen sharing may degrade under load.`,
+    );
   else
-    parts.push(`Upload of ${r.upload.toFixed(1)} Mbps is solid for video conferencing and cloud sync.`);
+    parts.push(
+      `Upload of ${r.upload.toFixed(1)} Mbps is solid for video conferencing and cloud sync.`,
+    );
 
   if (r.ping > 100)
-    parts.push(`Ping of ${r.ping} ms is high and will introduce noticeable lag in real-time apps.`);
+    parts.push(
+      `Ping of ${r.ping} ms is high and will introduce noticeable lag in real-time apps.`,
+    );
   else if (r.ping > 60)
-    parts.push(`Ping of ${r.ping} ms is moderate — fine for most uses, less ideal for competitive gaming.`);
+    parts.push(
+      `Ping of ${r.ping} ms is moderate — fine for most uses, less ideal for competitive gaming.`,
+    );
   else
-    parts.push(`Ping of ${r.ping} ms is responsive and great for interactive use.`);
+    parts.push(
+      `Ping of ${r.ping} ms is responsive and great for interactive use.`,
+    );
 
   if (r.jitter > 20)
-    parts.push(`Jitter of ${r.jitter} ms is unstable — consider a wired connection or moving closer to your router.`);
+    parts.push(
+      `Jitter of ${r.jitter} ms is unstable — consider a wired connection or moving closer to your router.`,
+    );
   else
-    parts.push(`Jitter of ${r.jitter} ms is stable, keeping calls and streams smooth.`);
+    parts.push(
+      `Jitter of ${r.jitter} ms is stable, keeping calls and streams smooth.`,
+    );
 
   if (r.poorApps.length)
-    parts.push(`Reachability is poor for ${r.poorApps.join(", ")} — you may experience slow loads on those services.`);
+    parts.push(
+      `Reachability is poor for ${r.poorApps.join(", ")} — you may experience slow loads on those services.`,
+    );
 
   return parts.join(" ");
 }
@@ -489,9 +568,14 @@ function Index() {
   const [liveDl, setLiveDl] = useState(0);
   const [liveUl, setLiveUl] = useState(0);
   const [results, setResults] = useState<{
-    download: number; upload: number; ping: number; jitter: number;
+    download: number;
+    upload: number;
+    ping: number;
+    jitter: number;
   } | null>(null);
-  const [appLatencies, setAppLatencies] = useState<(number | null)[]>(APPS.map(() => null));
+  const [appLatencies, setAppLatencies] = useState<(number | null)[]>(
+    APPS.map(() => null),
+  );
   const [aiText, setAiText] = useState("");
   const aiTimerRef = useRef<number | null>(null);
 
@@ -544,7 +628,9 @@ function Index() {
       setStatus("done");
       setPhase("");
 
-      const latencies = APPS.map(() => Math.max(10, Math.round(pingRes.ping + rand(5, 80))));
+      const latencies = APPS.map(() =>
+        Math.max(10, Math.round(pingRes.ping + rand(5, 80))),
+      );
       APPS.forEach((_, i) => {
         window.setTimeout(() => {
           setAppLatencies((prev) => {
@@ -556,7 +642,9 @@ function Index() {
       });
 
       window.setTimeout(() => {
-        const poorApps = APPS.filter((a, i) => statusFor(latencies[i], a.ideal) === "poor").map((a) => a.name);
+        const poorApps = APPS.filter(
+          (a, i) => statusFor(latencies[i], a.ideal) === "poor",
+        ).map((a) => a.name);
         const full = buildAiText({ ...r, poorApps });
         let i = 0;
         aiTimerRef.current = window.setInterval(() => {
@@ -576,74 +664,142 @@ function Index() {
     }
   };
 
-  useEffect(() => () => { if (aiTimerRef.current) window.clearInterval(aiTimerRef.current); }, []);
+  useEffect(
+    () => () => {
+      if (aiTimerRef.current) window.clearInterval(aiTimerRef.current);
+    },
+    [],
+  );
 
   // Show live values during test, final values when done
   const displayDl = status === "testing" ? liveDl : dl;
   const displayUl = status === "testing" ? liveUl : ul;
 
-  const phaseLabel = phase === "ping" ? "Measuring ping..." : phase === "download" ? "Testing download..." : phase === "upload" ? "Testing upload..." : "";
+  const phaseLabel =
+    phase === "ping"
+      ? "Measuring ping..."
+      : phase === "download"
+        ? "Testing download..."
+        : phase === "upload"
+          ? "Testing upload..."
+          : "";
 
-  const buttonLabel = status === "testing" ? "Testing..." : status === "done" ? "Test Again" : "Run Speed Test";
+  const buttonLabel =
+    status === "testing"
+      ? "Testing..."
+      : status === "done"
+        ? "Test Again"
+        : "Run Speed Test";
 
   const ctaButton = (
-    <button onClick={runTest} disabled={status === "testing"}
+    <button
+      onClick={runTest}
+      disabled={status === "testing"}
       style={{
-        padding: "14px 44px", borderRadius: 50, border: "none",
-        fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700,
+        padding: "14px 44px",
+        borderRadius: 50,
+        border: "none",
+        fontFamily: "'DM Sans', sans-serif",
+        fontSize: 15,
+        fontWeight: 700,
         letterSpacing: "0.3px",
         cursor: status === "testing" ? "not-allowed" : "pointer",
-        background: status === "testing" ? BORDER : `linear-gradient(135deg, ${TEAL}, #00b894)`,
+        background:
+          status === "testing"
+            ? BORDER
+            : `linear-gradient(135deg, ${TEAL}, #00b894)`,
         color: status === "testing" ? TEXT_MUTED : "#04150f",
-        boxShadow: status === "testing" ? "none" : `0 0 40px ${TEAL}55, 0 8px 24px ${TEAL}33`,
+        boxShadow:
+          status === "testing"
+            ? "none"
+            : `0 0 40px ${TEAL}55, 0 8px 24px ${TEAL}33`,
         transition: "all 0.2s",
-      }}>
-      {status === "testing" ? "⏳ " : "▶ "}{buttonLabel}
+      }}
+    >
+      {status === "testing" ? "⏳ " : "▶ "}
+      {buttonLabel}
     </button>
   );
 
-  const progressBar = status === "testing" ? (
-    <div style={{ width: "100%", maxWidth: 420, margin: "0 auto" }}>
-      <div style={{ height: 3, background: SURFACE, borderRadius: 2, overflow: "hidden" }}>
-        <div style={{
-          height: "100%", width: `${progress}%`,
-          background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
-          transition: "width 0.2s linear",
-        }} />
+  const progressBar =
+    status === "testing" ? (
+      <div style={{ width: "100%", maxWidth: 420, margin: "0 auto" }}>
+        <div
+          style={{
+            height: 3,
+            background: SURFACE,
+            borderRadius: 2,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              height: "100%",
+              width: `${progress}%`,
+              background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
+              transition: "width 0.2s linear",
+            }}
+          />
+        </div>
+        <div
+          className="font-mono-pulse"
+          style={{
+            textAlign: "center",
+            fontSize: 12,
+            color: TEXT_MUTED,
+            marginTop: 8,
+          }}
+        >
+          {phaseLabel || `Testing your connection... ${Math.floor(progress)}%`}
+        </div>
       </div>
-      <div className="font-mono-pulse"
-        style={{ textAlign: "center", fontSize: 12, color: TEXT_MUTED, marginTop: 8 }}>
-        {phaseLabel || `Testing your connection... ${Math.floor(progress)}%`}
-      </div>
-    </div>
-  ) : null;
+    ) : null;
 
   return (
-    <div style={{
-      maxWidth: viewMode === "web" ? 1180 : 480,
-      margin: "0 auto", paddingBottom: 80, minHeight: "100vh",
-    }}>
-      <div style={{
-        padding: viewMode === "web" ? "20px 32px 0" : "16px 24px 0",
-        display: "flex", alignItems: "center", justifyContent: "flex-end",
-        gap: 12, flexWrap: "wrap",
-      }}>
+    <div
+      style={{
+        maxWidth: viewMode === "web" ? 1180 : 480,
+        margin: "0 auto",
+        paddingBottom: 80,
+        minHeight: "100vh",
+      }}
+    >
+      <div
+        style={{
+          padding: viewMode === "web" ? "20px 32px 0" : "16px 24px 0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
         <ViewSwitcher value={viewMode} onChange={setViewMode} />
       </div>
 
       {viewMode === "web" ? (
         <WebLayout
-          status={status} results={results}
-          dl={displayDl} ul={displayUl}
-          progress={progress} appLatencies={appLatencies}
-          aiText={aiText} ctaButton={ctaButton} progressBar={progressBar}
+          status={status}
+          results={results}
+          dl={displayDl}
+          ul={displayUl}
+          progress={progress}
+          appLatencies={appLatencies}
+          aiText={aiText}
+          ctaButton={ctaButton}
+          progressBar={progressBar}
         />
       ) : (
         <MobileLayout
-          status={status} results={results}
-          dl={displayDl} ul={displayUl}
-          progress={progress} appLatencies={appLatencies}
-          aiText={aiText} ctaButton={ctaButton} progressBar={progressBar}
+          status={status}
+          results={results}
+          dl={displayDl}
+          ul={displayUl}
+          progress={progress}
+          appLatencies={appLatencies}
+          aiText={aiText}
+          ctaButton={ctaButton}
+          progressBar={progressBar}
         />
       )}
       <SeoContent />
@@ -654,23 +810,47 @@ function Index() {
 /* ============================================================
    VIEW SWITCHER
    ============================================================ */
-function ViewSwitcher({ value, onChange }: { value: ViewMode; onChange: (v: ViewMode) => void }) {
+function ViewSwitcher({
+  value,
+  onChange,
+}: {
+  value: ViewMode;
+  onChange: (v: ViewMode) => void;
+}) {
   return (
-    <div style={{
-      display: "inline-flex", padding: 4, borderRadius: 24,
-      border: `1px solid ${BORDER}`, background: SURFACE2, gap: 2,
-    }}>
+    <div
+      style={{
+        display: "inline-flex",
+        padding: 4,
+        borderRadius: 24,
+        border: `1px solid ${BORDER}`,
+        background: SURFACE2,
+        gap: 2,
+      }}
+    >
       {(["web", "mobile"] as ViewMode[]).map((m) => {
         const active = value === m;
         return (
-          <button key={m} onClick={() => onChange(m)} className="font-mono-pulse"
+          <button
+            key={m}
+            onClick={() => onChange(m)}
+            className="font-mono-pulse"
             style={{
-              padding: "6px 16px", borderRadius: 20, border: "none",
-              background: active ? `linear-gradient(135deg, ${TEAL}, #00b894)` : "transparent",
+              padding: "6px 16px",
+              borderRadius: 20,
+              border: "none",
+              background: active
+                ? `linear-gradient(135deg, ${TEAL}, #00b894)`
+                : "transparent",
               color: active ? "#04150f" : TEXT_MUTED,
-              fontSize: 11, fontWeight: 600, letterSpacing: 1.5,
-              textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s",
-            }}>
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: 1.5,
+              textTransform: "uppercase",
+              cursor: "pointer",
+              transition: "all 0.2s",
+            }}
+          >
             {m === "web" ? "🖥 Web" : "📱 Mobile"}
           </button>
         );
@@ -684,8 +864,15 @@ function ViewSwitcher({ value, onChange }: { value: ViewMode; onChange: (v: View
    ============================================================ */
 type PanelProps = {
   status: Status;
-  results: { download: number; upload: number; ping: number; jitter: number } | null;
-  dl: number; ul: number; progress: number;
+  results: {
+    download: number;
+    upload: number;
+    ping: number;
+    jitter: number;
+  } | null;
+  dl: number;
+  ul: number;
+  progress: number;
   appLatencies: (number | null)[];
   aiText: string;
   ctaButton: React.ReactNode;
@@ -695,14 +882,38 @@ type PanelProps = {
 function Hero({ centered }: { centered: boolean }) {
   return (
     <div style={{ textAlign: centered ? "center" : "left", maxWidth: 640 }}>
-      <h1 style={{ fontSize: centered ? 40 : 44, fontWeight: 800, letterSpacing: "-1.5px", lineHeight: 1.05, margin: 0, color: "#fff" }}>
+      <h1
+        style={{
+          fontSize: centered ? 40 : 44,
+          fontWeight: 800,
+          letterSpacing: "-1.5px",
+          lineHeight: 1.05,
+          margin: 0,
+          color: "#fff",
+        }}
+      >
         Internet Speed Test &{" "}
-        <span style={{ background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+        <span
+          style={{
+            background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
           Ping Checker
         </span>
       </h1>
-      <p style={{ fontSize: 16, color: TEXT_SEC, marginTop: 14, lineHeight: 1.6 }}>
-        Measure download speed, upload speed, ping, jitter and latency instantly.
+      <p
+        style={{
+          fontSize: 16,
+          color: TEXT_SEC,
+          marginTop: 14,
+          lineHeight: 1.6,
+        }}
+      >
+        Measure download speed, upload speed, ping, jitter and latency
+        instantly.
       </p>
       <TrustBadges centered={centered} />
     </div>
@@ -717,77 +928,276 @@ function TrustBadges({ centered }: { centered: boolean }) {
     { icon: "⚡", label: "Fast & Lightweight" },
   ];
   return (
-    <ul aria-label="Trust badges" style={{
-      listStyle: "none", padding: 0, margin: "20px 0 0",
-      display: "flex", flexWrap: "wrap", gap: 8,
-      justifyContent: centered ? "center" : "flex-start",
-    }}>
+    <ul
+      aria-label="Trust badges"
+      style={{
+        listStyle: "none",
+        padding: 0,
+        margin: "20px 0 0",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 8,
+        justifyContent: centered ? "center" : "flex-start",
+      }}
+    >
       {badges.map((b) => (
-        <li key={b.label} className="font-mono-pulse"
-          style={{ fontSize: 11, padding: "6px 12px", borderRadius: 999, border: `1px solid ${BORDER}`, background: SURFACE2, color: TEXT_SEC, letterSpacing: 0.5 }}>
-          <span aria-hidden style={{ marginRight: 6 }}>{b.icon}</span>{b.label}
+        <li
+          key={b.label}
+          className="font-mono-pulse"
+          style={{
+            fontSize: 11,
+            padding: "6px 12px",
+            borderRadius: 999,
+            border: `1px solid ${BORDER}`,
+            background: SURFACE2,
+            color: TEXT_SEC,
+            letterSpacing: 0.5,
+          }}
+        >
+          <span aria-hidden style={{ marginRight: 6 }}>
+            {b.icon}
+          </span>
+          {b.label}
         </li>
       ))}
     </ul>
   );
 }
 
-function MetricCard({ icon, label, value, unit, color }: { icon: string; label: string; value: string; unit: string; color: string }) {
+function MetricCard({
+  icon,
+  label,
+  value,
+  unit,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  unit: string;
+  color: string;
+}) {
   return (
-    <div style={{
-      position: "relative", overflow: "hidden",
-      background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
-      border: `1px solid ${BORDER}`, borderRadius: 16, padding: "18px 22px",
-      display: "flex", flexDirection: "column", gap: 6, flex: 1, minWidth: 0,
-    }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-      <div className="font-mono-pulse" style={{ fontSize: 10, color: TEXT_MUTED, letterSpacing: 2, textTransform: "uppercase" }}>{icon} {label}</div>
+    <div
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+        border: `1px solid ${BORDER}`,
+        borderRadius: 16,
+        padding: "18px 22px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        flex: 1,
+        minWidth: 0,
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 2,
+          background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+        }}
+      />
+      <div
+        className="font-mono-pulse"
+        style={{
+          fontSize: 10,
+          color: TEXT_MUTED,
+          letterSpacing: 2,
+          textTransform: "uppercase",
+        }}
+      >
+        {icon} {label}
+      </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-        <span className="font-num-pulse" style={{ fontSize: 30, fontWeight: 600, color: "#fff" }}>{value}</span>
-        <span className="font-mono-pulse" style={{ fontSize: 12, color: TEXT_MUTED }}>{unit}</span>
+        <span
+          className="font-num-pulse"
+          style={{ fontSize: 30, fontWeight: 600, color: "#fff" }}
+        >
+          {value}
+        </span>
+        <span
+          className="font-mono-pulse"
+          style={{ fontSize: 12, color: TEXT_MUTED }}
+        >
+          {unit}
+        </span>
       </div>
     </div>
   );
 }
 
-function SectionHeader({ label, right }: { label: string; right?: string }) {
+function SectionHeader({
+  label,
+  right,
+}: {
+  label: string;
+  right?: string;
+}) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-      <span className="font-mono-pulse" style={{ fontSize: 11, color: TEXT_MUTED, letterSpacing: 3, textTransform: "uppercase" }}>{label}</span>
+      <span
+        className="font-mono-pulse"
+        style={{
+          fontSize: 11,
+          color: TEXT_MUTED,
+          letterSpacing: 3,
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </span>
       <span style={{ flex: 1, height: 1, background: BORDER }} />
-      {right && <span className="font-mono-pulse" style={{ fontSize: 10, color: TEXT_MUTED }}>{right}</span>}
+      {right && (
+        <span className="font-mono-pulse" style={{ fontSize: 10, color: TEXT_MUTED }}>
+          {right}
+        </span>
+      )}
     </div>
   );
 }
 
 function AiPanel({ aiText }: { aiText: string }) {
   return (
-    <div style={{ position: "relative", overflow: "hidden", background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`, border: `1px solid ${TEAL}33`, borderRadius: 20, padding: 28, height: "100%" }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${TEAL}, ${PURPLE}, ${TEAL})` }} />
-      <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, background: `radial-gradient(circle, ${TEAL}15, transparent 70%)`, pointerEvents: "none" }} />
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, position: "relative" }}>
-        <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${TEAL}, ${PURPLE})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#04150f" }}>✦</div>
-        <div className="font-mono-pulse" style={{ fontSize: 13, fontWeight: 600, color: TEAL, letterSpacing: 2 }}>AI ANALYSIS</div>
+    <div
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+        border: `1px solid ${TEAL}33`,
+        borderRadius: 20,
+        padding: 28,
+        height: "100%",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 2,
+          background: `linear-gradient(90deg, ${TEAL}, ${PURPLE}, ${TEAL})`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: -60,
+          right: -60,
+          width: 200,
+          height: 200,
+          background: `radial-gradient(circle, ${TEAL}15, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginBottom: 16,
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 10,
+            background: `linear-gradient(135deg, ${TEAL}, ${PURPLE})`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 16,
+            color: "#04150f",
+          }}
+        >
+          ✦
+        </div>
+        <div
+          className="font-mono-pulse"
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: TEAL,
+            letterSpacing: 2,
+          }}
+        >
+          AI ANALYSIS
+        </div>
       </div>
-      <div style={{ fontSize: 15, lineHeight: 1.75, color: aiText ? TEXT_SEC : TEXT_MUTED, minHeight: 80, position: "relative" }}>
-        {aiText || "Run a speed test to get your personalized connection analysis..."}
+      <div
+        style={{
+          fontSize: 15,
+          lineHeight: 1.75,
+          color: aiText ? TEXT_SEC : TEXT_MUTED,
+          minHeight: 80,
+          position: "relative",
+        }}
+      >
+        {aiText ||
+          "Run a speed test to get your personalized connection analysis..."}
       </div>
     </div>
   );
 }
 
-function UseCases({ results }: { results: { download: number; upload: number; ping: number; jitter: number } }) {
+function UseCases({
+  results,
+}: {
+  results: {
+    download: number;
+    upload: number;
+    ping: number;
+    jitter: number;
+  };
+}) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <SectionHeader label="USE CASE READINESS" />
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
         {USE_CASES.map((uc) => {
-          const ok = results.download >= uc.d && results.upload >= uc.u && results.ping <= uc.p && results.jitter <= uc.j;
+          const ok =
+            results.download >= uc.d &&
+            results.upload >= uc.u &&
+            results.ping <= uc.p &&
+            results.jitter <= uc.j;
           return (
-            <div key={uc.label} style={{ background: ok ? `${TEAL}10` : `${RED}10`, border: `1px solid ${ok ? TEAL + "33" : RED + "33"}`, borderRadius: 12, padding: "10px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20 }} aria-hidden>{uc.icon}</span>
-              <span style={{ flex: 1, fontSize: 13, color: TEXT_SEC }}>{uc.label}</span>
-              <span className="font-mono-pulse" style={{ fontSize: 11, fontWeight: 600, color: ok ? TEAL : RED, background: ok ? `${TEAL}1a` : `${RED}1a`, padding: "3px 10px", borderRadius: 20 }}>
+            <div
+              key={uc.label}
+              style={{
+                background: ok ? `${TEAL}10` : `${RED}10`,
+                border: `1px solid ${ok ? TEAL + "33" : RED + "33"}`,
+                borderRadius: 12,
+                padding: "10px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
+              <span style={{ fontSize: 20 }} aria-hidden>
+                {uc.icon}
+              </span>
+              <span style={{ flex: 1, fontSize: 13, color: TEXT_SEC }}>
+                {uc.label}
+              </span>
+              <span
+                className="font-mono-pulse"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: ok ? TEAL : RED,
+                  background: ok ? `${TEAL}1a` : `${RED}1a`,
+                  padding: "3px 10px",
+                  borderRadius: 20,
+                }}
+              >
                 {ok ? "✓ READY" : "✗ LIMITED"}
               </span>
             </div>
@@ -798,31 +1208,131 @@ function UseCases({ results }: { results: { download: number; upload: number; pi
   );
 }
 
-function AppGrid({ appLatencies, columns }: { appLatencies: (number | null)[]; columns: number }) {
+function AppGrid({
+  appLatencies,
+  columns,
+}: {
+  appLatencies: (number | null)[];
+  columns: number;
+}) {
   return (
     <div>
       <SectionHeader label="APP REACHABILITY" right="latency to service endpoints" />
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: 12 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+          gap: 12,
+        }}
+      >
         {APPS.map((app, i) => {
           const latency = appLatencies[i];
-          const st = latency == null ? "checking" : statusFor(latency, app.ideal);
+          const st =
+            latency == null ? "checking" : statusFor(latency, app.ideal);
           const color = STATUS_COLOR[st];
           return (
-            <div key={app.name} style={{ position: "relative", overflow: "hidden", background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`, border: `1px solid ${latency == null ? BORDER : color + "66"}`, borderRadius: 14, padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8, transition: "border-color 0.5s ease" }}>
-              {latency != null && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${app.accent}, transparent)` }} />}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: TEXT_SEC }}>{app.name}</span>
-                <span className={latency == null ? "pulse-pulseAnim" : ""} style={{ width: 8, height: 8, borderRadius: "50%", background: color, boxShadow: latency == null ? "none" : `0 0 8px ${color}` }} />
+            <div
+              key={app.name}
+              style={{
+                position: "relative",
+                overflow: "hidden",
+                background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+                border: `1px solid ${
+                  latency == null ? BORDER : color + "66"
+                }`,
+                borderRadius: 14,
+                padding: "14px 16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                transition: "border-color 0.5s ease",
+              }}
+            >
+              {latency != null && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 2,
+                    background: `linear-gradient(90deg, transparent, ${app.accent}, transparent)`,
+                  }}
+                />
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span style={{ fontSize: 13, fontWeight: 600, color: TEXT_SEC }}>
+                  {app.name}
+                </span>
+                <span
+                  className={latency == null ? "pulse-pulseAnim" : ""}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: color,
+                    boxShadow:
+                      latency == null ? "none" : `0 0 8px ${color}`,
+                  }}
+                />
               </div>
               {latency == null ? (
-                <div style={{ height: 4, background: BORDER, overflow: "hidden", borderRadius: 2, position: "relative" }}>
-                  <div className="pulse-shimmerAnim" style={{ width: "40%", height: "100%", background: TEXT_MUTED }} />
+                <div
+                  style={{
+                    height: 4,
+                    background: BORDER,
+                    overflow: "hidden",
+                    borderRadius: 2,
+                    position: "relative",
+                  }}
+                >
+                  <div
+                    className="pulse-shimmerAnim"
+                    style={{
+                      width: "40%",
+                      height: "100%",
+                      background: TEXT_MUTED,
+                    }}
+                  />
                 </div>
               ) : (
                 <div>
-                  <span className="font-num-pulse" style={{ fontSize: 22, fontWeight: 600, color }}>{latency}</span>
-                  <span className="font-mono-pulse" style={{ fontSize: 11, color: TEXT_MUTED, marginLeft: 4 }}>ms</span>
-                  <div className="font-mono-pulse" style={{ fontSize: 10, color, marginTop: 2 }}>{STATUS_LABEL[st]}</div>
+                  <span
+                    className="font-num-pulse"
+                    style={{
+                      fontSize: 22,
+                      fontWeight: 600,
+                      color,
+                    }}
+                  >
+                    {latency}
+                  </span>
+                  <span
+                    className="font-mono-pulse"
+                    style={{
+                      fontSize: 11,
+                      color: TEXT_MUTED,
+                      marginLeft: 4,
+                    }}
+                  >
+                    ms
+                  </span>
+                  <div
+                    className="font-mono-pulse"
+                    style={{
+                      fontSize: 10,
+                      color,
+                      marginTop: 2,
+                    }}
+                  >
+                    {STATUS_LABEL[st]}
+                  </div>
                 </div>
               )}
             </div>
@@ -837,25 +1347,67 @@ function RouteTrace() {
   return (
     <div>
       <SectionHeader label="GLOBAL ROUTE TRACE" />
-      <div style={{ background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "18px 20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, gap: 8 }}>
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+          border: `1px solid ${BORDER}`,
+          borderRadius: 16,
+          padding: "18px 20px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 12,
+            gap: 8,
+          }}
+        >
           <div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: TEXT_SEC }}>Google DNS</span>
-            <span className="font-mono-pulse" style={{ fontSize: 11, color: TEXT_MUTED }}> 8.8.8.8 · Global</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: TEXT_SEC }}>
+              Google DNS
+            </span>
+            <span className="font-mono-pulse" style={{ fontSize: 11, color: TEXT_MUTED }}>
+              {" "}
+              8.8.8.8 · Global
+            </span>
           </div>
-          <span className="font-mono-pulse" style={{ fontSize: 12, color: TEAL }}>27 ms</span>
+          <span className="font-mono-pulse" style={{ fontSize: 12, color: TEAL }}>
+            27 ms
+          </span>
         </div>
         <div style={{ height: 4, background: BORDER, borderRadius: 2, overflow: "hidden" }}>
-          <div style={{ width: "15%", height: "100%", background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})` }} />
+          <div
+            style={{
+              width: "15%",
+              height: "100%",
+              background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
+            }}
+          />
         </div>
-        <div className="font-mono-pulse" style={{ fontSize: 10, color: TEAL, marginTop: 6 }}>EXCELLENT</div>
+        <div
+          className="font-mono-pulse"
+          style={{ fontSize: 10, color: TEAL, marginTop: 6 }}
+        >
+          EXCELLENT
+        </div>
       </div>
     </div>
   );
 }
 
 function NetworkInfo() {
-  const [info, setInfo] = useState<{ ip?: string; org?: string; asn?: string; city?: string; region?: string; country?: string; countryCode?: string; timezone?: string } | null>(null);
+  const [info, setInfo] = useState<{
+    ip?: string;
+    org?: string;
+    asn?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    countryCode?: string;
+    timezone?: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -865,30 +1417,90 @@ function NetworkInfo() {
         if (!res.ok) throw new Error("lookup failed");
         const j = await res.json();
         if (cancelled) return;
-        setInfo({ ip: j.ip, org: j.org, asn: j.asn, city: j.city, region: j.region, country: j.country_name, countryCode: j.country_code, timezone: j.timezone });
-      } catch { if (!cancelled) setError("Could not detect your network details."); }
+        setInfo({
+          ip: j.ip,
+          org: j.org,
+          asn: j.asn,
+          city: j.city,
+          region: j.region,
+          country: j.country_name,
+          countryCode: j.country_code,
+          timezone: j.timezone,
+        });
+      } catch {
+        if (!cancelled)
+          setError("Could not detect your network details.");
+      }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
   const rows = [
     { label: "PUBLIC IP", value: info?.ip },
     { label: "ISP / ORG", value: info?.org },
     { label: "ASN", value: info?.asn },
-    { label: "LOCATION", value: info ? [info.city, info.region, info.country].filter(Boolean).join(", ") : undefined },
+    {
+      label: "LOCATION",
+      value: info
+        ? [info.city, info.region, info.country]
+            .filter(Boolean)
+            .join(", ")
+        : undefined,
+    },
     { label: "TIMEZONE", value: info?.timezone },
   ];
   return (
     <div>
       <SectionHeader label="YOUR NETWORK" right={info?.countryCode} />
-      <div style={{ background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "18px 20px" }}>
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+          border: `1px solid ${BORDER}`,
+          borderRadius: 16,
+          padding: "18px 20px",
+        }}
+      >
         {error ? (
-          <div className="font-mono-pulse" style={{ fontSize: 12, color: TEXT_MUTED }}>{error}</div>
+          <div className="font-mono-pulse" style={{ fontSize: 12, color: TEXT_MUTED }}>
+            {error}
+          </div>
         ) : (
           <div style={{ display: "grid", gap: 12 }}>
             {rows.map((r) => (
-              <div key={r.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, borderBottom: `1px solid ${BORDER}`, paddingBottom: 8 }}>
-                <span className="font-mono-pulse" style={{ fontSize: 10, color: TEXT_MUTED, letterSpacing: 2 }}>{r.label}</span>
-                <span className="font-mono-pulse" style={{ fontSize: 13, color: r.value ? "#fff" : TEXT_MUTED, textAlign: "right", fontWeight: 500, wordBreak: "break-word" }}>{r.value ?? "—"}</span>
+              <div
+                key={r.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  gap: 12,
+                  borderBottom: `1px solid ${BORDER}`,
+                  paddingBottom: 8,
+                }}
+              >
+                <span
+                  className="font-mono-pulse"
+                  style={{
+                    fontSize: 10,
+                    color: TEXT_MUTED,
+                    letterSpacing: 2,
+                  }}
+                >
+                  {r.label}
+                </span>
+                <span
+                  className="font-mono-pulse"
+                  style={{
+                    fontSize: 13,
+                    color: r.value ? "#fff" : TEXT_MUTED,
+                    textAlign: "right",
+                    fontWeight: 500,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {r.value ?? "—"}
+                </span>
               </div>
             ))}
           </div>
@@ -902,60 +1514,223 @@ function NetworkInfo() {
    SEO CONTENT
    ============================================================ */
 const SEO_SECTIONS = [
-  { h: "What Is Internet Speed?", body: "Internet speed measures how quickly data moves between your device and the internet. Download speed determines how fast you can pull data (streaming, browsing, downloads), while upload speed governs how fast you can send data (video calls, cloud sync, gaming). Both are measured in megabits per second (Mbps), a unit of bandwidth. Higher Mbps means more headroom for simultaneous devices and richer media like 4K video." },
-  { h: "What Is Ping and Latency?", body: "Ping is the round-trip time for a small packet to reach a server and return, expressed in milliseconds (ms). Latency is the underlying delay that ping measures. Gamers care about low ping because every millisecond delays their actions in competitive play. VoIP and video calls also rely on low latency to keep conversations natural — anything above 150 ms starts to feel laggy." },
-  { h: "What Is Jitter?", body: "Jitter is the variation in packet arrival time. A connection can have great average speed but still suffer from jitter, which manifests as choppy voice calls, frozen video, or rubber-banding in games. Jitter is typically caused by network congestion, wireless interference or poorly tuned routers." },
-  { h: "What Affects Internet Speed?", body: "Several factors influence real-world speed: WiFi interference from neighbours and household devices, ISP congestion during peak hours, VPN routing through distant servers, the quality and age of your router, and the physical distance between you and the test server. Older 2.4 GHz networks and outdated cabling are common bottlenecks." },
-  { h: "How to Improve Internet Speed", body: "Use Ethernet for stationary devices, upgrade to Wi-Fi 6 or mesh on larger homes, place your router centrally and elevated, separate 2.4 GHz and 5 GHz SSIDs, restart equipment monthly, and run firmware updates. If problems persist, test at different times — sustained slow speeds during off-peak hours warrant a call to your ISP." },
+  {
+    h: "What Is Internet Speed?",
+    body: "Internet speed measures how quickly data moves between your device and the internet. Download speed determines how fast you can pull data (streaming, browsing, downloads), while upload speed governs how fast you can send data (video calls, cloud sync, gaming). Both are measured in megabits per second (Mbps), a unit of bandwidth. Higher Mbps means more headroom for simultaneous devices and richer media like 4K video.",
+  },
+  {
+    h: "What Is Ping and Latency?",
+    body: "Ping is the round-trip time for a small packet to reach a server and return, expressed in milliseconds (ms). Latency is the underlying delay that ping measures. Gamers care about low ping because every millisecond delays their actions in competitive play. VoIP and video calls also rely on low latency to keep conversations natural — anything above 150 ms starts to feel laggy.",
+  },
+  {
+    h: "What Is Jitter?",
+    body: "Jitter is the variation in packet arrival time. A connection can have great average speed but still suffer from jitter, which manifests as choppy voice calls, frozen video, or rubber-banding in games. Jitter is typically caused by network congestion, wireless interference or poorly tuned routers.",
+  },
+  {
+    h: "What Affects Internet Speed?",
+    body: "Several factors influence real-world speed: WiFi interference from neighbours and household devices, ISP congestion during peak hours, VPN routing through distant servers, the quality and age of your router, and the physical distance between you and the test server. Older 2.4 GHz networks and outdated cabling are common bottlenecks.",
+  },
+  {
+    h: "How to Improve Internet Speed",
+    body: "Use Ethernet for stationary devices, upgrade to Wi-Fi 6 or mesh on larger homes, place your router centrally and elevated, separate 2.4 GHz and 5 GHz SSIDs, restart equipment monthly, and run firmware updates. If problems persist, test at different times — sustained slow speeds during off-peak hours warrant a call to your ISP.",
+  },
 ];
 
 const FAQS = [
-  { q: "What is a good internet speed?", a: "For most households, 100 Mbps download and 10 Mbps upload comfortably handles 4K streaming, video calls and multiple devices. Gamers benefit from low ping (under 60 ms) more than raw bandwidth." },
-  { q: "Why is my ping high?", a: "High ping is usually caused by long network paths, congested ISPs, weak Wi-Fi or VPN routing. Switching to Ethernet and choosing a closer server typically reduces ping." },
-  { q: "What is jitter?", a: "Jitter is the variation in delay between packets. High jitter causes choppy voice/video calls and unstable gaming even when speed looks fine." },
-  { q: "Why is WiFi slower than Ethernet?", a: "Wi-Fi shares airtime, suffers interference, and weakens with distance. Ethernet provides a dedicated, full-duplex link with consistent latency." },
-  { q: "How accurate is Pulse Speed?", a: "Pulse Speed measures real network performance from your browser using lightweight probes. Results closely match ISP-grade tools for everyday diagnostics." },
-  { q: "What speed is good for gaming?", a: "Online gaming needs only 15–25 Mbps, but ping below 60 ms and jitter below 10 ms matter far more than raw bandwidth." },
-  { q: "How much speed do I need for streaming?", a: "HD video needs ~5 Mbps, 4K streaming needs ~25 Mbps per device. For multiple simultaneous 4K streams aim for 100 Mbps or more." },
+  {
+    q: "What is a good internet speed?",
+    a: "For most households, 100 Mbps download and 10 Mbps upload comfortably handles 4K streaming, video calls and multiple devices. Gamers benefit from low ping (under 60 ms) more than raw bandwidth.",
+  },
+  {
+    q: "Why is my ping high?",
+    a: "High ping is usually caused by long network paths, congested ISPs, weak Wi-Fi or VPN routing. Switching to Ethernet and choosing a closer server typically reduces ping.",
+  },
+  {
+    q: "What is jitter?",
+    a: "Jitter is the variation in delay between packets. High jitter causes choppy voice/video calls and unstable gaming even when speed looks fine.",
+  },
+  {
+    q: "Why is WiFi slower than Ethernet?",
+    a: "Wi-Fi shares airtime, suffers interference, and weakens with distance. Ethernet provides a dedicated, full-duplex link with consistent latency.",
+  },
+  {
+    q: "How accurate is Pulse Speed?",
+    a: "Pulse Speed measures real network performance from your browser using lightweight probes. Results closely match ISP-grade tools for everyday diagnostics.",
+  },
+  {
+    q: "What speed is good for gaming?",
+    a: "Online gaming needs only 15–25 Mbps, but ping below 60 ms and jitter below 10 ms matter far more than raw bandwidth.",
+  },
+  {
+    q: "How much speed do I need for streaming?",
+    a: "HD video needs ~5 Mbps, 4K streaming needs ~25 Mbps per device. For multiple simultaneous 4K streams aim for 100 Mbps or more.",
+  },
 ];
 
 function SeoContent() {
   return (
     <>
-      <section aria-labelledby="learn-heading" style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}>
-        <h2 id="learn-heading" style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>Understand your connection</h2>
-        <p style={{ color: TEXT_MUTED, marginTop: 8, fontSize: 14 }}>A quick primer on the numbers behind your speed test.</p>
+      <section
+        aria-labelledby="learn-heading"
+        style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <h2
+          id="learn-heading"
+          style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}
+        >
+          Understand your connection
+        </h2>
+        <p style={{ color: TEXT_MUTED, marginTop: 8, fontSize: 14 }}>
+          A quick primer on the numbers behind your speed test.
+        </p>
         <div style={{ display: "grid", gap: 16, marginTop: 24 }}>
           {SEO_SECTIONS.map((s) => (
-            <article key={s.h} style={{ background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`, border: `1px solid ${BORDER}`, borderRadius: 16, padding: "22px 24px" }}>
-              <h3 style={{ fontSize: 18, margin: 0, color: "#fff", fontWeight: 700 }}>{s.h}</h3>
-              <p style={{ color: TEXT_SEC, fontSize: 14, lineHeight: 1.7, margin: "10px 0 0" }}>{s.body}</p>
+            <article
+              key={s.h}
+              style={{
+                background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+                border: `1px solid ${BORDER}`,
+                borderRadius: 16,
+                padding: "22px 24px",
+              }}
+            >
+              <h3 style={{ fontSize: 18, margin: 0, color: "#fff", fontWeight: 700 }}>
+                {s.h}
+              </h3>
+              <p
+                style={{
+                  color: TEXT_SEC,
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  margin: "10px 0 0",
+                }}
+              >
+                {s.body}
+              </p>
             </article>
           ))}
         </div>
       </section>
 
-      <section aria-labelledby="faq-heading" style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}>
-        <h2 id="faq-heading" style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>Frequently asked questions</h2>
+      <section
+        aria-labelledby="faq-heading"
+        style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <h2
+          id="faq-heading"
+          style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}
+        >
+          Frequently asked questions
+        </h2>
         <div style={{ marginTop: 20, display: "grid", gap: 10 }}>
           {FAQS.map((f, i) => (
-            <details key={f.q} style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "14px 18px" }} open={i === 0}>
-              <summary style={{ cursor: "pointer", fontWeight: 600, color: "#fff", fontSize: 15, listStyle: "none" }}>{f.q}</summary>
-              <p style={{ color: TEXT_SEC, fontSize: 14, lineHeight: 1.7, margin: "10px 0 0" }}>{f.a}</p>
+            <details
+              key={f.q}
+              style={{
+                background: SURFACE,
+                border: `1px solid ${BORDER}`,
+                borderRadius: 12,
+                padding: "14px 18px",
+              }}
+              open={i === 0}
+            >
+              <summary
+                style={{
+                  cursor: "pointer",
+                  fontWeight: 600,
+                  color: "#fff",
+                  fontSize: 15,
+                  listStyle: "none",
+                }}
+              >
+                {f.q}
+              </summary>
+              <p
+                style={{
+                  color: TEXT_SEC,
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  margin: "10px 0 0",
+                }}
+              >
+                {f.a}
+              </p>
             </details>
           ))}
         </div>
       </section>
 
-      <section aria-labelledby="newsletter-heading" style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}>
-        <div style={{ background: `linear-gradient(135deg, ${TEAL}15, ${PURPLE}15)`, border: `1px solid ${TEAL}33`, borderRadius: 20, padding: 32, textAlign: "center" }}>
-          <h2 id="newsletter-heading" style={{ fontSize: 22, margin: 0, fontWeight: 700, color: "#fff" }}>Get networking tips in your inbox</h2>
-          <p style={{ color: TEXT_SEC, marginTop: 8, fontSize: 14 }}>Occasional deep dives on speed, latency and home network tuning.</p>
-          <form onSubmit={(e) => e.preventDefault()} style={{ marginTop: 18, display: "flex", gap: 8, maxWidth: 420, margin: "18px auto 0", flexWrap: "wrap", justifyContent: "center" }}>
-            <label htmlFor="newsletter-email" style={{ position: "absolute", left: -9999 }}>Email address</label>
-            <input id="newsletter-email" type="email" required placeholder="you@example.com"
-              style={{ flex: "1 1 220px", padding: "12px 16px", borderRadius: 10, border: `1px solid ${BORDER}`, background: SURFACE2, color: "#fff", fontSize: 14 }} />
-            <button type="submit" style={{ padding: "12px 22px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${TEAL}, #00b894)`, color: "#04150f", fontWeight: 700, cursor: "pointer" }}>Subscribe</button>
+      <section
+        aria-labelledby="newsletter-heading"
+        style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <div
+          style={{
+            background: `linear-gradient(135deg, ${TEAL}15, ${PURPLE}15)`,
+            border: `1px solid ${TEAL}33`,
+            borderRadius: 20,
+            padding: 32,
+            textAlign: "center",
+          }}
+        >
+          <h2
+            id="newsletter-heading"
+            style={{
+              fontSize: 22,
+              margin: 0,
+              fontWeight: 700,
+              color: "#fff",
+            }}
+          >
+            Get networking tips in your inbox
+          </h2>
+          <p style={{ color: TEXT_SEC, marginTop: 8, fontSize: 14 }}>
+            Occasional deep dives on speed, latency and home network tuning.
+          </p>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            style={{
+              marginTop: 18,
+              display: "flex",
+              gap: 8,
+              maxWidth: 420,
+              margin: "18px auto 0",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            <label htmlFor="newsletter-email" style={{ position: "absolute", left: -9999 }}>
+              Email address
+            </label>
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              style={{
+                flex: "1 1 220px",
+                padding: "12px 16px",
+                borderRadius: 10,
+                border: `1px solid ${BORDER}`,
+                background: SURFACE2,
+                color: "#fff",
+                fontSize: 14,
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                padding: "12px 22px",
+                borderRadius: 10,
+                border: "none",
+                background: `linear-gradient(135deg, ${TEAL}, #00b894)`,
+                color: "#04150f",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Subscribe
+            </button>
           </form>
         </div>
       </section>
@@ -967,29 +1742,125 @@ function SeoContent() {
    LAYOUT COMPONENTS
    ============================================================ */
 function WebLayout(p: PanelProps) {
-  const { status, results, dl, ul, progress, appLatencies, aiText, ctaButton, progressBar } = p;
+  const {
+    status,
+    results,
+    dl,
+    ul,
+    progress,
+    appLatencies,
+    aiText,
+    ctaButton,
+    progressBar,
+  } = p;
   return (
     <>
-      <section style={{ padding: "16px 32px 24px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap" }}>
+      <section
+        style={{
+          padding: "16px 32px 24px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          gap: 24,
+          flexWrap: "wrap",
+        }}
+      >
         <Hero centered={false} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-end" }}>{ctaButton}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-end" }}>
+          {ctaButton}
+        </div>
       </section>
 
-      <section style={{ margin: "0 32px", padding: "32px", background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`, border: `1px solid ${BORDER}`, borderRadius: 24, boxShadow: "0 30px 80px -20px rgba(0,0,0,0.6)" }}>
-        <div style={{ display: "flex", gap: 48, justifyContent: "center", alignItems: "center", flexWrap: "wrap", marginBottom: 24 }}>
-          <Gauge label="Download" value={dl} max={300} unit="Mbps" color={TEAL} gradientId="gauge-dl" gradientStops={[TEAL, "#00b894"]} size={260} />
-          <Gauge label="Upload" value={ul} max={100} unit="Mbps" color={PURPLE} gradientId="gauge-ul" gradientStops={[PURPLE, "#7a6dd6"]} size={260} />
+      <section
+        style={{
+          margin: "0 32px",
+          padding: "32px",
+          background: `linear-gradient(135deg, ${SURFACE}, ${SURFACE2})`,
+          border: `1px solid ${BORDER}`,
+          borderRadius: 24,
+          boxShadow: "0 30px 80px -20px rgba(0,0,0,0.6)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: 48,
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginBottom: 24,
+          }}
+        >
+          <Gauge
+            label="Download"
+            value={dl}
+            max={300}
+            unit="Mbps"
+            color={TEAL}
+            gradientId="gauge-dl"
+            gradientStops={[TEAL, "#00b894"]}
+            size={260}
+          />
+          <Gauge
+            label="Upload"
+            value={ul}
+            max={100}
+            unit="Mbps"
+            color={PURPLE}
+            gradientId="gauge-ul"
+            gradientStops={[PURPLE, "#7a6dd6"]}
+            size={260}
+          />
         </div>
         {progressBar}
-        <div className="pulse-fadeUp" style={{ marginTop: 24, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-          <MetricCard icon="📡" label="Ping" value={results ? results.ping.toString() : "—"} unit="ms" color={AMBER} />
-          <MetricCard icon="〰" label="Jitter" value={results ? results.jitter.toString() : "—"} unit="ms" color={RED} />
-          <MetricCard icon="↓" label="Download" value={results ? results.download.toFixed(1) : "—"} unit="Mbps" color={TEAL} />
-          <MetricCard icon="↑" label="Upload" value={results ? results.upload.toFixed(1) : "—"} unit="Mbps" color={PURPLE} />
+        <div
+          className="pulse-fadeUp"
+          style={{
+            marginTop: 24,
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 12,
+          }}
+        >
+          <MetricCard
+            icon="📡"
+            label="Ping"
+            value={results ? results.ping.toString() : "—"}
+            unit="ms"
+            color={AMBER}
+          />
+          <MetricCard
+            icon="〰"
+            label="Jitter"
+            value={results ? results.jitter.toString() : "—"}
+            unit="ms"
+            color={RED}
+          />
+          <MetricCard
+            icon="↓"
+            label="Download"
+            value={results ? results.download.toFixed(1) : "—"}
+            unit="Mbps"
+            color={TEAL}
+          />
+          <MetricCard
+            icon="↑"
+            label="Upload"
+            value={results ? results.upload.toFixed(1) : "—"}
+            unit="Mbps"
+            color={PURPLE}
+          />
         </div>
       </section>
 
-      <section style={{ padding: "28px 32px 0", display: "grid", gridTemplateColumns: status === "done" ? "1.4fr 1fr" : "1fr", gap: 20 }}>
+      <section
+        style={{
+          padding: "28px 32px 0",
+          display: "grid",
+          gridTemplateColumns: status === "done" ? "1.4fr 1fr" : "1fr",
+          gap: 20,
+        }}
+      >
         <AiPanel aiText={aiText} />
         {status === "done" && results && <UseCases results={results} />}
       </section>
@@ -1000,38 +1871,121 @@ function WebLayout(p: PanelProps) {
         </section>
       )}
       {status === "done" && (
-        <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}><RouteTrace /></section>
+        <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
+          <RouteTrace />
+        </section>
       )}
-      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}><NetworkInfo /></section>
-      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}><GlobalLatencySection /></section>
+      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
+        <NetworkInfo />
+      </section>
+      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
+        <GlobalLatencySection />
+      </section>
     </>
   );
 }
 
 function MobileLayout(p: PanelProps) {
-  const { status, results, dl, ul, appLatencies, aiText, ctaButton, progressBar } = p;
+  const {
+    status,
+    results,
+    dl,
+    ul,
+    appLatencies,
+    aiText,
+    ctaButton,
+    progressBar,
+  } = p;
   return (
     <>
       <section style={{ padding: "32px 24px 28px" }}>
-        <div style={{ textAlign: "center" }}><Hero centered /></div>
+        <div style={{ textAlign: "center" }}>
+          <Hero centered />
+        </div>
       </section>
-      <section style={{ display: "flex", gap: 24, padding: "0 24px", justifyContent: "center", flexWrap: "wrap" }}>
-        <Gauge label="Download" value={dl} max={300} unit="Mbps" color={TEAL} gradientId="gauge-dl-m" gradientStops={[TEAL, "#00b894"]} size={200} />
-        <Gauge label="Upload" value={ul} max={100} unit="Mbps" color={PURPLE} gradientId="gauge-ul-m" gradientStops={[PURPLE, "#7a6dd6"]} size={200} />
+      <section
+        style={{
+          display: "flex",
+          gap: 24,
+          padding: "0 24px",
+          justifyContent: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Gauge
+          label="Download"
+          value={dl}
+          max={300}
+          unit="Mbps"
+          color={TEAL}
+          gradientId="gauge-dl-m"
+          gradientStops={[TEAL, "#00b894"]}
+          size={200}
+        />
+        <Gauge
+          label="Upload"
+          value={ul}
+          max={100}
+          unit="Mbps"
+          color={PURPLE}
+          gradientId="gauge-ul-m"
+          gradientStops={[PURPLE, "#7a6dd6"]}
+          size={200}
+        />
       </section>
-      {status === "testing" && <section style={{ padding: "16px 24px 0" }}>{progressBar}</section>}
-      <section style={{ textAlign: "center", padding: "24px 24px 0" }}>{ctaButton}</section>
+      {status === "testing" && (
+        <section style={{ padding: "16px 24px 0" }}>{progressBar}</section>
+      )}
+      <section style={{ textAlign: "center", padding: "24px 24px 0" }}>
+        {ctaButton}
+      </section>
       {status === "done" && results && (
-        <section className="pulse-fadeUp" style={{ padding: "28px 24px 0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <MetricCard icon="📡" label="Ping" value={results.ping.toString()} unit="ms" color={AMBER} />
-          <MetricCard icon="〰" label="Jitter" value={results.jitter.toString()} unit="ms" color={RED} />
-          <MetricCard icon="↓" label="Download" value={results.download.toFixed(1)} unit="Mbps" color={TEAL} />
-          <MetricCard icon="↑" label="Upload" value={results.upload.toFixed(1)} unit="Mbps" color={PURPLE} />
+        <section
+          className="pulse-fadeUp"
+          style={{
+            padding: "28px 24px 0",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 10,
+          }}
+        >
+          <MetricCard
+            icon="📡"
+            label="Ping"
+            value={results.ping.toString()}
+            unit="ms"
+            color={AMBER}
+          />
+          <MetricCard
+            icon="〰"
+            label="Jitter"
+            value={results.jitter.toString()}
+            unit="ms"
+            color={RED}
+          />
+          <MetricCard
+            icon="↓"
+            label="Download"
+            value={results.download.toFixed(1)}
+            unit="Mbps"
+            color={TEAL}
+          />
+          <MetricCard
+            icon="↑"
+            label="Upload"
+            value={results.upload.toFixed(1)}
+            unit="Mbps"
+            color={PURPLE}
+          />
         </section>
       )}
-      <section style={{ padding: "24px 24px 0" }}><AiPanel aiText={aiText} /></section>
+      <section style={{ padding: "24px 24px 0" }}>
+        <AiPanel aiText={aiText} />
+      </section>
       {status === "done" && results && (
-        <section className="pulse-fadeUp" style={{ padding: "28px 24px 0" }}><UseCases results={results} /></section>
+        <section className="pulse-fadeUp" style={{ padding: "28px 24px 0" }}>
+          <UseCases results={results} />
+        </section>
       )}
       {status !== "idle" && (
         <section className="pulse-fadeUp" style={{ padding: "28px 24px 0" }}>
@@ -1039,120 +1993,18 @@ function MobileLayout(p: PanelProps) {
         </section>
       )}
       {status === "done" && (
-        <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}><RouteTrace /></section>
+        <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
+          <RouteTrace />
+        </section>
       )}
-      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}><NetworkInfo /></section>
-      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}><GlobalLatencySection /></section>
+      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
+        <NetworkInfo />
+      </section>
+      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
+        <GlobalLatencySection />
+      </section>
     </>
   );
 }
 
-async function uploadTest(
-  onProgress: (mbps: number, frac: number) => void,
-): Promise<number> {
-  const CHUNK_SIZE = 1 * 1024 * 1024; // 1 MB per stream chunk
-  const TOTAL_PER_STREAM = 64 * 1024 * 1024; // 64 MB target per stream
-  const PARALLEL = 3;
-  const DURATION_MS = 10000;
-
-  // Random-ish payload chunk (reused, not regenerated each time)
-  const chunkData = new Uint8Array(CHUNK_SIZE);
-  for (let i = 0; i < chunkData.length; i++) chunkData[i] = (i * 31 + 7) & 0xff;
-
-  const t0 = performance.now();
-  let totalSentBytes = 0; // shared across all streams
-  const samples: { bytes: number; sec: number }[] = [];
-  let lastBytes = 0;
-  let lastTs = t0;
-
-  const ticker = window.setInterval(() => {
-    const now = performance.now();
-    const elapsed = (now - t0) / 1000;
-    const frac = Math.min((now - t0) / DURATION_MS, 1);
-
-    // Sample every ~400ms
-    const deltaB = totalSentBytes - lastBytes;
-    const deltaS = (now - lastTs) / 1000;
-    if (deltaS >= 0.4 && deltaB > 0) {
-      samples.push({ bytes: deltaB, sec: deltaS });
-      lastBytes = totalSentBytes;
-      lastTs = now;
-    }
-
-    // Rolling window speed (last 5 samples = ~2 seconds)
-    const win = samples.slice(-5);
-    const wB = win.reduce((s, x) => s + x.bytes, 0);
-    const wS = win.reduce((s, x) => s + x.sec, 0);
-    const mbps = wS > 0
-      ? (wB * 8) / wS / 1e6
-      : elapsed > 0 ? (totalSentBytes * 8) / elapsed / 1e6 : 0;
-
-    onProgress(mbps, frac);
-  }, 200);
-
-  // Upload stream: uses fetch with a ReadableStream body.
-  // We manually enqueue chunks and count bytes ourselves.
-  const runStream = async (_idx: number): Promise<void> => {
-    let sentThisStream = 0;
-
-    while (performance.now() - t0 < DURATION_MS && sentThisStream < TOTAL_PER_STREAM) {
-      const remaining = DURATION_MS - (performance.now() - t0);
-      if (remaining <= 0) break;
-
-      // How many chunks to send in this request (time-limited)
-      const chunksPerRequest = 4; // 4 MB per request
-      let chunksSent = 0;
-
-      const stream = new ReadableStream({
-        pull(controller) {
-          if (
-            chunksSent >= chunksPerRequest ||
-            performance.now() - t0 >= DURATION_MS
-          ) {
-            controller.close();
-            return;
-          }
-          controller.enqueue(chunkData);
-          chunksSent++;
-          sentThisStream += CHUNK_SIZE;
-          totalSentBytes += CHUNK_SIZE;
-        },
-      });
-
-      try {
-        await fetch(`https://speed.cloudflare.com/__up?_=${_idx}-${Date.now()}`, {
-          method: "POST",
-          body: stream,
-          // @ts-ignore — duplex required for streaming bodies in some browsers
-          duplex: "half",
-          headers: { "Content-Type": "application/octet-stream" },
-          signal: AbortSignal.timeout(Math.min(8000, DURATION_MS)),
-        });
-      } catch {
-        // Ignore abort/timeout — expected at end of test
-      }
-    }
-  };
-
-  await Promise.race([
-    Promise.all(Array.from({ length: PARALLEL }, (_, i) => runStream(i))),
-    new Promise<void>((res) => window.setTimeout(res, DURATION_MS + 2000)),
-  ]);
-
-  window.clearInterval(ticker);
-
-  // Final result: trim outliers and average
-  if (samples.length >= 3) {
-    const mbpsList = samples.map((s) => (s.bytes * 8) / s.sec / 1e6);
-    const sorted = [...mbpsList].sort((a, b) => a - b);
-    const trim = Math.max(1, Math.floor(sorted.length * 0.15));
-    const core = sorted.slice(trim, sorted.length - trim);
-    if (core.length > 0) return core.reduce((s, n) => s + n, 0) / core.length;
-  }
-
-  const elapsed = (performance.now() - t0) / 1000;
-  return elapsed > 0 ? (totalSentBytes * 8) / elapsed / 1e6 : 0;
-}
-s (Index, Gauge, layouts, etc.)
-   are unchanged from your original file.
-*/
+export default Index;
