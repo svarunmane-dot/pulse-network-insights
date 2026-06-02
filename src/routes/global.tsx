@@ -165,11 +165,6 @@ export function GlobalLatencySection() {
     setRunning(false);
   };
 
-  useEffect(() => {
-    if (user) runTest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
   const userPos = useMemo(() => (user ? project(user.lat, user.lon) : project(20, 0)), [user]);
 
   return (
