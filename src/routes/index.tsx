@@ -17,6 +17,7 @@ async function pingTest(): Promise<{ ping: number; jitter: number }> {
       /* ignore */
     }
   }
+  
   if (!samples.length) return { ping: 0, jitter: 0 };
   const sorted = [...samples].sort((a, b) => a - b);
   // drop slowest as cold-start outlier
