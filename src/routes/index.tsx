@@ -93,21 +93,29 @@ async function downloadTest(
   return elapsed > 0 ? (totalBytes * 8) / elapsed / 1e6 : 0;
 }
 
+/* ============================================================
+   FIXED UPLOAD TEST
+   Uses Blob payloads instead of ReadableStream — browsers
+   reliably support Blob bodies for cross-origin POST requests.
+   Only counts bytes from HTTP-200 responses to avoid inflating
+   results from failed/aborted requests.
+   ============================================================ */
 async function uploadTest(
   onProgress: (mbps: number, frac: number) => void,
 ): Promise<number> {
-  const CHUNK_SIZE = 512 * 1024; // 512 KB chunks
-  const PARALLEL = 3;
-  const DURATION_MS = 10000;
+  const CHUNK_SIZE = 4 * 1024 * 1024; // 4 MB per request (Blob, no streaming)
+  const PARALLEL = 4;
+  const DURATION_MS = 10_000;
 
-  // Pre-generate chunk data
-  const chunkData = new Uint8Array(CHUNK_SIZE);
-  for (let i = 0; i < chunkData.length; i++) {
-    chunkData[i] = (i * 31 + 7) & 0xff;
-  }
+  // Pre-build a reusable Blob payload once
+  const payload = new Blob([new Uint8Array(CHUNK_SIZE).fill(0x61)], {
+    type: "application/octet-stream",
+  });
 
   const t0 = performance.now();
   let totalSentBytes = 0;
+
+  // Rolling samples for a stable live readout
   const samples: { bytes: number; sec: number }[] = [];
   let lastBytes = 0;
   let lastTs = t0;
@@ -120,18 +128,16 @@ async function uploadTest(
     const deltaB = totalSentBytes - lastBytes;
     const deltaS = (now - lastTs) / 1000;
 
-    // Sample every ~400ms
     if (deltaS >= 0.4 && deltaB > 0) {
       samples.push({ bytes: deltaB, sec: deltaS });
       lastBytes = totalSentBytes;
       lastTs = now;
     }
 
-    // Rolling window average
+    // Rolling 5-sample window for the live gauge
     const win = samples.slice(-5);
     const wB = win.reduce((s, x) => s + x.bytes, 0);
     const wS = win.reduce((s, x) => s + x.sec, 0);
-
     const mbps =
       wS > 0
         ? (wB * 8) / wS / 1e6
@@ -142,92 +148,65 @@ async function uploadTest(
     onProgress(mbps, frac);
   }, 200);
 
-  const runStream = async (idx: number): Promise<void> => {
+  // Each worker fires sequential POST requests for the full duration
+  const runWorker = async (): Promise<void> => {
     while (performance.now() - t0 < DURATION_MS) {
+      const reqT0 = performance.now();
       try {
-        // Send 8 chunks per request
-        const chunksPerRequest = 8;
-        let chunksSent = 0;
-        const bytesThisRequest = chunksPerRequest * CHUNK_SIZE;
-
-        const stream = new ReadableStream<Uint8Array>({
-          pull(controller) {
-            if (chunksSent >= chunksPerRequest || performance.now() - t0 >= DURATION_MS) {
-              controller.close();
-              return;
-            }
-
-            try {
-              controller.enqueue(new Uint8Array(chunkData));
-              chunksSent++;
-            } catch {
-              controller.close();
-            }
-          },
-        });
-
-        // Start the request
-        const response = await fetch(
-          `https://speed.cloudflare.com/__up?_=${idx}-${Date.now()}-${Math.random()}`,
+        const res = await fetch(
+          `https://speed.cloudflare.com/__up?_=${Date.now()}-${Math.random()}`,
           {
             method: "POST",
-            body: stream,
-            // @ts-ignore
-            duplex: "half",
-            headers: {
-              "Content-Type": "application/octet-stream",
-            },
-            signal: AbortSignal.timeout(12000),
+            body: payload,
+            headers: { "Content-Type": "application/octet-stream" },
+            // Short per-request timeout so stalled requests don't block the worker
+            signal: AbortSignal.timeout(8_000),
           },
         );
 
-        // Consume response body to ensure request completes
-        try {
-          const arrayBuffer = await response.arrayBuffer();
-          // Successfully received response - count the bytes we sent
-          totalSentBytes += bytesThisRequest;
-        } catch {
-          // Response read failed but request may have been sent
-          // Count it anyway since we initiated the upload
-          totalSentBytes += bytesThisRequest;
+        // Only count bytes when the server acknowledged receipt (200 OK)
+        if (res.ok) {
+          // Drain the (tiny) response body so the connection is reused cleanly
+          await res.arrayBuffer();
+          totalSentBytes += CHUNK_SIZE;
         }
-      } catch (err) {
-        // Timeout or network error - still continue trying
-        // Don't count these bytes to be conservative
+      } catch {
+        // Network error or timeout — skip this chunk, keep looping
+        // Add a small back-off so a broken link doesn't spin-loop
+        const elapsed = performance.now() - reqT0;
+        if (elapsed < 500) {
+          await new Promise((r) => window.setTimeout(r, 500 - elapsed));
+        }
       }
     }
   };
 
-  // Run parallel upload streams
   await Promise.race([
-    Promise.all(Array.from({ length: PARALLEL }, (_, i) => runStream(i))),
-    new Promise<void>((res) =>
-      window.setTimeout(res, DURATION_MS + 2000),
-    ),
+    Promise.all(Array.from({ length: PARALLEL }, runWorker)),
+    // Hard safety timeout: stop no matter what after DURATION + 3 s
+    new Promise<void>((res) => window.setTimeout(res, DURATION_MS + 3_000)),
   ]);
 
   window.clearInterval(ticker);
 
-  // Calculate from samples
-  if (samples.length >= 2) {
+  // Final result: trim top/bottom 10 % of per-sample readings for accuracy
+  if (samples.length >= 3) {
     const mbpsList = samples.map((s) => (s.bytes * 8) / s.sec / 1e6);
     const sorted = [...mbpsList].sort((a, b) => a - b);
-    // Trim outliers (10%)
     const trim = Math.max(1, Math.floor(sorted.length * 0.1));
     const core = sorted.slice(trim, sorted.length - trim);
-
     if (core.length > 0) {
       return core.reduce((s, n) => s + n, 0) / core.length;
     }
   }
 
-  // Fallback
+  // Fallback: straight average over the full run
   const elapsed = (performance.now() - t0) / 1000;
   if (elapsed > 0 && totalSentBytes > 0) {
     return (totalSentBytes * 8) / elapsed / 1e6;
   }
 
-  return 0.1;
+  return 0;
 }
 
 /* ============================================================
