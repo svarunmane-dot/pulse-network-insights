@@ -1047,12 +1047,6 @@ function MobileLayout(p: PanelProps) {
   );
 }
 
-
-
-find the entire async function uploadTest(...) block and replace it with below 
-
-
-
 async function uploadTest(
   onProgress: (mbps: number, frac: number) => void,
 ): Promise<number> {
