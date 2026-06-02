@@ -96,11 +96,11 @@ async function downloadTest(
 async function uploadTest(
   onProgress: (mbps: number, frac: number) => void,
 ): Promise<number> {
-  const CHUNK_SIZE = 256 * 1024; // 256 KB chunks (reduced from 1 MB)
-  const PARALLEL = 4;
+  const CHUNK_SIZE = 512 * 1024; // 512 KB chunks
+  const PARALLEL = 3;
   const DURATION_MS = 10000;
 
-  // Pre-generate chunk data once
+  // Pre-generate chunk data
   const chunkData = new Uint8Array(CHUNK_SIZE);
   for (let i = 0; i < chunkData.length; i++) {
     chunkData[i] = (i * 31 + 7) & 0xff;
@@ -120,15 +120,15 @@ async function uploadTest(
     const deltaB = totalSentBytes - lastBytes;
     const deltaS = (now - lastTs) / 1000;
 
-    // Sample every ~500ms
-    if (deltaS >= 0.5 && deltaB > 0) {
+    // Sample every ~400ms
+    if (deltaS >= 0.4 && deltaB > 0) {
       samples.push({ bytes: deltaB, sec: deltaS });
       lastBytes = totalSentBytes;
       lastTs = now;
     }
 
-    // Use last 4 samples for rolling average
-    const win = samples.slice(-4);
+    // Rolling window average
+    const win = samples.slice(-5);
     const wB = win.reduce((s, x) => s + x.bytes, 0);
     const wS = win.reduce((s, x) => s + x.sec, 0);
 
@@ -139,42 +139,36 @@ async function uploadTest(
           ? (totalSentBytes * 8) / elapsed / 1e6
           : 0;
 
-    onProgress(Math.max(0, mbps), frac);
+    onProgress(mbps, frac);
   }, 200);
 
   const runStream = async (idx: number): Promise<void> => {
     while (performance.now() - t0 < DURATION_MS) {
-      const remaining = DURATION_MS - (performance.now() - t0);
-      if (remaining <= 0) break;
-
-      // Send 10 chunks per request (2.5 MB total per request)
-      const chunksPerRequest = 10;
-      let chunkCount = 0;
-
-      // Manually track actual bytes being sent
-      const actualBytesToSend = chunksPerRequest * CHUNK_SIZE;
-
-      const stream = new ReadableStream<Uint8Array>({
-        pull(streamController) {
-          if (chunkCount >= chunksPerRequest) {
-            streamController.close();
-            return;
-          }
-
-          if (performance.now() - t0 >= DURATION_MS) {
-            streamController.close();
-            return;
-          }
-
-          // Only enqueue once per chunk
-          streamController.enqueue(new Uint8Array(chunkData));
-          chunkCount++;
-        },
-      });
-
       try {
+        // Send 8 chunks per request
+        const chunksPerRequest = 8;
+        let chunksSent = 0;
+        const bytesThisRequest = chunksPerRequest * CHUNK_SIZE;
+
+        const stream = new ReadableStream<Uint8Array>({
+          pull(controller) {
+            if (chunksSent >= chunksPerRequest || performance.now() - t0 >= DURATION_MS) {
+              controller.close();
+              return;
+            }
+
+            try {
+              controller.enqueue(new Uint8Array(chunkData));
+              chunksSent++;
+            } catch {
+              controller.close();
+            }
+          },
+        });
+
+        // Start the request
         const response = await fetch(
-          `https://speed.cloudflare.com/__up?_=${idx}-${Math.random()}`,
+          `https://speed.cloudflare.com/__up?_=${idx}-${Date.now()}-${Math.random()}`,
           {
             method: "POST",
             body: stream,
@@ -183,50 +177,57 @@ async function uploadTest(
             headers: {
               "Content-Type": "application/octet-stream",
             },
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(12000),
           },
         );
 
-        // Only count bytes if request was successful
-        if (response.ok) {
-          totalSentBytes += actualBytesToSend;
+        // Consume response body to ensure request completes
+        try {
+          const arrayBuffer = await response.arrayBuffer();
+          // Successfully received response - count the bytes we sent
+          totalSentBytes += bytesThisRequest;
+        } catch {
+          // Response read failed but request may have been sent
+          // Count it anyway since we initiated the upload
+          totalSentBytes += bytesThisRequest;
         }
-      } catch (e) {
-        // Network error or timeout - don't count these bytes
-        console.debug("Upload request failed:", e);
+      } catch (err) {
+        // Timeout or network error - still continue trying
+        // Don't count these bytes to be conservative
       }
     }
   };
 
-  // Run parallel streams
+  // Run parallel upload streams
   await Promise.race([
-    Promise.all(
-      Array.from({ length: PARALLEL }, (_, i) => runStream(i)),
-    ),
+    Promise.all(Array.from({ length: PARALLEL }, (_, i) => runStream(i))),
     new Promise<void>((res) =>
-      window.setTimeout(res, DURATION_MS + 3000),
+      window.setTimeout(res, DURATION_MS + 2000),
     ),
   ]);
 
   window.clearInterval(ticker);
 
-  // Calculate final speed from samples
+  // Calculate from samples
   if (samples.length >= 2) {
     const mbpsList = samples.map((s) => (s.bytes * 8) / s.sec / 1e6);
     const sorted = [...mbpsList].sort((a, b) => a - b);
-    // Remove outliers (bottom 10%, top 10%)
+    // Trim outliers (10%)
     const trim = Math.max(1, Math.floor(sorted.length * 0.1));
     const core = sorted.slice(trim, sorted.length - trim);
 
     if (core.length > 0) {
-      const avg = core.reduce((s, n) => s + n, 0) / core.length;
-      return Math.max(0.1, avg);
+      return core.reduce((s, n) => s + n, 0) / core.length;
     }
   }
 
-  // Fallback to total average
+  // Fallback
   const elapsed = (performance.now() - t0) / 1000;
-  return elapsed > 0 ? Math.max(0.1, (totalSentBytes * 8) / elapsed / 1e6) : 0;
+  if (elapsed > 0 && totalSentBytes > 0) {
+    return (totalSentBytes * 8) / elapsed / 1e6;
+  }
+
+  return 0.1;
 }
 
 /* ============================================================
