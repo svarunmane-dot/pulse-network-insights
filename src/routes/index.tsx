@@ -4,16 +4,8 @@ import { GlobalLatencySection } from "./global";
 
 /* ============ REAL SPEED TEST (Cloudflare) ============ */
 async function pingTest(): Promise<{ ping: number; jitter: number }> {
-  // Warm up connection (DNS/TCP/TLS) once so first sample isn't an outlier,
-  // then take samples sequentially but quickly. Keeps total ping phase < 1.5s.
-  try {
-    await fetch(
-      `https://speed.cloudflare.com/__down?bytes=0&cb=warm-${Date.now()}`,
-      { cache: "no-store" },
-    );
-  } catch { /* ignore */ }
   const samples: number[] = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 10; i++) {
     const t0 = performance.now();
     try {
       await fetch(
@@ -87,99 +79,94 @@ async function downloadTest(
 async function uploadTest(
   onProgress: (mbps: number, fracElapsed: number) => void,
 ): Promise<number> {
-  // Use XHR so we can read upload.onprogress and count bytes actually put on
-  // the wire (not just bytes accepted into the request body). This is what
-  // real speed tests do; plain fetch() awaits the response and undercounts
-  // throughput badly on fast links.
-  const SIZE = 20 * 1024 * 1024; // 20 MB per request
-  const PARALLEL = 4;
-  const WARMUP_MS = 1500;
-  const MEASURE_MS = 8000;
-
-  // Build payload once with random bytes (defeats compression).
-  const buf = new Uint8Array(SIZE);
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    for (let off = 0; off < SIZE; off += 65536) {
-      crypto.getRandomValues(buf.subarray(off, Math.min(off + 65536, SIZE)));
-    }
+  const SIZE = 8 * 1024 * 1024; // 8 MB per request
+  const PARALLEL = Math.min(6, Math.max(3, navigator.hardwareConcurrency || 4));
+  const DURATION_MS = 8000;
+  const payload = new Uint8Array(SIZE);
+  let seed = Date.now() || 1;
+  for (let i = 0; i < payload.length; i++) {
+    seed ^= seed << 13;
+    seed ^= seed >>> 17;
+    seed ^= seed << 5;
+    payload[i] = seed & 255;
   }
-
-  const TOTAL_MS = WARMUP_MS + MEASURE_MS;
+  const body = new Blob([payload], { type: "application/octet-stream" });
   const t0 = performance.now();
-  let measureStart = 0;
-  let baselineBytes = 0;
-  // sentBytes[i] = bytes uploaded so far across all completed+in-flight requests for stream i
-  const sentBytes = new Array<number>(PARALLEL).fill(0);
-  let totalSent = 0;
+  let completedBytes = 0;
+  let partialBytes = 0;
+  const streamLoaded = new Array<number>(PARALLEL).fill(0);
+  const samples: number[] = [];
   const activeXhrs = new Set<XMLHttpRequest>();
 
   const ticker = window.setInterval(() => {
     const now = performance.now();
     const elapsed = (now - t0) / 1000;
-    if (now - t0 >= WARMUP_MS && measureStart === 0) {
-      measureStart = now;
-      baselineBytes = totalSent;
-    }
-    if (measureStart > 0) {
-      const measured = (totalSent - baselineBytes) * 8;
-      const dt = (now - measureStart) / 1000;
-      if (dt > 0) onProgress(measured / dt / 1e6, Math.min((now - measureStart) / MEASURE_MS, 1));
-    } else if (elapsed > 0) {
-      onProgress(0, Math.min((now - t0) / TOTAL_MS, 0.2));
-    }
+    const measuredBytes = Math.max(completedBytes, partialBytes);
+    if (elapsed > 0) onProgress((measuredBytes * 8) / elapsed / 1e6, Math.min((now - t0) / DURATION_MS, 1));
   }, 150);
 
-  const runOne = (idx: number): Promise<void> => {
-    return new Promise((resolve) => {
-      if (performance.now() - t0 >= TOTAL_MS) return resolve();
+  const uploadOnce = (idx: number, seq: number): Promise<void> =>
+    new Promise((resolve) => {
+      if (performance.now() - t0 >= DURATION_MS) return resolve();
       const xhr = new XMLHttpRequest();
       activeXhrs.add(xhr);
-      let lastLoaded = 0;
+      streamLoaded[idx] = 0;
+      const started = performance.now();
       xhr.upload.onprogress = (e) => {
-        const delta = e.loaded - lastLoaded;
-        lastLoaded = e.loaded;
-        sentBytes[idx] += delta;
-        totalSent += delta;
+        streamLoaded[idx] = e.loaded;
+        partialBytes = completedBytes + streamLoaded.reduce((sum, n) => sum + n, 0);
       };
-      const done = () => {
+      xhr.onload = () => {
+        const duration = (performance.now() - started) / 1000;
         activeXhrs.delete(xhr);
-        if (performance.now() - t0 < TOTAL_MS) {
-          runOne(idx).then(resolve);
-        } else {
-          resolve();
+        streamLoaded[idx] = 0;
+        if (xhr.status >= 200 && xhr.status < 400 && duration > 0) {
+          completedBytes += SIZE;
+          samples.push((SIZE * 8) / duration / 1e6);
         }
+        resolve();
       };
-      xhr.onload = done;
-      xhr.onerror = done;
-      xhr.onabort = done;
-      xhr.open("POST", `https://speed.cloudflare.com/__up?cb=${Math.random()}`);
+      const doneWithoutSample = () => {
+        activeXhrs.delete(xhr);
+        streamLoaded[idx] = 0;
+        resolve();
+      };
+      xhr.onerror = doneWithoutSample;
+      xhr.onabort = doneWithoutSample;
+      xhr.timeout = 12000;
+      xhr.ontimeout = doneWithoutSample;
+      xhr.open("POST", `https://speed.cloudflare.com/__up?bytes=${SIZE}&cb=${idx}-${seq}-${Date.now()}-${Math.random()}`);
       try {
-        xhr.send(buf);
+        xhr.send(body);
       } catch {
-        done();
+        doneWithoutSample();
       }
     });
+
+  const stream = async (idx: number) => {
+    let seq = 0;
+    while (performance.now() - t0 < DURATION_MS) {
+      await uploadOnce(idx, seq++);
+    }
   };
 
-  const stopper = new Promise<void>((resolve) => {
-    window.setTimeout(() => {
-      activeXhrs.forEach((x) => {
-        try { x.abort(); } catch { /* */ }
-      });
-      resolve();
-    }, TOTAL_MS);
-  });
-
   await Promise.race([
-    Promise.all(Array.from({ length: PARALLEL }, (_, i) => runOne(i))),
-    stopper,
+    Promise.all(Array.from({ length: PARALLEL }, (_, i) => stream(i))),
+    new Promise<void>((resolve) => window.setTimeout(resolve, DURATION_MS)),
   ]);
+  activeXhrs.forEach((x) => {
+    try { x.abort(); } catch { /* ignore */ }
+  });
   window.clearInterval(ticker);
 
-  const measuredBytes = totalSent - baselineBytes;
-  const measuredSec = measureStart > 0 ? (performance.now() - measureStart) / 1000 : 0;
-  const cappedSec = Math.min(measuredSec, MEASURE_MS / 1000);
-  return cappedSec > 0 ? (measuredBytes * 8) / cappedSec / 1e6 : 0;
+  if (samples.length >= 2) {
+    const sorted = [...samples].sort((a, b) => a - b);
+    const trimmed = sorted.slice(Math.floor(sorted.length * 0.15), Math.ceil(sorted.length * 0.85));
+    return trimmed.reduce((sum, n) => sum + n, 0) / trimmed.length;
+  }
+  const elapsed = (performance.now() - t0) / 1000;
+  const measuredBytes = Math.max(completedBytes, partialBytes);
+  return elapsed > 0 ? (measuredBytes * 8) / elapsed / 1e6 : 0;
 }
 
 export const Route = createFileRoute("/")({
