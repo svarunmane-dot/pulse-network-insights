@@ -95,14 +95,25 @@ async function uploadTest(
   let completedBytes = 0;
   let partialBytes = 0;
   const streamLoaded = new Array<number>(PARALLEL).fill(0);
-  const samples: number[] = [];
+  const throughputSamples: number[] = [];
   const activeXhrs = new Set<XMLHttpRequest>();
+  let lastSampleAt = t0;
+  let lastSampleBytes = 0;
 
   const ticker = window.setInterval(() => {
     const now = performance.now();
     const elapsed = (now - t0) / 1000;
     const measuredBytes = Math.max(completedBytes, partialBytes);
     if (elapsed > 0) onProgress((measuredBytes * 8) / elapsed / 1e6, Math.min((now - t0) / DURATION_MS, 1));
+    if (now - lastSampleAt >= 500) {
+      const deltaBytes = measuredBytes - lastSampleBytes;
+      const deltaSec = (now - lastSampleAt) / 1000;
+      if (deltaBytes > 0 && deltaSec > 0) {
+        throughputSamples.push((deltaBytes * 8) / deltaSec / 1e6);
+      }
+      lastSampleAt = now;
+      lastSampleBytes = measuredBytes;
+    }
   }, 150);
 
   const uploadOnce = (idx: number, seq: number): Promise<void> =>
@@ -122,7 +133,6 @@ async function uploadTest(
         streamLoaded[idx] = 0;
         if (xhr.status >= 200 && xhr.status < 400 && duration > 0) {
           completedBytes += SIZE;
-          samples.push((SIZE * 8) / duration / 1e6);
         }
         resolve();
       };
@@ -159,12 +169,12 @@ async function uploadTest(
   });
   window.clearInterval(ticker);
 
-  if (samples.length >= 2) {
-    const sorted = [...samples].sort((a, b) => a - b);
+  if (throughputSamples.length >= 4) {
+    const sorted = [...throughputSamples].sort((a, b) => a - b);
     const trimmed = sorted.slice(Math.floor(sorted.length * 0.15), Math.ceil(sorted.length * 0.85));
     return trimmed.reduce((sum, n) => sum + n, 0) / trimmed.length;
   }
-  const elapsed = (performance.now() - t0) / 1000;
+  const elapsed = Math.min((performance.now() - t0) / 1000, DURATION_MS / 1000);
   const measuredBytes = Math.max(completedBytes, partialBytes);
   return elapsed > 0 ? (measuredBytes * 8) / elapsed / 1e6 : 0;
 }
@@ -537,17 +547,17 @@ function Index() {
     if (aiTimerRef.current) window.clearInterval(aiTimerRef.current);
 
     try {
-      // 1) Ping/jitter (0 -> 10%)
-      const pingRes = await pingTest();
-      setProgress(10);
+      setProgress(1);
+      const pingPromise = pingTest();
 
-      // 2) Download (10 -> 55%)
+      // 1) Download starts immediately while ping/jitter samples run in parallel.
       const dlMbps = await downloadTest((_m, frac) => {
-        setProgress(10 + frac * 45);
+        setProgress(1 + frac * 54);
       });
       setProgress(55);
+      const pingRes = await pingPromise;
 
-      // 3) Upload (55 -> 95%)
+      // 2) Upload (55 -> 95%)
       const ulMbps = await uploadTest((_m, frac) => {
         setProgress(55 + frac * 40);
       });
