@@ -174,7 +174,7 @@ async function uploadTest(
     const trimmed = sorted.slice(Math.floor(sorted.length * 0.15), Math.ceil(sorted.length * 0.85));
     return trimmed.reduce((sum, n) => sum + n, 0) / trimmed.length;
   }
-  const elapsed = Math.min((performance.now() - t0) / 1000, DURATION_MS / 1000);
+  const elapsed = (performance.now() - t0) / 1000;
   const measuredBytes = Math.max(completedBytes, partialBytes);
   return elapsed > 0 ? (measuredBytes * 8) / elapsed / 1e6 : 0;
 }
