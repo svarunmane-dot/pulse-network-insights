@@ -1896,9 +1896,6 @@ function WebLayout(p: PanelProps) {
       <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
         <NetworkInfo />
       </section>
-      <section className="pulse-fadeUp" style={{ padding: "24px 32px 0" }}>
-        <GlobalLatencySection />
-      </section>
     </>
   );
 }
@@ -2017,9 +2014,6 @@ function MobileLayout(p: PanelProps) {
       )}
       <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
         <NetworkInfo />
-      </section>
-      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
-        <GlobalLatencySection />
       </section>
     </>
   );
