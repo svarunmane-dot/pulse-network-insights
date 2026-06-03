@@ -103,93 +103,104 @@ async function downloadTest(
 async function uploadTest(
   onProgress: (mbps: number, frac: number) => void,
 ): Promise<number> {
-  const CHUNK_SIZE = 4 * 1024 * 1024; // 4 MB per request (Blob, no streaming)
-  const PARALLEL = 4;
+  // LibreSpeed-style upload: XHR with upload.onprogress so we count bytes
+  // as the browser actually pushes them onto the wire (not on response ack).
+  // Cloudflare's __up endpoint is CORS-enabled and discards the body.
+  const CHUNK_SIZE = 20 * 1024 * 1024; // 20 MB per request
+  const PARALLEL = 6;
   const DURATION_MS = 10_000;
+  const GRACE_MS = 1_500; // warm-up window excluded from measurement
 
-  // Pre-build a reusable Blob payload once
-  const payload = new Blob([new Uint8Array(CHUNK_SIZE).fill(0x61)], {
+  // Pre-build a single reusable payload (text/plain → no CORS preflight)
+  const payload = new Blob([new Uint8Array(CHUNK_SIZE)], {
     type: "application/octet-stream",
   });
 
   const t0 = performance.now();
-  let totalSentBytes = 0;
-
-  // Rolling samples for a stable live readout
-  const samples: { bytes: number; sec: number }[] = [];
+  let totalSentBytes = 0; // bytes sent since the grace window ended
+  let measureStart = t0 + GRACE_MS;
   let lastBytes = 0;
-  let lastTs = t0;
+  let lastTs = measureStart;
+  const samples: { bytes: number; sec: number }[] = [];
+  const activeXhrs = new Set<XMLHttpRequest>();
 
   const ticker = window.setInterval(() => {
     const now = performance.now();
-    const elapsed = (now - t0) / 1000;
     const frac = Math.min((now - t0) / DURATION_MS, 1);
-
+    if (now < measureStart) {
+      onProgress(0, frac);
+      return;
+    }
     const deltaB = totalSentBytes - lastBytes;
     const deltaS = (now - lastTs) / 1000;
-
     if (deltaS >= 0.4 && deltaB > 0) {
       samples.push({ bytes: deltaB, sec: deltaS });
       lastBytes = totalSentBytes;
       lastTs = now;
     }
-
-    // Rolling 5-sample window for the live gauge
-    const win = samples.slice(-5);
+    const win = samples.slice(-6);
     const wB = win.reduce((s, x) => s + x.bytes, 0);
     const wS = win.reduce((s, x) => s + x.sec, 0);
+    const elapsed = (now - measureStart) / 1000;
     const mbps =
       wS > 0
         ? (wB * 8) / wS / 1e6
         : elapsed > 0
           ? (totalSentBytes * 8) / elapsed / 1e6
           : 0;
-
     onProgress(mbps, frac);
   }, 200);
 
-  // Each worker fires sequential POST requests for the full duration
-  const runWorker = async (): Promise<void> => {
-    while (performance.now() - t0 < DURATION_MS) {
-      const reqT0 = performance.now();
-      try {
-        const res = await fetch(
-          `https://speed.cloudflare.com/__up?_=${Date.now()}-${Math.random()}`,
-          {
-            method: "POST",
-            body: payload,
-            headers: { "Content-Type": "application/octet-stream" },
-            // Short per-request timeout so stalled requests don't block the worker
-            signal: AbortSignal.timeout(8_000),
-          },
-        );
-
-        // Only count bytes when the server acknowledged receipt (200 OK)
-        if (res.ok) {
-          // Drain the (tiny) response body so the connection is reused cleanly
-          await res.arrayBuffer();
-          totalSentBytes += CHUNK_SIZE;
+  const runWorker = (): Promise<void> =>
+    new Promise((resolveWorker) => {
+      const fire = () => {
+        if (performance.now() - t0 >= DURATION_MS) return resolveWorker();
+        const xhr = new XMLHttpRequest();
+        activeXhrs.add(xhr);
+        let prevLoaded = 0;
+        xhr.upload.onprogress = (e) => {
+          const now = performance.now();
+          const delta = e.loaded - prevLoaded;
+          prevLoaded = e.loaded;
+          if (now >= measureStart && delta > 0) totalSentBytes += delta;
+          // Stop the request once we've hit the duration so we don't wait on response
+          if (now - t0 >= DURATION_MS) {
+            try { xhr.abort(); } catch {}
+          }
+        };
+        const done = () => {
+          activeXhrs.delete(xhr);
+          fire();
+        };
+        xhr.onload = done;
+        xhr.onerror = done;
+        xhr.onabort = done;
+        xhr.ontimeout = done;
+        try {
+          xhr.open(
+            "POST",
+            `https://speed.cloudflare.com/__up?_=${Date.now()}-${Math.random()}`,
+            true,
+          );
+          xhr.send(payload);
+        } catch {
+          done();
         }
-      } catch {
-        // Network error or timeout — skip this chunk, keep looping
-        // Add a small back-off so a broken link doesn't spin-loop
-        const elapsed = performance.now() - reqT0;
-        if (elapsed < 500) {
-          await new Promise((r) => window.setTimeout(r, 500 - elapsed));
-        }
-      }
-    }
-  };
+      };
+      fire();
+    });
 
   await Promise.race([
     Promise.all(Array.from({ length: PARALLEL }, runWorker)),
-    // Hard safety timeout: stop no matter what after DURATION + 3 s
-    new Promise<void>((res) => window.setTimeout(res, DURATION_MS + 3_000)),
+    new Promise<void>((res) => window.setTimeout(res, DURATION_MS + 500)),
   ]);
 
+  // Abort any stragglers so the function returns promptly
+  activeXhrs.forEach((x) => {
+    try { x.abort(); } catch {}
+  });
   window.clearInterval(ticker);
 
-  // Final result: trim top/bottom 10 % of per-sample readings for accuracy
   if (samples.length >= 3) {
     const mbpsList = samples.map((s) => (s.bytes * 8) / s.sec / 1e6);
     const sorted = [...mbpsList].sort((a, b) => a - b);
@@ -200,12 +211,10 @@ async function uploadTest(
     }
   }
 
-  // Fallback: straight average over the full run
-  const elapsed = (performance.now() - t0) / 1000;
-  if (elapsed > 0 && totalSentBytes > 0) {
-    return (totalSentBytes * 8) / elapsed / 1e6;
+  const elapsedSec = (performance.now() - measureStart) / 1000;
+  if (elapsedSec > 0 && totalSentBytes > 0) {
+    return (totalSentBytes * 8) / elapsedSec / 1e6;
   }
-
   return 0;
 }
 
