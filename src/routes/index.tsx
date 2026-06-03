@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { GlobalLatencySection } from "./global";
 
 /* ============================================================
    LIBRESPEED-BASED ENGINE
@@ -95,23 +94,20 @@ async function downloadTest(
 
 /* ============================================================
    FIXED UPLOAD TEST
-   Uses Blob payloads instead of ReadableStream — browsers
-   reliably support Blob bodies for cross-origin POST requests.
-   Only counts bytes from HTTP-200 responses to avoid inflating
-   results from failed/aborted requests.
+   Uses a same-origin discard endpoint plus XHR upload progress,
+   avoiding cross-origin endpoint failures that reported 0.1 Mbps.
    ============================================================ */
 async function uploadTest(
   onProgress: (mbps: number, frac: number) => void,
 ): Promise<number> {
   // LibreSpeed-style upload: XHR with upload.onprogress so we count bytes
   // as the browser actually pushes them onto the wire (not on response ack).
-  // Cloudflare's __up endpoint is CORS-enabled and discards the body.
-  const CHUNK_SIZE = 20 * 1024 * 1024; // 20 MB per request
+  const CHUNK_SIZE = 12 * 1024 * 1024;
   const PARALLEL = 6;
   const DURATION_MS = 10_000;
-  const GRACE_MS = 1_500; // warm-up window excluded from measurement
+  const GRACE_MS = 1_000;
 
-  // Pre-build a single reusable payload (text/plain → no CORS preflight)
+  // Pre-build a single reusable payload.
   const payload = new Blob([new Uint8Array(CHUNK_SIZE)], {
     type: "application/octet-stream",
   });
@@ -155,36 +151,51 @@ async function uploadTest(
     new Promise((resolveWorker) => {
       const fire = () => {
         if (performance.now() - t0 >= DURATION_MS) return resolveWorker();
+        const startedAt = performance.now();
         const xhr = new XMLHttpRequest();
         activeXhrs.add(xhr);
         let prevLoaded = 0;
+        let sawProgress = false;
         xhr.upload.onprogress = (e) => {
           const now = performance.now();
-          const delta = e.loaded - prevLoaded;
-          prevLoaded = e.loaded;
+          sawProgress = true;
+          const loaded = Math.min(e.loaded, CHUNK_SIZE);
+          const delta = loaded - prevLoaded;
+          prevLoaded = loaded;
           if (now >= measureStart && delta > 0) totalSentBytes += delta;
           // Stop the request once we've hit the duration so we don't wait on response
           if (now - t0 >= DURATION_MS) {
             try { xhr.abort(); } catch {}
           }
         };
-        const done = () => {
+        const done = (completed: boolean) => {
+          const now = performance.now();
+          if (completed && now >= measureStart) {
+            const remaining = Math.max(0, CHUNK_SIZE - prevLoaded);
+            if (remaining > 0) {
+              if (sawProgress) {
+                totalSentBytes += remaining;
+              } else {
+                const totalMs = Math.max(now - startedAt, 1);
+                const measuredMs = Math.max(0, now - Math.max(startedAt, measureStart));
+                totalSentBytes += remaining * Math.min(1, measuredMs / totalMs);
+              }
+            }
+          }
           activeXhrs.delete(xhr);
           fire();
         };
-        xhr.onload = done;
-        xhr.onerror = done;
-        xhr.onabort = done;
-        xhr.ontimeout = done;
+        xhr.onload = () => done(xhr.status >= 200 && xhr.status < 300);
+        xhr.onerror = () => done(false);
+        xhr.onabort = () => done(false);
+        xhr.ontimeout = () => done(false);
         try {
-          xhr.open(
-            "POST",
-            `https://speed.cloudflare.com/__up?_=${Date.now()}-${Math.random()}`,
-            true,
-          );
+          xhr.open("POST", `/api/public/upload?_=${Date.now()}-${Math.random()}`, true);
+          xhr.timeout = DURATION_MS + 5_000;
+          xhr.setRequestHeader("Content-Type", "application/octet-stream");
           xhr.send(payload);
         } catch {
-          done();
+          done(false);
         }
       };
       fire();
