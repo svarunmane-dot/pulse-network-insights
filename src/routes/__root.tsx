@@ -87,6 +87,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#0A0E1A" },
       { property: "og:site_name", content: "Pulse Speed" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pulse-speed.com/" },
+      { property: "og:image", content: "https://pulse-speed.com/favicon.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@pulsespeed" },
       // Analytics placeholders – replace IDs when ready
@@ -97,7 +99,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
+      { rel: "canonical", href: "https://pulse-speed.com/" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
       {
@@ -112,8 +116,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "Pulse Speed",
-          url: "/",
-          logo: "/favicon.ico",
+          url: "https://pulse-speed.com/",
+          logo: "https://pulse-speed.com/favicon.png",
           founder: { "@type": "Person", name: "Arun" },
           description:
             "Pulse Speed is a lightweight internet performance testing platform built by a network architect.",
