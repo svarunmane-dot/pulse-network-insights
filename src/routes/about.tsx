@@ -16,9 +16,9 @@ export const Route = createFileRoute("/about")({
         content:
           "Built by Arun – 17+ years in SD-WAN and enterprise networking. Our mission is accurate, lightweight internet testing.",
       },
-      { property: "og:url", content: "/about" },
+      { property: "og:url", content: "https://pulse-speed.com/about" },
     ],
-    links: [{ rel: "canonical", href: "/about" }],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/about" }],
   }),
 });
 

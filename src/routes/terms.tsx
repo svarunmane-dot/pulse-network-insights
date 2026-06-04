@@ -9,9 +9,9 @@ export const Route = createFileRoute("/terms")({
         name: "description",
         content: "Terms governing your use of Pulse Speed.",
       },
-      { property: "og:url", content: "/terms" },
+      { property: "og:url", content: "https://pulse-speed.com/terms" },
     ],
-    links: [{ rel: "canonical", href: "/terms" }],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/terms" }],
   }),
 });
 

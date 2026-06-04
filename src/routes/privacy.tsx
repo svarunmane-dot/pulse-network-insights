@@ -10,9 +10,9 @@ export const Route = createFileRoute("/privacy")({
         content:
           "How Pulse Speed handles your data. We are privacy focused: no accounts, no tracking beyond aggregate analytics.",
       },
-      { property: "og:url", content: "/privacy" },
+      { property: "og:url", content: "https://pulse-speed.com/privacy" },
     ],
-    links: [{ rel: "canonical", href: "/privacy" }],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/privacy" }],
   }),
 });
 
