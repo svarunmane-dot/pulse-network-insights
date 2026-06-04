@@ -218,6 +218,7 @@ function SiteHeader() {
             { to: "/", label: "Speed Test" },
             { to: "/ping", label: "Ping a Friend" },
             { to: "/global", label: "Global Latency" },
+            { to: "/subnet", label: "Subnet Calculator" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
@@ -274,6 +275,7 @@ function SiteFooter() {
           links={[
             { to: "/", label: "Speed Test" },
             { to: "/ping", label: "Ping a Friend" },
+            { to: "/subnet", label: "Subnet Calculator" },
           ]}
         />
         <FooterCol
