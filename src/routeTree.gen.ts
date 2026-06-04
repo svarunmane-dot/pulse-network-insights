@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PingRouteImport } from './routes/ping'
@@ -22,6 +23,11 @@ import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubnetRoute = SubnetRouteImport.update({
+  id: '/subnet',
+  path: '/subnet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/ping': typeof PingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/ping': typeof PingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/ping': typeof PingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/ping'
     | '/privacy'
     | '/sitemap.xml'
+    | '/subnet'
     | '/terms'
     | '/api/public/upload'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/ping'
     | '/privacy'
     | '/sitemap.xml'
+    | '/subnet'
     | '/terms'
     | '/api/public/upload'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/ping'
     | '/privacy'
     | '/sitemap.xml'
+    | '/subnet'
     | '/terms'
     | '/api/public/upload'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   PingRoute: typeof PingRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
 }
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subnet': {
+      id: '/subnet'
+      path: '/subnet'
+      fullPath: '/subnet'
+      preLoaderRoute: typeof SubnetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   PingRoute: PingRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
 }
