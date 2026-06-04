@@ -248,7 +248,7 @@ export const Route = createFileRoute("/")({
         content:
           "Measure download speed, upload speed, ping, jitter and latency instantly. Free, accurate and lightweight.",
       },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
       {
@@ -256,7 +256,7 @@ export const Route = createFileRoute("/")({
         content: "Measure download speed, upload speed, ping, jitter and latency instantly.",
       },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/" }],
     scripts: [
       {
         type: "application/ld+json",

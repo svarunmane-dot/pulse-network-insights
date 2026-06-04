@@ -12,9 +12,9 @@ export const Route = createFileRoute("/global")({
           "Measure your latency to Cloudflare edge locations around the world on an interactive map.",
       },
       { property: "og:title", content: "Global Latency Map – Pulse Speed" },
-      { property: "og:url", content: "/global" },
+      { property: "og:url", content: "https://pulse-speed.com/global" },
     ],
-    links: [{ rel: "canonical", href: "/global" }],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/global" }],
   }),
 });
 

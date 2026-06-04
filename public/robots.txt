@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+
+Host: https://pulse-speed.com
+Sitemap: https://pulse-speed.com/sitemap.xml

@@ -12,9 +12,9 @@ export const Route = createFileRoute("/contact")({
           "Get in touch with the Pulse Speed team. Feedback, partnership and support enquiries welcome.",
       },
       { property: "og:title", content: "Contact Pulse Speed" },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: "https://pulse-speed.com/contact" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/contact" }],
   }),
 });
 
