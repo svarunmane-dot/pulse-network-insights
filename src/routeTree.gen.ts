@@ -15,6 +15,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PingRouteImport } from './routes/ping'
 import { Route as GlobalRouteImport } from './routes/global'
+import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -50,6 +51,11 @@ const GlobalRoute = GlobalRouteImport.update({
   path: '/global',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DnslookupRoute = DnslookupRouteImport.update({
+  id: '/dnslookup',
+  path: '/dnslookup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
   '/privacy': typeof PrivacyRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
   '/privacy': typeof PrivacyRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
   '/privacy': typeof PrivacyRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/dnslookup'
     | '/global'
     | '/ping'
     | '/privacy'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/dnslookup'
     | '/global'
     | '/ping'
     | '/privacy'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/dnslookup'
     | '/global'
     | '/ping'
     | '/privacy'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
   PingRoute: typeof PingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GlobalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dnslookup': {
+      id: '/dnslookup'
+      path: '/dnslookup'
+      fullPath: '/dnslookup'
+      preLoaderRoute: typeof DnslookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
   PingRoute: PingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -250,3 +271,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
