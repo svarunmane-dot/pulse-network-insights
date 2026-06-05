@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "keywords",
         content:
-          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test",
+          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns, domain to ip",
       },
       { name: "author", content: "Arun – Network Architect" },
       { name: "theme-color", content: "#0A0E1A" },
@@ -219,6 +219,7 @@ function SiteHeader() {
             { to: "/ping", label: "Ping a Friend" },
             { to: "/global", label: "Global Latency" },
             { to: "/subnet", label: "Subnet Calculator" },
+            { to: "/dnslookup", label: "DNS Lookup" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
@@ -276,6 +277,7 @@ function SiteFooter() {
             { to: "/", label: "Speed Test" },
             { to: "/ping", label: "Ping a Friend" },
             { to: "/subnet", label: "Subnet Calculator" },
+            { to: "/dnslookup", label: "DNS Lookup" },
           ]}
         />
         <FooterCol

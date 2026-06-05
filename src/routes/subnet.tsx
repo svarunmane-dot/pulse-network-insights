@@ -163,7 +163,12 @@ export const Route = createFileRoute("/subnet")({
       {
         name: "description",
         content:
-          "Free IP subnet calculator. Enter an IP address and subnet mask to instantly get network address, broadcast address, usable IP range, host count, wildcard mask and binary representation.",
+          "Free IP subnet calculator. Enter an IP address and subnet mask to instantly get network address, broadcast address, usable IP range, host count, wildcard mask and binary representation. Part of Pulse Speed networking tools.",
+      },
+      {
+        name: "keywords",
+        content:
+          "ip subnet calculator, subnet mask calculator, cidr calculator, network calculator, ip range calculator, broadcast address, usable hosts, networking tools, ipv4 subnet",
       },
       { property: "og:title", content: "IP Subnet Calculator – Pulse Speed" },
       {
