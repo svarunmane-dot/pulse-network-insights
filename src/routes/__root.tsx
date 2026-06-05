@@ -277,6 +277,7 @@ function SiteFooter() {
             { to: "/", label: "Speed Test" },
             { to: "/ping", label: "Ping a Friend" },
             { to: "/subnet", label: "Subnet Calculator" },
+            { to: "/dnslookup", label: "DNS Lookup" },
           ]}
         />
         <FooterCol
