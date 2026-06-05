@@ -240,7 +240,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Test your internet speed, ping, jitter and latency instantly with Pulse Speed. Fast, accurate and lightweight internet performance testing platform.",
+          "Test your internet speed, ping, jitter and latency instantly with Pulse Speed. Also explore our free IP subnet calculator and DNS lookup tools. Fast, accurate and lightweight internet performance testing platform.",
+      },
+      {
+        name: "keywords",
+        content:
+          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns",
       },
       { property: "og:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
       {
