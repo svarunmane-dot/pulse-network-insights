@@ -219,6 +219,7 @@ function SiteHeader() {
             { to: "/ping", label: "Ping a Friend" },
             { to: "/global", label: "Global Latency" },
             { to: "/subnet", label: "Subnet Calculator" },
+            { to: "/dnslookup", label: "DNS Lookup" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
