@@ -55,10 +55,9 @@ const TYPE_NAMES: Record<number, string> = {
 };
 
 async function queryDOH(name: string, type: string): Promise<{ Answer?: Array<{ type: number; data: string; TTL: number }>; Status: number; Comment?: string }> {
-  const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`;
-  const res = await fetch(url, {
-    headers: { Accept: "application/dns-json" },
-  });
+  // Use Google's DoH JSON API — no custom headers required (avoids CORS preflight).
+  const url = `https://dns.google/resolve?name=${encodeURIComponent(name)}&type=${type}`;
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`DNS query failed: ${res.status}`);
   return res.json();
 }
