@@ -9,10 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WhoisipRouteImport } from './routes/whoisip'
+import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PortcheckRouteImport } from './routes/portcheck'
+import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PingRouteImport } from './routes/ping'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
@@ -21,6 +25,16 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 
+const WhoisipRoute = WhoisipRouteImport.update({
+  id: '/whoisip',
+  path: '/whoisip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TracerouteRoute = TracerouteRouteImport.update({
+  id: '/traceroute',
+  path: '/traceroute',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -39,6 +53,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortcheckRoute = PortcheckRouteImport.update({
+  id: '/portcheck',
+  path: '/portcheck',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PingipRoute = PingipRouteImport.update({
+  id: '/pingip',
+  path: '/pingip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PingRoute = PingRouteImport.update({
@@ -84,10 +108,14 @@ export interface FileRoutesByFullPath {
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
+  '/pingip': typeof PingipRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRoutesByTo {
@@ -97,10 +125,14 @@ export interface FileRoutesByTo {
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
+  '/pingip': typeof PingipRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRoutesById {
@@ -111,10 +143,14 @@ export interface FileRoutesById {
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
+  '/pingip': typeof PingipRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRouteTypes {
@@ -126,10 +162,14 @@ export interface FileRouteTypes {
     | '/dnslookup'
     | '/global'
     | '/ping'
+    | '/pingip'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
+    | '/whoisip'
     | '/api/public/upload'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -139,10 +179,14 @@ export interface FileRouteTypes {
     | '/dnslookup'
     | '/global'
     | '/ping'
+    | '/pingip'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
+    | '/whoisip'
     | '/api/public/upload'
   id:
     | '__root__'
@@ -152,10 +196,14 @@ export interface FileRouteTypes {
     | '/dnslookup'
     | '/global'
     | '/ping'
+    | '/pingip'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
+    | '/whoisip'
     | '/api/public/upload'
   fileRoutesById: FileRoutesById
 }
@@ -166,15 +214,33 @@ export interface RootRouteChildren {
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
   PingRoute: typeof PingRoute
+  PingipRoute: typeof PingipRoute
+  PortcheckRoute: typeof PortcheckRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
+  TracerouteRoute: typeof TracerouteRoute
+  WhoisipRoute: typeof WhoisipRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/whoisip': {
+      id: '/whoisip'
+      path: '/whoisip'
+      fullPath: '/whoisip'
+      preLoaderRoute: typeof WhoisipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/traceroute': {
+      id: '/traceroute'
+      path: '/traceroute'
+      fullPath: '/traceroute'
+      preLoaderRoute: typeof TracerouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -201,6 +267,20 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portcheck': {
+      id: '/portcheck'
+      path: '/portcheck'
+      fullPath: '/portcheck'
+      preLoaderRoute: typeof PortcheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pingip': {
+      id: '/pingip'
+      path: '/pingip'
+      fullPath: '/pingip'
+      preLoaderRoute: typeof PingipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ping': {
@@ -262,10 +342,14 @@ const rootRouteChildren: RootRouteChildren = {
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
   PingRoute: PingRoute,
+  PingipRoute: PingipRoute,
+  PortcheckRoute: PortcheckRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
+  TracerouteRoute: TracerouteRoute,
+  WhoisipRoute: WhoisipRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
 }
 export const routeTree = rootRouteImport
