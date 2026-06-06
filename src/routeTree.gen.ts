@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -22,6 +23,11 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 
+const TracerouteRoute = TracerouteRouteImport.update({
+  id: '/traceroute',
+  path: '/traceroute',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
     | '/api/public/upload'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
     | '/api/public/upload'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
     | '/api/public/upload'
   fileRoutesById: FileRoutesById
 }
@@ -183,11 +195,19 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
+  TracerouteRoute: typeof TracerouteRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/traceroute': {
+      id: '/traceroute'
+      path: '/traceroute'
+      fullPath: '/traceroute'
+      preLoaderRoute: typeof TracerouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
+  TracerouteRoute: TracerouteRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
 }
 export const routeTree = rootRouteImport
