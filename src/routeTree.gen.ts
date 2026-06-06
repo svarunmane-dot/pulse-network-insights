@@ -15,6 +15,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PortcheckRouteImport } from './routes/portcheck'
 import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PingRouteImport } from './routes/ping'
 import { Route as GlobalRouteImport } from './routes/global'
@@ -52,6 +53,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortcheckRoute = PortcheckRouteImport.update({
+  id: '/portcheck',
+  path: '/portcheck',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PingipRoute = PingipRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/ping'
     | '/pingip'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/ping'
     | '/pingip'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/ping'
     | '/pingip'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   GlobalRoute: typeof GlobalRoute
   PingRoute: typeof PingRoute
   PingipRoute: typeof PingipRoute
+  PortcheckRoute: typeof PortcheckRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portcheck': {
+      id: '/portcheck'
+      path: '/portcheck'
+      fullPath: '/portcheck'
+      preLoaderRoute: typeof PortcheckRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pingip': {
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlobalRoute: GlobalRoute,
   PingRoute: PingRoute,
   PingipRoute: PingipRoute,
+  PortcheckRoute: PortcheckRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
