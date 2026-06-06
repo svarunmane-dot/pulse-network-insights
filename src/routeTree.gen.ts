@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WhoisipRouteImport } from './routes/whoisip'
 import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
@@ -23,6 +24,11 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 
+const WhoisipRoute = WhoisipRouteImport.update({
+  id: '/whoisip',
+  path: '/whoisip',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TracerouteRoute = TracerouteRouteImport.update({
   id: '/traceroute',
   path: '/traceroute',
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRoutesById {
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/subnet'
     | '/terms'
     | '/traceroute'
+    | '/whoisip'
     | '/api/public/upload'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/subnet'
     | '/terms'
     | '/traceroute'
+    | '/whoisip'
     | '/api/public/upload'
   id:
     | '__root__'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/subnet'
     | '/terms'
     | '/traceroute'
+    | '/whoisip'
     | '/api/public/upload'
   fileRoutesById: FileRoutesById
 }
@@ -196,11 +208,19 @@ export interface RootRouteChildren {
   SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
   TracerouteRoute: typeof TracerouteRoute
+  WhoisipRoute: typeof WhoisipRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/whoisip': {
+      id: '/whoisip'
+      path: '/whoisip'
+      fullPath: '/whoisip'
+      preLoaderRoute: typeof WhoisipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/traceroute': {
       id: '/traceroute'
       path: '/traceroute'
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
   TracerouteRoute: TracerouteRoute,
+  WhoisipRoute: WhoisipRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
 }
 export const routeTree = rootRouteImport
