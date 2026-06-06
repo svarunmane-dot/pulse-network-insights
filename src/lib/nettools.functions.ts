@@ -29,21 +29,20 @@ async function tcpConnectTime(
   port: number,
   timeoutMs: number,
 ): Promise<{ ok: boolean; ms?: number; error?: string }> {
-  // Dynamic import so non-Worker environments (build-time tooling) don't break.
-  let connect: (opts: { hostname: string; port: number }, init?: unknown) => {
-    opened: Promise<unknown>;
-    close: () => Promise<void>;
-  };
+  // Dynamic import so build-time tooling doesn't crash on the virtual module.
+  let mod: { connect: (...args: unknown[]) => { opened: Promise<unknown>; close: () => Promise<void> } };
   try {
-    // @ts-expect-error cloudflare:sockets is a Worker runtime module
-    ({ connect } = await import("cloudflare:sockets"));
+    mod = (await import(/* @vite-ignore */ "cloudflare:sockets")) as typeof mod;
   } catch {
     return { ok: false, error: "TCP sockets not available in this runtime" };
   }
   const start = Date.now();
   let socket: { opened: Promise<unknown>; close: () => Promise<void> } | null = null;
   try {
-    socket = connect({ hostname, port }, { secureTransport: "off", allowHalfOpen: false } as unknown);
+    socket = mod.connect(
+      { hostname, port },
+      { secureTransport: "off", allowHalfOpen: false },
+    );
     await Promise.race([
       socket.opened,
       new Promise((_, r) => setTimeout(() => r(new Error("timeout")), timeoutMs)),
