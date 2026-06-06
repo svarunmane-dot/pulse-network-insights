@@ -220,6 +220,10 @@ function SiteHeader() {
             { to: "/global", label: "Global Latency" },
             { to: "/subnet", label: "Subnet Calculator" },
             { to: "/dnslookup", label: "DNS Lookup" },
+            { to: "/pingip", label: "Ping IP" },
+            { to: "/traceroute", label: "Traceroute" },
+            { to: "/whoisip", label: "Whose IP" },
+            { to: "/portcheck", label: "Port Check" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
@@ -278,6 +282,10 @@ function SiteFooter() {
             { to: "/ping", label: "Ping a Friend" },
             { to: "/subnet", label: "Subnet Calculator" },
             { to: "/dnslookup", label: "DNS Lookup" },
+            { to: "/pingip", label: "Ping IP" },
+            { to: "/traceroute", label: "Traceroute" },
+            { to: "/whoisip", label: "Whose IP" },
+            { to: "/portcheck", label: "Port Check" },
           ]}
         />
         <FooterCol
