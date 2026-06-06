@@ -131,9 +131,30 @@ export const whoisIp = createServerFn({ method: "POST" })
     const url = `http://ip-api.com/json/${encodeURIComponent(data.ip)}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,asname,reverse,mobile,proxy,hosting,query`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Lookup failed: HTTP ${res.status}`);
-    const json = (await res.json()) as Record<string, unknown>;
+    const json = (await res.json()) as {
+      status: string;
+      message?: string;
+      country?: string;
+      countryCode?: string;
+      region?: string;
+      regionName?: string;
+      city?: string;
+      zip?: string;
+      lat?: number;
+      lon?: number;
+      timezone?: string;
+      isp?: string;
+      org?: string;
+      as?: string;
+      asname?: string;
+      reverse?: string;
+      mobile?: boolean;
+      proxy?: boolean;
+      hosting?: boolean;
+      query?: string;
+    };
     if (json.status !== "success") {
-      throw new Error((json.message as string) || "Lookup failed");
+      throw new Error(json.message || "Lookup failed");
     }
     return json;
   });
