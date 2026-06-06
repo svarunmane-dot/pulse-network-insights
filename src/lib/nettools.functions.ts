@@ -32,6 +32,7 @@ async function tcpConnectTime(
   // Dynamic import so build-time tooling doesn't crash on the virtual module.
   let mod: { connect: (...args: unknown[]) => { opened: Promise<unknown>; close: () => Promise<void> } };
   try {
+    // @ts-expect-error cloudflare:sockets is a Worker runtime virtual module
     mod = (await import(/* @vite-ignore */ "cloudflare:sockets")) as typeof mod;
   } catch {
     return { ok: false, error: "TCP sockets not available in this runtime" };
