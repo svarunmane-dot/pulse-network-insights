@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "keywords",
         content:
-          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns, domain to ip",
+          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns, domain to ip, ping ip, traceroute, whose ip, ip geolocation, port check, open port checker, network tools",
       },
       { name: "author", content: "Arun – Network Architect" },
       { name: "theme-color", content: "#0A0E1A" },
