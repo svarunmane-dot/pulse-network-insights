@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PingRouteImport } from './routes/ping'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
@@ -39,6 +40,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PingipRoute = PingipRouteImport.update({
+  id: '/pingip',
+  path: '/pingip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PingRoute = PingRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
+  '/pingip': typeof PingipRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
+  '/pingip': typeof PingipRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/ping': typeof PingRoute
+  '/pingip': typeof PingipRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/dnslookup'
     | '/global'
     | '/ping'
+    | '/pingip'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/dnslookup'
     | '/global'
     | '/ping'
+    | '/pingip'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/dnslookup'
     | '/global'
     | '/ping'
+    | '/pingip'
     | '/privacy'
     | '/sitemap.xml'
     | '/subnet'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
   PingRoute: typeof PingRoute
+  PingipRoute: typeof PingipRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pingip': {
+      id: '/pingip'
+      path: '/pingip'
+      fullPath: '/pingip'
+      preLoaderRoute: typeof PingipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ping': {
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
   PingRoute: PingRoute,
+  PingipRoute: PingipRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
@@ -271,3 +292,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
