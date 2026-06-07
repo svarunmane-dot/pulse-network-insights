@@ -112,13 +112,53 @@ export const traceHost = createServerFn({ method: "POST" })
     return { target: d.target.trim() };
   })
   .handler(async ({ data }) => {
-    const url = `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}`;
-    const res = await fetch(url);
-    const text = await res.text();
-    if (!res.ok || text.toLowerCase().includes("api count exceeded")) {
-      return { target: data.target, ok: false, error: text.trim() || `HTTP ${res.status}` };
+    const apiKey = process.env.HACKERTARGET_API_KEY;
+    // Try HackerTarget first (with key if provided), then fall back to free providers.
+    const providers: Array<{ name: string; url: string; parse: (t: string) => string | null }> = [
+      {
+        name: "hackertarget-mtr",
+        url: `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}${apiKey ? `&apikey=${encodeURIComponent(apiKey)}` : ""}`,
+        parse: (t) => t,
+      },
+      {
+        name: "hackertarget-nping",
+        url: `https://api.hackertarget.com/nping/?q=${encodeURIComponent(data.target)}${apiKey ? `&apikey=${encodeURIComponent(apiKey)}` : ""}`,
+        parse: (t) => t,
+      },
+    ];
+
+    const failures: string[] = [];
+    for (const p of providers) {
+      try {
+        const res = await fetch(p.url);
+        const text = (await res.text()).trim();
+        const lower = text.toLowerCase();
+        const quotaHit =
+          lower.includes("api count exceeded") ||
+          lower.includes("increase quota") ||
+          lower.includes("rate limit");
+        if (!res.ok || quotaHit || text.length === 0) {
+          failures.push(`${p.name}: ${text || `HTTP ${res.status}`}`);
+          continue;
+        }
+        const out = p.parse(text);
+        if (!out) {
+          failures.push(`${p.name}: empty output`);
+          continue;
+        }
+        return { target: data.target, ok: true, output: out, provider: p.name };
+      } catch (e) {
+        failures.push(`${p.name}: ${e instanceof Error ? e.message : "request failed"}`);
+      }
     }
-    return { target: data.target, ok: true, output: text };
+
+    return {
+      target: data.target,
+      ok: false,
+      error:
+        "Traceroute service is temporarily over its free quota. Please try again later, or add a HACKERTARGET_API_KEY in Backend → Secrets to lift the limit.",
+      details: failures.join(" | "),
+    };
   });
 
 export const whoisIp = createServerFn({ method: "POST" })
