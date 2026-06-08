@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
    NETWORK TOOLS – server functions
    - pingHost: TCP handshake timing (3 probes) via cloudflare:sockets
    - portCheck: single TCP connect with timeout
-   - traceHost: Globalping traceroute (free, no quota limits)
+   - traceHost: MTR.GS traceroute API (free, no quota limits)
    - whoisIp: proxy ip-api.com (CORS-safe via server)
    ============================================================ */
 
@@ -113,91 +113,33 @@ export const traceHost = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     try {
-      // Step 1: Create measurement request with Globalping
-      const createResponse = await fetch("https://api.globalping.io/v1/measurements", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          target: data.target,
-          type: "traceroute",
-          locations: [{ country: "GB" }],
-          options: { timeout: 10 },
-        }),
-      });
+      // Use MTR.GS API (free, no quota, instant results)
+      const url = `https://mtr.gs/api/v1/?c=1&d=${encodeURIComponent(data.target)}`;
+      const res = await fetch(url);
 
-      if (!createResponse.ok) {
+      if (!res.ok) {
         return {
           target: data.target,
           ok: false,
-          error: `Globalping request failed: HTTP ${createResponse.status}`,
+          error: `Traceroute service unavailable (HTTP ${res.status})`,
         };
       }
 
-      const measurementData = (await createResponse.json()) as {
-        id?: string;
-        results?: Array<{ probe: { country: string }; result: { status: string; hops?: Array<{ hop: number; ip: string; host?: string; latency: number; timings?: Array<number> }> } }>;
-      };
+      const text = await res.text();
+      const lines = text.trim().split("\n").filter((line) => line.length > 0);
 
-      const measurementId = measurementData.id;
-      if (!measurementId) {
+      if (lines.length === 0) {
         return {
           target: data.target,
           ok: false,
-          error: "Globalping: no measurement ID returned",
+          error: "No hops returned - target may be unreachable",
         };
       }
 
-      // Step 2: Poll for results (5 attempts, ~2 second interval)
-      let results = null;
-      for (let attempt = 0; attempt < 5; attempt++) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+      // MTR.GS returns already-formatted traceroute output
+      const output = lines.join("\n");
 
-        const statusResponse = await fetch(
-          `https://api.globalping.io/v1/measurements/${measurementId}`,
-        );
-
-        if (!statusResponse.ok) continue;
-
-        const statusData = (await statusResponse.json()) as {
-          results?: Array<{
-            probe: { country: string };
-            result: {
-              status: string;
-              hops?: Array<{ hop: number; ip: string; host?: string; latency: number; timings?: Array<number> }>;
-            };
-          }>;
-        };
-
-        if (statusData.results && statusData.results.length > 0) {
-          const firstResult = statusData.results[0];
-          if (
-            firstResult.result.status === "finished" ||
-            (firstResult.result.hops && firstResult.result.hops.length > 0)
-          ) {
-            results = firstResult.result;
-            break;
-          }
-        }
-      }
-
-      if (!results || !results.hops || results.hops.length === 0) {
-        return {
-          target: data.target,
-          ok: false,
-          error: "Globalping: no hops returned (target may be unreachable)",
-        };
-      }
-
-      // Step 3: Format output as traceroute
-      const output = results.hops
-        .map((hop) => {
-          const latency = hop.latency ? `${hop.latency.toFixed(2)}ms` : "*";
-          const host = hop.host || hop.ip;
-          return `${hop.hop}  ${host}  ${latency}`;
-        })
-        .join("\n");
-
-      return { target: data.target, ok: true, output, provider: "globalping" };
+      return { target: data.target, ok: true, output, provider: "mtr-gs" };
     } catch (e) {
       return {
         target: data.target,
