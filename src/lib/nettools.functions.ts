@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
    NETWORK TOOLS – server functions
    - pingHost: TCP handshake timing (3 probes) via cloudflare:sockets
    - portCheck: single TCP connect with timeout
-   - traceHost: HackerTarget with 3 fallback endpoints (quota resilient)
+   - traceHost: ip.sb traceroute API (free, reliable, public)
    - whoisIp: proxy ip-api.com (CORS-safe via server)
    ============================================================ */
 
@@ -112,85 +112,61 @@ export const traceHost = createServerFn({ method: "POST" })
     return { target: d.target.trim() };
   })
   .handler(async ({ data }) => {
-    const failures: string[] = [];
-
-    // Provider 1: HackerTarget with API key
-    const apiKey = process.env.HACKERTARGET_API_KEY;
-    if (apiKey) {
-      try {
-        const url = `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}&apikey=${encodeURIComponent(apiKey)}`;
-        const res = await fetch(url);
-        const text = (await res.text()).trim();
-        const lower = text.toLowerCase();
-
-        const quotaHit =
-          lower.includes("api count exceeded") ||
-          lower.includes("increase quota") ||
-          lower.includes("rate limit");
-
-        if (res.ok && !quotaHit && text.length > 0) {
-          return { target: data.target, ok: true, output: text, provider: "hackertarget-key" };
-        }
-        failures.push("HackerTarget: " + (quotaHit ? "quota exceeded" : `HTTP ${res.status}`));
-      } catch (e) {
-        failures.push("HackerTarget: " + (e instanceof Error ? e.message : "failed"));
-      }
-    }
-
-    // Provider 2: HackerTarget free (no API key)
     try {
-      const url = `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}`;
-      const res = await fetch(url);
-      const text = (await res.text()).trim();
-      const lower = text.toLowerCase();
+      // Use ip.sb public traceroute API (free, reliable, no quota)
+      const url = `https://ip.sb/api/traceroute/?host=${encodeURIComponent(data.target)}&lang=en`;
+      
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        },
+      });
 
-      const quotaHit =
-        lower.includes("api count exceeded") ||
-        lower.includes("increase quota") ||
-        lower.includes("rate limit") ||
-        lower.includes("daily") ||
-        lower.includes("monthly");
-
-      if (res.ok && !quotaHit && text.length > 0) {
-        return { target: data.target, ok: true, output: text, provider: "hackertarget-free" };
+      if (!res.ok) {
+        return {
+          target: data.target,
+          ok: false,
+          error: `Traceroute API error (HTTP ${res.status})`,
+        };
       }
-      failures.push("HackerTarget-Free: " + (quotaHit ? "quota exceeded" : `HTTP ${res.status}`));
-    } catch (e) {
-      failures.push("HackerTarget-Free: " + (e instanceof Error ? e.message : "failed"));
-    }
 
-    // Provider 3: HackerTarget nping (alternate endpoint)
-    try {
-      const url = `https://api.hackertarget.com/nping/?q=${encodeURIComponent(data.target)}`;
-      const res = await fetch(url);
-      const text = (await res.text()).trim();
-      const lower = text.toLowerCase();
+      const html = await res.text();
 
-      const quotaHit =
-        lower.includes("api count exceeded") ||
-        lower.includes("increase quota") ||
-        lower.includes("rate limit") ||
-        lower.includes("daily");
-
-      if (res.ok && !quotaHit && text.length > 0) {
-        return { target: data.target, ok: true, output: text, provider: "hackertarget-nping" };
+      // Parse HTML response to extract traceroute data
+      const match = html.match(/<pre[^>]*>([\s\S]*?)<\/pre>/);
+      
+      if (!match || !match[1]) {
+        return {
+          target: data.target,
+          ok: false,
+          error: "No traceroute data returned",
+        };
       }
-      failures.push("nping: " + (quotaHit ? "quota exceeded" : `HTTP ${res.status}`));
+
+      // Clean HTML entities and tags
+      let output = match[1]
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&")
+        .replace(/<[^>]*>/g, "")
+        .trim();
+
+      if (!output || output.length < 10) {
+        return {
+          target: data.target,
+          ok: false,
+          error: "Target unreachable or invalid",
+        };
+      }
+
+      return { target: data.target, ok: true, output, provider: "ip.sb" };
     } catch (e) {
-      failures.push("nping: " + (e instanceof Error ? e.message : "failed"));
+      return {
+        target: data.target,
+        ok: false,
+        error: e instanceof Error ? e.message : "Traceroute failed - service unavailable",
+      };
     }
-
-    // All providers failed
-    const hasQuotaError = failures.some((f) => f.includes("quota"));
-    const errorMsg = hasQuotaError
-      ? "Traceroute service quota exceeded. Try again later, or add HACKERTARGET_API_KEY in Backend → Secrets."
-      : `Traceroute services unavailable. ${failures.join(" | ")}`;
-
-    return {
-      target: data.target,
-      ok: false,
-      error: errorMsg,
-    };
   });
 
 export const whoisIp = createServerFn({ method: "POST" })
