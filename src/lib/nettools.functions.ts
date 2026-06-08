@@ -113,54 +113,84 @@ export const traceHost = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     const apiKey = process.env.HACKERTARGET_API_KEY;
-    // Try HackerTarget first (with key if provided), then fall back to free providers.
-    const providers: Array<{ name: string; url: string; parse: (t: string) => string | null }> = [
-      {
-        name: "hackertarget-mtr",
-        url: `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}${apiKey ? `&apikey=${encodeURIComponent(apiKey)}` : ""}`,
-        parse: (t) => t,
-      },
-      {
-        name: "hackertarget-nping",
-        url: `https://api.hackertarget.com/nping/?q=${encodeURIComponent(data.target)}${apiKey ? `&apikey=${encodeURIComponent(apiKey)}` : ""}`,
-        parse: (t) => t,
-      },
-    ];
-
-    const failures: string[] = [];
-    for (const p of providers) {
+    
+    // Provider 1: ViewDNS (free, no quota, simple API)
+    const tryViewDNS = async (): Promise<{ ok: true; output: string } | { ok: false; error: string }> => {
       try {
-        const res = await fetch(p.url);
+        const url = `https://viewdns.info/api/traceroute/?domain=${encodeURIComponent(data.target)}&output=json`;
+        const res = await fetch(url);
+        if (!res.ok) return { ok: false, error: `ViewDNS HTTP ${res.status}` };
+        
+        const json = (await res.json()) as {
+          hops?: Array<{ hop: number; ip: string; hostname: string; rtt1: string; rtt2: string; rtt3: string }>;
+          response_code?: string;
+        };
+        
+        if (json.response_code !== "200" || !json.hops || json.hops.length === 0) {
+          return { ok: false, error: "ViewDNS: No hops returned" };
+        }
+        
+        // Format as traceroute output
+        const output = json.hops
+          .map((hop) => {
+            const rtts = [hop.rtt1, hop.rtt2, hop.rtt3]
+              .filter((r) => r && r !== "*")
+              .map((r) => `${r}ms`)
+              .join("  ");
+            const host = hop.hostname && hop.hostname !== hop.ip ? `${hop.hostname} (${hop.ip})` : hop.ip;
+            return `${hop.hop}  ${host}  ${rtts || "* * *"}`;
+          })
+          .join("\n");
+        
+        return { ok: true, output };
+      } catch (e) {
+        return { ok: false, error: `ViewDNS: ${e instanceof Error ? e.message : "request failed"}` };
+      }
+    };
+
+    // Provider 2: HackerTarget (if API key provided, or as secondary)
+    const tryHackerTarget = async (): Promise<{ ok: true; output: string } | { ok: false; error: string }> => {
+      if (!apiKey) return { ok: false, error: "HackerTarget: no API key" };
+      
+      try {
+        const url = `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}&apikey=${encodeURIComponent(apiKey)}`;
+        const res = await fetch(url);
         const text = (await res.text()).trim();
         const lower = text.toLowerCase();
+        
         const quotaHit =
           lower.includes("api count exceeded") ||
           lower.includes("increase quota") ||
           lower.includes("rate limit");
+        
         if (!res.ok || quotaHit || text.length === 0) {
-          failures.push(`${p.name}: ${text || `HTTP ${res.status}`}`);
-          continue;
+          return { ok: false, error: `HackerTarget: ${text || `HTTP ${res.status}`}` };
         }
-        const out = p.parse(text);
-        if (!out) {
-          failures.push(`${p.name}: empty output`);
-          continue;
-        }
-        return { target: data.target, ok: true, output: out, provider: p.name };
+        
+        return { ok: true, output: text };
       } catch (e) {
-        failures.push(`${p.name}: ${e instanceof Error ? e.message : "request failed"}`);
+        return { ok: false, error: `HackerTarget: ${e instanceof Error ? e.message : "request failed"}` };
       }
+    };
+
+    // Try providers in order
+    const result1 = await tryViewDNS();
+    if (result1.ok) {
+      return { target: data.target, ok: true, output: result1.output, provider: "viewdns" };
     }
 
+    const result2 = await tryHackerTarget();
+    if (result2.ok) {
+      return { target: data.target, ok: true, output: result2.output, provider: "hackertarget" };
+    }
+
+    // Both failed
     return {
       target: data.target,
       ok: false,
-      error:
-        "Traceroute service is temporarily over its free quota. Please try again later, or add a HACKERTARGET_API_KEY in Backend → Secrets to lift the limit.",
-      details: failures.join(" | "),
+      error: `Traceroute services unavailable. ${result1.error} | ${result2.error}`,
     };
   });
-
 export const whoisIp = createServerFn({ method: "POST" })
   .inputValidator((d: { ip: string }) => {
     const v = d.ip.trim();
