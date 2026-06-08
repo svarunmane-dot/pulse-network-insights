@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
    NETWORK TOOLS – server functions
    - pingHost: TCP handshake timing (3 probes) via cloudflare:sockets
    - portCheck: single TCP connect with timeout
-   - traceHost: proxy HackerTarget MTR API (returns text)
+   - traceHost: Globalping traceroute (free, no quota limits)
    - whoisIp: proxy ip-api.com (CORS-safe via server)
    ============================================================ */
 
@@ -106,31 +106,6 @@ export const portCheck = createServerFn({ method: "POST" })
     return { target: data.target, port: data.port, ...r };
   });
 
-import { createServerFn } from "@tanstack/react-start";
-
-/* ============================================================
-   TRACEROUTE using Globalping (free, no quota limits)
-   - Creates measurement request
-   - Polls for results (5 attempts, 10s total timeout)
-   - Returns formatted traceroute output
-   ============================================================ */
-
-function isValidIPv4(ip: string): boolean {
-  const parts = ip.trim().split(".");
-  if (parts.length !== 4) return false;
-  return parts.every((p) => {
-    const n = parseInt(p, 10);
-    return String(n) === p && n >= 0 && n <= 255;
-  });
-}
-
-function isValidHostOrIp(s: string): boolean {
-  const v = s.trim();
-  if (!v || v.length > 253) return false;
-  if (isValidIPv4(v)) return true;
-  return /^[a-zA-Z0-9.-]+$/.test(v) && v.includes(".");
-}
-
 export const traceHost = createServerFn({ method: "POST" })
   .inputValidator((d: { target: string }) => {
     if (!isValidHostOrIp(d.target)) throw new Error("Invalid host or IP");
@@ -145,7 +120,7 @@ export const traceHost = createServerFn({ method: "POST" })
         body: JSON.stringify({
           target: data.target,
           type: "traceroute",
-          locations: [{ country: "GB" }], // Your location
+          locations: [{ country: "GB" }],
           options: { timeout: 10 },
         }),
       });
@@ -175,7 +150,7 @@ export const traceHost = createServerFn({ method: "POST" })
       // Step 2: Poll for results (5 attempts, ~2 second interval)
       let results = null;
       for (let attempt = 0; attempt < 5; attempt++) {
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2s between polls
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const statusResponse = await fetch(
           `https://api.globalping.io/v1/measurements/${measurementId}`,
@@ -231,6 +206,7 @@ export const traceHost = createServerFn({ method: "POST" })
       };
     }
   });
+
 export const whoisIp = createServerFn({ method: "POST" })
   .inputValidator((d: { ip: string }) => {
     const v = d.ip.trim();
