@@ -106,90 +106,130 @@ export const portCheck = createServerFn({ method: "POST" })
     return { target: data.target, port: data.port, ...r };
   });
 
+import { createServerFn } from "@tanstack/react-start";
+
+/* ============================================================
+   TRACEROUTE using Globalping (free, no quota limits)
+   - Creates measurement request
+   - Polls for results (5 attempts, 10s total timeout)
+   - Returns formatted traceroute output
+   ============================================================ */
+
+function isValidIPv4(ip: string): boolean {
+  const parts = ip.trim().split(".");
+  if (parts.length !== 4) return false;
+  return parts.every((p) => {
+    const n = parseInt(p, 10);
+    return String(n) === p && n >= 0 && n <= 255;
+  });
+}
+
+function isValidHostOrIp(s: string): boolean {
+  const v = s.trim();
+  if (!v || v.length > 253) return false;
+  if (isValidIPv4(v)) return true;
+  return /^[a-zA-Z0-9.-]+$/.test(v) && v.includes(".");
+}
+
 export const traceHost = createServerFn({ method: "POST" })
   .inputValidator((d: { target: string }) => {
     if (!isValidHostOrIp(d.target)) throw new Error("Invalid host or IP");
     return { target: d.target.trim() };
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env.HACKERTARGET_API_KEY;
-    
-    // Provider 1: ViewDNS (free, no quota, simple API)
-    const tryViewDNS = async (): Promise<{ ok: true; output: string } | { ok: false; error: string }> => {
-      try {
-        const url = `https://viewdns.info/api/traceroute/?domain=${encodeURIComponent(data.target)}&output=json`;
-        const res = await fetch(url);
-        if (!res.ok) return { ok: false, error: `ViewDNS HTTP ${res.status}` };
-        
-        const json = (await res.json()) as {
-          hops?: Array<{ hop: number; ip: string; hostname: string; rtt1: string; rtt2: string; rtt3: string }>;
-          response_code?: string;
+    try {
+      // Step 1: Create measurement request with Globalping
+      const createResponse = await fetch("https://api.globalping.io/v1/measurements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target: data.target,
+          type: "traceroute",
+          locations: [{ country: "GB" }], // Your location
+          options: { timeout: 10 },
+        }),
+      });
+
+      if (!createResponse.ok) {
+        return {
+          target: data.target,
+          ok: false,
+          error: `Globalping request failed: HTTP ${createResponse.status}`,
         };
-        
-        if (json.response_code !== "200" || !json.hops || json.hops.length === 0) {
-          return { ok: false, error: "ViewDNS: No hops returned" };
-        }
-        
-        // Format as traceroute output
-        const output = json.hops
-          .map((hop) => {
-            const rtts = [hop.rtt1, hop.rtt2, hop.rtt3]
-              .filter((r) => r && r !== "*")
-              .map((r) => `${r}ms`)
-              .join("  ");
-            const host = hop.hostname && hop.hostname !== hop.ip ? `${hop.hostname} (${hop.ip})` : hop.ip;
-            return `${hop.hop}  ${host}  ${rtts || "* * *"}`;
-          })
-          .join("\n");
-        
-        return { ok: true, output };
-      } catch (e) {
-        return { ok: false, error: `ViewDNS: ${e instanceof Error ? e.message : "request failed"}` };
       }
-    };
 
-    // Provider 2: HackerTarget (if API key provided, or as secondary)
-    const tryHackerTarget = async (): Promise<{ ok: true; output: string } | { ok: false; error: string }> => {
-      if (!apiKey) return { ok: false, error: "HackerTarget: no API key" };
-      
-      try {
-        const url = `https://api.hackertarget.com/mtr/?q=${encodeURIComponent(data.target)}&apikey=${encodeURIComponent(apiKey)}`;
-        const res = await fetch(url);
-        const text = (await res.text()).trim();
-        const lower = text.toLowerCase();
-        
-        const quotaHit =
-          lower.includes("api count exceeded") ||
-          lower.includes("increase quota") ||
-          lower.includes("rate limit");
-        
-        if (!res.ok || quotaHit || text.length === 0) {
-          return { ok: false, error: `HackerTarget: ${text || `HTTP ${res.status}`}` };
-        }
-        
-        return { ok: true, output: text };
-      } catch (e) {
-        return { ok: false, error: `HackerTarget: ${e instanceof Error ? e.message : "request failed"}` };
+      const measurementData = (await createResponse.json()) as {
+        id?: string;
+        results?: Array<{ probe: { country: string }; result: { status: string; hops?: Array<{ hop: number; ip: string; host?: string; latency: number; timings?: Array<number> }> } }>;
+      };
+
+      const measurementId = measurementData.id;
+      if (!measurementId) {
+        return {
+          target: data.target,
+          ok: false,
+          error: "Globalping: no measurement ID returned",
+        };
       }
-    };
 
-    // Try providers in order
-    const result1 = await tryViewDNS();
-    if (result1.ok) {
-      return { target: data.target, ok: true, output: result1.output, provider: "viewdns" };
+      // Step 2: Poll for results (5 attempts, ~2 second interval)
+      let results = null;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2s between polls
+
+        const statusResponse = await fetch(
+          `https://api.globalping.io/v1/measurements/${measurementId}`,
+        );
+
+        if (!statusResponse.ok) continue;
+
+        const statusData = (await statusResponse.json()) as {
+          results?: Array<{
+            probe: { country: string };
+            result: {
+              status: string;
+              hops?: Array<{ hop: number; ip: string; host?: string; latency: number; timings?: Array<number> }>;
+            };
+          }>;
+        };
+
+        if (statusData.results && statusData.results.length > 0) {
+          const firstResult = statusData.results[0];
+          if (
+            firstResult.result.status === "finished" ||
+            (firstResult.result.hops && firstResult.result.hops.length > 0)
+          ) {
+            results = firstResult.result;
+            break;
+          }
+        }
+      }
+
+      if (!results || !results.hops || results.hops.length === 0) {
+        return {
+          target: data.target,
+          ok: false,
+          error: "Globalping: no hops returned (target may be unreachable)",
+        };
+      }
+
+      // Step 3: Format output as traceroute
+      const output = results.hops
+        .map((hop) => {
+          const latency = hop.latency ? `${hop.latency.toFixed(2)}ms` : "*";
+          const host = hop.host || hop.ip;
+          return `${hop.hop}  ${host}  ${latency}`;
+        })
+        .join("\n");
+
+      return { target: data.target, ok: true, output, provider: "globalping" };
+    } catch (e) {
+      return {
+        target: data.target,
+        ok: false,
+        error: e instanceof Error ? e.message : "Traceroute failed",
+      };
     }
-
-    const result2 = await tryHackerTarget();
-    if (result2.ok) {
-      return { target: data.target, ok: true, output: result2.output, provider: "hackertarget" };
-    }
-
-    // Both failed
-    return {
-      target: data.target,
-      ok: false,
-      error: `Traceroute services unavailable. ${result1.error} | ${result2.error}`,
-    };
   });
 export const whoisIp = createServerFn({ method: "POST" })
   .inputValidator((d: { ip: string }) => {
