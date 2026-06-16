@@ -138,41 +138,25 @@ export const adminListUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: profiles }, { data: roles }, { data: limits }, { data: monitors }] =
-      await Promise.all([
-        supabaseAdmin.from("profiles").select("id, email, created_at"),
-        supabaseAdmin.from("user_roles").select("user_id, role"),
-        supabaseAdmin.from("user_limits").select("user_id, max_monitors, retention_days"),
-        supabaseAdmin.from("wan_monitors").select("user_id"),
-      ]);
-    const roleByUser = new Map<string, string[]>();
-    (roles ?? []).forEach((r) => {
-      const arr = roleByUser.get(r.user_id) ?? [];
-      arr.push(r.role);
-      roleByUser.set(r.user_id, arr);
-    });
-    const limitByUser = new Map(
-      (limits ?? []).map((l) => [l.user_id, l] as const),
-    );
-    const countByUser = new Map<string, number>();
-    (monitors ?? []).forEach((m) => {
-      countByUser.set(m.user_id, (countByUser.get(m.user_id) ?? 0) + 1);
-    });
-    return (profiles ?? []).map((p) => {
-      const userRoles = roleByUser.get(p.id) ?? [];
-      const isAdmin = userRoles.includes("admin");
-      const limit = limitByUser.get(p.id);
-      return {
-        id: p.id,
-        email: p.email,
-        created_at: p.created_at,
-        is_admin: isAdmin,
-        max_monitors: limit?.max_monitors ?? 1,
-        retention_days: limit?.retention_days ?? 1,
-        monitor_count: countByUser.get(p.id) ?? 0,
-      };
-    });
+    const { data, error } = await context.supabase.rpc("admin_list_users");
+    if (error) throw new Error(error.message);
+    return (data ?? []).map((r: {
+      id: string;
+      email: string;
+      created_at: string;
+      is_admin: boolean;
+      max_monitors: number;
+      retention_days: number;
+      monitor_count: number | string;
+    }) => ({
+      id: r.id,
+      email: r.email,
+      created_at: r.created_at,
+      is_admin: r.is_admin,
+      max_monitors: r.max_monitors,
+      retention_days: r.retention_days,
+      monitor_count: Number(r.monitor_count),
+    }));
   });
 
 export const adminSetUserLimit = createServerFn({ method: "POST" })
@@ -189,8 +173,7 @@ export const adminSetUserLimit = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const { error } = await context.supabase
       .from("user_limits")
       .upsert(
         {
