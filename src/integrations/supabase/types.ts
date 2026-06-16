@@ -203,6 +203,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          is_admin: boolean
+          max_monitors: number
+          monitor_count: number
+          retention_days: number
+        }[]
+      }
       get_user_limits: {
         Args: { _user_id: string }
         Returns: {
