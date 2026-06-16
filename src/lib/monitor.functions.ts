@@ -122,8 +122,9 @@ export const listEvents = createServerFn({ method: "POST" })
 
 // ---- Admin: per-user limits management ----
 
-async function assertAdmin(context: { supabase: ReturnType<typeof Object>; userId: string }) {
-  // @ts-expect-error runtime call
+type AuthCtx = { supabase: any; userId: string };
+
+async function assertAdmin(context: AuthCtx) {
   const { data, error } = await context.supabase
     .from("user_roles")
     .select("role")
