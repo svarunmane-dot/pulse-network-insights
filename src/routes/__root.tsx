@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "keywords",
         content:
-          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns, domain to ip, ping ip, traceroute, whose ip, ip geolocation, port check, open port checker, network tools",
+          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns, domain to ip, ping ip, whose ip, ip geolocation, port check, open port checker, wan monitoring, uptime monitor, ip uptime, public ip monitor, network tools",
       },
       { name: "author", content: "Arun – Network Architect" },
       { name: "theme-color", content: "#0A0E1A" },
@@ -221,9 +221,9 @@ function SiteHeader() {
             { to: "/subnet", label: "Subnet Calculator" },
             { to: "/dnslookup", label: "DNS Lookup" },
             { to: "/pingip", label: "Ping IP" },
-            { to: "/traceroute", label: "Traceroute" },
             { to: "/whoisip", label: "Whose IP" },
             { to: "/portcheck", label: "Port Check" },
+            { to: "/monitoring", label: "Monitoring" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
@@ -283,9 +283,9 @@ function SiteFooter() {
             { to: "/subnet", label: "Subnet Calculator" },
             { to: "/dnslookup", label: "DNS Lookup" },
             { to: "/pingip", label: "Ping IP" },
-            { to: "/traceroute", label: "Traceroute" },
             { to: "/whoisip", label: "Whose IP" },
             { to: "/portcheck", label: "Port Check" },
+            { to: "/monitoring", label: "Monitoring" },
           ]}
         />
         <FooterCol
