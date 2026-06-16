@@ -23,6 +23,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
+import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
 
 const WhoisipRoute = WhoisipRouteImport.update({
   id: '/whoisip',
@@ -94,6 +95,12 @@ const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   path: '/api/public/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksMonitorTickRoute =
+  ApiPublicHooksMonitorTickRouteImport.update({
+    id: '/api/public/hooks/monitor-tick',
+    path: '/api/public/hooks/monitor-tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
+  '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +134,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
+  '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +152,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
+  '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/whoisip'
     | '/api/public/upload'
+    | '/api/public/hooks/monitor-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/whoisip'
     | '/api/public/upload'
+    | '/api/public/hooks/monitor-tick'
   id:
     | '__root__'
     | '/'
@@ -193,6 +205,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/whoisip'
     | '/api/public/upload'
+    | '/api/public/hooks/monitor-tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,6 +223,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WhoisipRoute: typeof WhoisipRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
+  ApiPublicHooksMonitorTickRoute: typeof ApiPublicHooksMonitorTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -312,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/monitor-tick': {
+      id: '/api/public/hooks/monitor-tick'
+      path: '/api/public/hooks/monitor-tick'
+      fullPath: '/api/public/hooks/monitor-tick'
+      preLoaderRoute: typeof ApiPublicHooksMonitorTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -330,6 +351,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WhoisipRoute: WhoisipRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
+  ApiPublicHooksMonitorTickRoute: ApiPublicHooksMonitorTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -49,7 +49,12 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
             });
 
             const changed = m.last_status !== null && m.last_status !== status;
-            const update: Record<string, unknown> = {
+            const update: {
+              last_status: string;
+              last_latency_ms: number | null;
+              last_checked_at: string;
+              last_status_change_at?: string;
+            } = {
               last_status: status,
               last_latency_ms: latency,
               last_checked_at: now,
