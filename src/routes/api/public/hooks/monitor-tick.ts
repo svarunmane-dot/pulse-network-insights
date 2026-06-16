@@ -19,6 +19,16 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
         );
         const { tcpProbe } = await import("@/lib/monitor-probe.server");
 
+        // Hard-delete expired monitors first
+        const nowIso = new Date().toISOString();
+        const { data: expired } = await supabaseAdmin
+          .from("wan_monitors")
+          .delete()
+          .lt("expires_at", nowIso)
+          .not("expires_at", "is", null)
+          .select("id");
+        const expiredCount = expired?.length ?? 0;
+
         const { data: monitors, error } = await supabaseAdmin
           .from("wan_monitors")
           .select("id, host, port, last_status")
@@ -78,7 +88,7 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
           }),
         );
 
-        return Response.json({ ok: true, checked, changes });
+        return Response.json({ ok: true, checked, changes, expired: expiredCount });
       },
     },
   },
