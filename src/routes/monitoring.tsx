@@ -7,6 +7,9 @@ import {
   deleteMonitor,
   listEvents,
   listMonitors,
+  adminListUsers,
+  adminSetUserLimit,
+  getMyLimits,
 } from "@/lib/monitor.functions";
 
 export const Route = createFileRoute("/monitoring")({
@@ -42,6 +45,7 @@ type Monitor = {
   last_checked_at: string | null;
   last_status_change_at: string | null;
   created_at: string;
+  expires_at: string | null;
 };
 
 function MonitoringPage() {
@@ -179,6 +183,11 @@ function Dashboard({ email }: { email?: string }) {
   const monitors = (monitorsQ.data?.monitors ?? []) as Monitor[];
   const isAdmin = !!monitorsQ.data?.isAdmin;
 
+  const myLimitsQ = useQuery({
+    queryKey: ["my-limits"],
+    queryFn: () => getMyLimits(),
+  });
+
   return (
     <Shell>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 24, gap: 16, flexWrap: "wrap" }}>
@@ -187,6 +196,11 @@ function Dashboard({ email }: { email?: string }) {
             WAN Monitoring {isAdmin && <span style={badge}>ADMIN</span>}
           </h1>
           <p style={{ color: "#8b94b0", margin: "6px 0 0" }}>{email}{isAdmin ? " · viewing all users’ monitors" : ""}</p>
+          {!isAdmin && myLimitsQ.data && (
+            <p style={{ color: "#8b94b0", margin: "4px 0 0", fontSize: 12 }}>
+              Your plan: up to <strong style={{ color: "#c8d0e0" }}>{myLimitsQ.data.max_monitors}</strong> monitor{myLimitsQ.data.max_monitors === 1 ? "" : "s"}, auto-removed after <strong style={{ color: "#c8d0e0" }}>{myLimitsQ.data.retention_days}</strong> day{myLimitsQ.data.retention_days === 1 ? "" : "s"}. Contact admin to increase.
+            </p>
+          )}
         </div>
         <button onClick={signOut} style={ghostBtn}>Sign out</button>
       </header>
@@ -231,6 +245,8 @@ function Dashboard({ email }: { email?: string }) {
       <p style={{ marginTop: 28, color: "#6b7794", fontSize: 12 }}>
         Checks run server-side from our Cloudflare edge every minute via a TCP handshake. ICMP ping is not used.
       </p>
+
+      {isAdmin && <AdminPanel />}
     </Shell>
   );
 }
@@ -250,6 +266,7 @@ function MonitorRow({
 }) {
   const status = m.last_status;
   const dot = status === "up" ? "#00D4AA" : status === "down" ? "#ff5470" : "#6b7794";
+  const statusLabel = status ? status.toUpperCase() : "PENDING";
   return (
     <div style={panel}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
@@ -259,8 +276,13 @@ function MonitorRow({
           <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
             {m.host}:{m.port}
           </div>
+          {m.expires_at && (
+            <div style={{ color: "#8b94b0", fontSize: 11, marginTop: 2 }}>
+              Auto-removes in {fmtUntil(m.expires_at)}
+            </div>
+          )}
         </div>
-        <Stat label="Status" value={status ? status.toUpperCase() : "—"} color={dot} />
+        <Stat label="Status" value={statusLabel} color={dot} />
         <Stat label="Latency" value={m.last_latency_ms != null ? `${m.last_latency_ms} ms` : "—"} />
         <Stat label="Last check" value={fmtRel(m.last_checked_at)} />
         <button onClick={onToggle} style={ghostBtn}>{expanded ? "Hide" : "Events"}</button>
@@ -332,6 +354,127 @@ function fmtAbs(iso: string): string {
   } catch {
     return iso;
   }
+}
+function fmtUntil(iso: string): string {
+  const diff = new Date(iso).getTime() - Date.now();
+  if (diff <= 0) return "any moment";
+  if (diff < 3_600_000) return `${Math.max(1, Math.round(diff / 60_000))}m`;
+  if (diff < 86_400_000) return `${Math.round(diff / 3_600_000)}h`;
+  return `${Math.round(diff / 86_400_000)}d`;
+}
+
+// ---- Admin panel ----
+
+type AdminUser = {
+  id: string;
+  email: string;
+  created_at: string;
+  is_admin: boolean;
+  max_monitors: number;
+  retention_days: number;
+  monitor_count: number;
+};
+
+function AdminPanel() {
+  const qc = useQueryClient();
+  const usersQ = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: () => adminListUsers(),
+  });
+  const save = useMutation({
+    mutationFn: (v: { user_id: string; max_monitors: number; retention_days: number }) =>
+      adminSetUserLimit({ data: v }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+    },
+  });
+
+  return (
+    <section style={{ marginTop: 36 }}>
+      <h2 style={{ color: "#fff", fontSize: 22, margin: "0 0 12px" }}>
+        Admin · user limits
+      </h2>
+      <p style={{ color: "#8b94b0", fontSize: 13, margin: "0 0 14px" }}>
+        Defaults are 1 monitor and 1-day retention per user. Increase below for specific users.
+      </p>
+      {usersQ.isLoading && <p style={{ color: "#8b94b0" }}>Loading users…</p>}
+      <div style={{ display: "grid", gap: 10 }}>
+        {(usersQ.data as AdminUser[] | undefined)?.map((u) => (
+          <AdminUserRow
+            key={u.id}
+            user={u}
+            onSave={(max_monitors, retention_days) =>
+              save.mutate({ user_id: u.id, max_monitors, retention_days })
+            }
+            saving={save.isPending && save.variables?.user_id === u.id}
+          />
+        ))}
+      </div>
+      {save.error instanceof Error && (
+        <div style={{ color: "#ffb4b4", fontSize: 13, marginTop: 8 }}>{save.error.message}</div>
+      )}
+    </section>
+  );
+}
+
+function AdminUserRow({
+  user,
+  onSave,
+  saving,
+}: {
+  user: AdminUser;
+  onSave: (max: number, days: number) => void;
+  saving: boolean;
+}) {
+  const [max, setMax] = useState(String(user.max_monitors));
+  const [days, setDays] = useState(String(user.retention_days));
+  return (
+    <div
+      style={{
+        ...panel,
+        display: "grid",
+        gridTemplateColumns: "1fr 90px 90px auto",
+        gap: 10,
+        alignItems: "end",
+      }}
+    >
+      <div>
+        <div style={{ color: "#fff", fontWeight: 600, fontSize: 14 }}>
+          {user.email} {user.is_admin && <span style={badge}>ADMIN</span>}
+        </div>
+        <div style={{ color: "#8b94b0", fontSize: 11, marginTop: 2 }}>
+          {user.monitor_count} active monitor{user.monitor_count === 1 ? "" : "s"}
+        </div>
+      </div>
+      <Field label="Max IPs">
+        <input
+          value={max}
+          inputMode="numeric"
+          onChange={(e) => setMax(e.target.value)}
+          style={input}
+          disabled={user.is_admin}
+        />
+      </Field>
+      <Field label="Days">
+        <input
+          value={days}
+          inputMode="numeric"
+          onChange={(e) => setDays(e.target.value)}
+          style={input}
+          disabled={user.is_admin}
+        />
+      </Field>
+      <button
+        type="button"
+        onClick={() => onSave(parseInt(max, 10), parseInt(days, 10))}
+        disabled={saving || user.is_admin}
+        style={{ ...primaryBtn, opacity: user.is_admin ? 0.4 : 1 }}
+      >
+        {saving ? "Saving…" : "Save"}
+      </button>
+    </div>
+  );
 }
 
 const panel: React.CSSProperties = {
