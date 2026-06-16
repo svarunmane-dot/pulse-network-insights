@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhoisipRouteImport } from './routes/whoisip'
-import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -18,21 +17,19 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PortcheckRouteImport } from './routes/portcheck'
 import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PingRouteImport } from './routes/ping'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
+import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
 
 const WhoisipRoute = WhoisipRouteImport.update({
   id: '/whoisip',
   path: '/whoisip',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TracerouteRoute = TracerouteRouteImport.update({
-  id: '/traceroute',
-  path: '/traceroute',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -70,6 +67,11 @@ const PingRoute = PingRouteImport.update({
   path: '/ping',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GlobalRoute = GlobalRouteImport.update({
   id: '/global',
   path: '/global',
@@ -83,6 +85,11 @@ const DnslookupRoute = DnslookupRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -100,13 +107,21 @@ const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   path: '/api/public/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksMonitorTickRoute =
+  ApiPublicHooksMonitorTickRouteImport.update({
+    id: '/api/public/hooks/monitor-tick',
+    path: '/api/public/hooks/monitor-tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
   '/portcheck': typeof PortcheckRoute
@@ -114,16 +129,18 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
-  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
+  '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
   '/portcheck': typeof PortcheckRoute
@@ -131,17 +148,19 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
-  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
+  '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
   '/portcheck': typeof PortcheckRoute
@@ -149,18 +168,20 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
-  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
+  '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/auth'
     | '/contact'
     | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/pingip'
     | '/portcheck'
@@ -168,16 +189,18 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
-    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
+    | '/api/public/hooks/monitor-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/auth'
     | '/contact'
     | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/pingip'
     | '/portcheck'
@@ -185,16 +208,18 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
-    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
+    | '/api/public/hooks/monitor-tick'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/auth'
     | '/contact'
     | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/pingip'
     | '/portcheck'
@@ -202,17 +227,19 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
-    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
+    | '/api/public/hooks/monitor-tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
+  MonitoringRoute: typeof MonitoringRoute
   PingRoute: typeof PingRoute
   PingipRoute: typeof PingipRoute
   PortcheckRoute: typeof PortcheckRoute
@@ -220,9 +247,9 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
-  TracerouteRoute: typeof TracerouteRoute
   WhoisipRoute: typeof WhoisipRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
+  ApiPublicHooksMonitorTickRoute: typeof ApiPublicHooksMonitorTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,13 +259,6 @@ declare module '@tanstack/react-router' {
       path: '/whoisip'
       fullPath: '/whoisip'
       preLoaderRoute: typeof WhoisipRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/traceroute': {
-      id: '/traceroute'
-      path: '/traceroute'
-      fullPath: '/traceroute'
-      preLoaderRoute: typeof TracerouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -290,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/global': {
       id: '/global'
       path: '/global'
@@ -309,6 +336,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -332,15 +366,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/monitor-tick': {
+      id: '/api/public/hooks/monitor-tick'
+      path: '/api/public/hooks/monitor-tick'
+      fullPath: '/api/public/hooks/monitor-tick'
+      preLoaderRoute: typeof ApiPublicHooksMonitorTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
+  MonitoringRoute: MonitoringRoute,
   PingRoute: PingRoute,
   PingipRoute: PingipRoute,
   PortcheckRoute: PortcheckRoute,
@@ -348,20 +391,10 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
-  TracerouteRoute: TracerouteRoute,
   WhoisipRoute: WhoisipRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
+  ApiPublicHooksMonitorTickRoute: ApiPublicHooksMonitorTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

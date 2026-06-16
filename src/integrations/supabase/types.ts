@@ -14,16 +14,178 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      monitor_checks: {
+        Row: {
+          checked_at: string
+          error: string | null
+          id: number
+          latency_ms: number | null
+          monitor_id: string
+          status: string
+        }
+        Insert: {
+          checked_at?: string
+          error?: string | null
+          id?: number
+          latency_ms?: number | null
+          monitor_id: string
+          status: string
+        }
+        Update: {
+          checked_at?: string
+          error?: string | null
+          id?: number
+          latency_ms?: number | null
+          monitor_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monitor_checks_monitor_id_fkey"
+            columns: ["monitor_id"]
+            isOneToOne: false
+            referencedRelation: "wan_monitors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monitor_events: {
+        Row: {
+          created_at: string
+          error: string | null
+          from_status: string | null
+          id: number
+          latency_ms: number | null
+          monitor_id: string
+          to_status: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          from_status?: string | null
+          id?: number
+          latency_ms?: number | null
+          monitor_id: string
+          to_status: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          from_status?: string | null
+          id?: number
+          latency_ms?: number | null
+          monitor_id?: string
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monitor_events_monitor_id_fkey"
+            columns: ["monitor_id"]
+            isOneToOne: false
+            referencedRelation: "wan_monitors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wan_monitors: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          host: string
+          id: string
+          label: string
+          last_checked_at: string | null
+          last_latency_ms: number | null
+          last_status: string | null
+          last_status_change_at: string | null
+          port: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          host: string
+          id?: string
+          label: string
+          last_checked_at?: string | null
+          last_latency_ms?: number | null
+          last_status?: string | null
+          last_status_change_at?: string | null
+          port?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          host?: string
+          id?: string
+          label?: string
+          last_checked_at?: string | null
+          last_latency_ms?: number | null
+          last_status?: string | null
+          last_status_change_at?: string | null
+          port?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +312,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
