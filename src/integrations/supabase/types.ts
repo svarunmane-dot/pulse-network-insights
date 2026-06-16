@@ -105,6 +105,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_limits: {
+        Row: {
+          created_at: string
+          max_monitors: number
+          retention_days: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          max_monitors?: number
+          retention_days?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          max_monitors?: number
+          retention_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -130,6 +154,7 @@ export type Database = {
         Row: {
           created_at: string
           enabled: boolean
+          expires_at: string | null
           host: string
           id: string
           label: string
@@ -144,6 +169,7 @@ export type Database = {
         Insert: {
           created_at?: string
           enabled?: boolean
+          expires_at?: string | null
           host: string
           id?: string
           label: string
@@ -158,6 +184,7 @@ export type Database = {
         Update: {
           created_at?: string
           enabled?: boolean
+          expires_at?: string | null
           host?: string
           id?: string
           label?: string
@@ -176,6 +203,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_limits: {
+        Args: { _user_id: string }
+        Returns: {
+          max_monitors: number
+          retention_days: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
