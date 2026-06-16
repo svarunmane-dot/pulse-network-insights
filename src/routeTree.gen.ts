@@ -17,6 +17,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PortcheckRouteImport } from './routes/portcheck'
 import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PingRouteImport } from './routes/ping'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -64,6 +65,11 @@ const PingipRoute = PingipRouteImport.update({
 const PingRoute = PingRouteImport.update({
   id: '/ping',
   path: '/ping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GlobalRoute = GlobalRouteImport.update({
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
   '/portcheck': typeof PortcheckRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
   '/portcheck': typeof PortcheckRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/pingip': typeof PingipRoute
   '/portcheck': typeof PortcheckRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/pingip'
     | '/portcheck'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/pingip'
     | '/portcheck'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/pingip'
     | '/portcheck'
@@ -227,6 +239,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
+  MonitoringRoute: typeof MonitoringRoute
   PingRoute: typeof PingRoute
   PingipRoute: typeof PingipRoute
   PortcheckRoute: typeof PortcheckRoute
@@ -297,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/global': {
       id: '/global'
       path: '/global'
@@ -363,6 +383,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
+  MonitoringRoute: MonitoringRoute,
   PingRoute: PingRoute,
   PingipRoute: PingipRoute,
   PortcheckRoute: PortcheckRoute,
@@ -377,3 +398,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
