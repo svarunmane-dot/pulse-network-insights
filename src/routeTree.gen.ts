@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhoisipRouteImport } from './routes/whoisip'
-import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -28,11 +27,6 @@ import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 const WhoisipRoute = WhoisipRouteImport.update({
   id: '/whoisip',
   path: '/whoisip',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TracerouteRoute = TracerouteRouteImport.update({
-  id: '/traceroute',
-  path: '/traceroute',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -114,7 +108,6 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
-  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
@@ -131,7 +124,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
-  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
@@ -149,7 +141,6 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
-  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
 }
@@ -168,7 +159,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
-    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
   fileRoutesByTo: FileRoutesByTo
@@ -185,7 +175,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
-    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
   id:
@@ -202,7 +191,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
-    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
   fileRoutesById: FileRoutesById
@@ -220,7 +208,6 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
-  TracerouteRoute: typeof TracerouteRoute
   WhoisipRoute: typeof WhoisipRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
 }
@@ -232,13 +219,6 @@ declare module '@tanstack/react-router' {
       path: '/whoisip'
       fullPath: '/whoisip'
       preLoaderRoute: typeof WhoisipRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/traceroute': {
-      id: '/traceroute'
-      path: '/traceroute'
-      fullPath: '/traceroute'
-      preLoaderRoute: typeof TracerouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -348,7 +328,6 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
-  TracerouteRoute: TracerouteRoute,
   WhoisipRoute: WhoisipRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
 }
