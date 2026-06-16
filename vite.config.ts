@@ -12,11 +12,6 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
-  // Force-enable the nitro deploy plugin so external CI (Cloudflare Pages/Workers
-  // `npx wrangler deploy`) gets a proper Worker bundle. Without this, the plugin
-  // skips itself ("No Lovable context detected") and wrangler fails to resolve
-  // TanStack Start virtual imports like `#tanstack-router-entry`.
-  nitro: true,
   vite: {
     build: {
       rollupOptions: {
