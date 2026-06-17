@@ -311,6 +311,11 @@ function MonitorRow({
           <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
             {m.host}{m.probe_type === "icmp" ? "" : `:${m.port}`}
           </div>
+          {m.last_error && m.last_status === "down" && (
+            <div style={{ color: "#ffb4b4", fontSize: 11, marginTop: 2 }}>
+              {m.probe_type === "icmp" ? "Tunnel/ICMP: " : "TCP: "}{m.last_error}
+            </div>
+          )}
           {m.expires_at && (
             <div style={{ color: "#8b94b0", fontSize: 11, marginTop: 2 }}>
               Auto-removes in {fmtUntil(m.expires_at)}
