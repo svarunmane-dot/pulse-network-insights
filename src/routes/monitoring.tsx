@@ -209,16 +209,30 @@ function Dashboard({ email }: { email?: string }) {
         <button onClick={signOut} style={ghostBtn}>Sign out</button>
       </header>
 
-      <form onSubmit={submit} style={{ ...panel, display: "grid", gridTemplateColumns: "1fr 1fr 110px 120px auto", gap: 10, alignItems: "end" }}>
+      <form
+        onSubmit={submit}
+        style={{
+          ...panel,
+          display: "grid",
+          gridTemplateColumns:
+            probeType === "icmp"
+              ? "1.2fr 1.4fr 150px 140px"
+              : "1.2fr 1.4fr 90px 150px 140px",
+          gap: 12,
+          alignItems: "end",
+        }}
+      >
         <Field label="Label">
           <input value={label} required maxLength={80} onChange={(e) => setLabel(e.target.value)} style={input} placeholder="HQ firewall" />
         </Field>
         <Field label="Public IP / host">
           <input value={host} required onChange={(e) => setHost(e.target.value)} style={input} placeholder="203.0.113.5" />
         </Field>
-        <Field label="Port">
-          <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" disabled={probeType === "icmp"} />
-        </Field>
+        {probeType === "tcp" && (
+          <Field label="Port">
+            <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" />
+          </Field>
+        )}
         <Field label="Probe">
           <select
             value={probeType}
