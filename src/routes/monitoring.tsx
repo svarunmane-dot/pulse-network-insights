@@ -45,6 +45,7 @@ type Monitor = {
   last_latency_ms: number | null;
   last_checked_at: string | null;
   last_status_change_at: string | null;
+  last_error?: string | null;
   created_at: string;
   expires_at: string | null;
 };
