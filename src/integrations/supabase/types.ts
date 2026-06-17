@@ -159,6 +159,7 @@ export type Database = {
           id: string
           label: string
           last_checked_at: string | null
+          last_error: string | null
           last_latency_ms: number | null
           last_status: string | null
           last_status_change_at: string | null
@@ -175,6 +176,7 @@ export type Database = {
           id?: string
           label: string
           last_checked_at?: string | null
+          last_error?: string | null
           last_latency_ms?: number | null
           last_status?: string | null
           last_status_change_at?: string | null
@@ -191,6 +193,7 @@ export type Database = {
           id?: string
           label?: string
           last_checked_at?: string | null
+          last_error?: string | null
           last_latency_ms?: number | null
           last_status?: string | null
           last_status_change_at?: string | null

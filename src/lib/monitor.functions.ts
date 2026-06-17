@@ -92,6 +92,7 @@ export const createMonitor = createServerFn({ method: "POST" })
           last_latency_ms: latency,
           last_checked_at: now,
           last_status_change_at: now,
+          last_error: err,
         })
         .eq("id", row.id)
         .select("*")

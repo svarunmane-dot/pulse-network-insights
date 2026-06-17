@@ -45,6 +45,7 @@ type Monitor = {
   last_latency_ms: number | null;
   last_checked_at: string | null;
   last_status_change_at: string | null;
+  last_error?: string | null;
   created_at: string;
   expires_at: string | null;
 };
@@ -208,16 +209,30 @@ function Dashboard({ email }: { email?: string }) {
         <button onClick={signOut} style={ghostBtn}>Sign out</button>
       </header>
 
-      <form onSubmit={submit} style={{ ...panel, display: "grid", gridTemplateColumns: "1fr 1fr 110px 120px auto", gap: 10, alignItems: "end" }}>
+      <form
+        onSubmit={submit}
+        style={{
+          ...panel,
+          display: "grid",
+          gridTemplateColumns:
+            probeType === "icmp"
+              ? "1.2fr 1.4fr 150px 140px"
+              : "1.2fr 1.4fr 90px 150px 140px",
+          gap: 12,
+          alignItems: "end",
+        }}
+      >
         <Field label="Label">
           <input value={label} required maxLength={80} onChange={(e) => setLabel(e.target.value)} style={input} placeholder="HQ firewall" />
         </Field>
         <Field label="Public IP / host">
           <input value={host} required onChange={(e) => setHost(e.target.value)} style={input} placeholder="203.0.113.5" />
         </Field>
-        <Field label="Port">
-          <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" disabled={probeType === "icmp"} />
-        </Field>
+        {probeType === "tcp" && (
+          <Field label="Port">
+            <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" />
+          </Field>
+        )}
         <Field label="Probe">
           <select
             value={probeType}
@@ -296,6 +311,11 @@ function MonitorRow({
           <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
             {m.host}{m.probe_type === "icmp" ? "" : `:${m.port}`}
           </div>
+          {m.last_error && m.last_status === "down" && (
+            <div style={{ color: "#ffb4b4", fontSize: 11, marginTop: 2 }}>
+              {m.probe_type === "icmp" ? "Tunnel/ICMP: " : "TCP: "}{m.last_error}
+            </div>
+          )}
           {m.expires_at && (
             <div style={{ color: "#8b94b0", fontSize: 11, marginTop: 2 }}>
               Auto-removes in {fmtUntil(m.expires_at)}
