@@ -39,6 +39,7 @@ type Monitor = {
   label: string;
   host: string;
   port: number;
+  probe_type: "tcp" | "icmp" | string;
   enabled: boolean;
   last_status: string | null;
   last_latency_ms: number | null;
@@ -143,7 +144,7 @@ function Dashboard({ email }: { email?: string }) {
   });
 
   const create = useMutation({
-    mutationFn: (input: { label: string; host: string; port: number }) =>
+    mutationFn: (input: { label: string; host: string; port: number; probe_type: "tcp" | "icmp" }) =>
       createMonitor({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["monitors"] }),
   });
@@ -155,6 +156,7 @@ function Dashboard({ email }: { email?: string }) {
   const [label, setLabel] = useState("");
   const [host, setHost] = useState("");
   const [port, setPort] = useState("443");
+  const [probeType, setProbeType] = useState<"tcp" | "icmp">("tcp");
   const [expanded, setExpanded] = useState<string | null>(null);
 
   async function signOut() {
@@ -169,12 +171,13 @@ function Dashboard({ email }: { email?: string }) {
     const p = parseInt(port, 10);
     if (!Number.isInteger(p) || p < 1 || p > 65535) return;
     create.mutate(
-      { label, host, port: p },
+      { label, host, port: p, probe_type: probeType },
       {
         onSuccess: () => {
           setLabel("");
           setHost("");
           setPort("443");
+          setProbeType("tcp");
         },
       },
     );
@@ -205,7 +208,7 @@ function Dashboard({ email }: { email?: string }) {
         <button onClick={signOut} style={ghostBtn}>Sign out</button>
       </header>
 
-      <form onSubmit={submit} style={{ ...panel, display: "grid", gridTemplateColumns: "1fr 1fr 110px auto", gap: 10, alignItems: "end" }}>
+      <form onSubmit={submit} style={{ ...panel, display: "grid", gridTemplateColumns: "1fr 1fr 110px 120px auto", gap: 10, alignItems: "end" }}>
         <Field label="Label">
           <input value={label} required maxLength={80} onChange={(e) => setLabel(e.target.value)} style={input} placeholder="HQ firewall" />
         </Field>
@@ -213,7 +216,17 @@ function Dashboard({ email }: { email?: string }) {
           <input value={host} required onChange={(e) => setHost(e.target.value)} style={input} placeholder="203.0.113.5" />
         </Field>
         <Field label="Port">
-          <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" />
+          <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" disabled={probeType === "icmp"} />
+        </Field>
+        <Field label="Probe">
+          <select
+            value={probeType}
+            onChange={(e) => setProbeType(e.target.value as "tcp" | "icmp")}
+            style={input}
+          >
+            <option value="tcp">TCP handshake</option>
+            <option value="icmp">ICMP (via tunnel)</option>
+          </select>
         </Field>
         <button type="submit" disabled={create.isPending} style={primaryBtn}>
           {create.isPending ? "Adding…" : "Add monitor"}
@@ -267,14 +280,21 @@ function MonitorRow({
   const status = m.last_status;
   const dot = status === "up" ? "#00D4AA" : status === "down" ? "#ff5470" : "#6b7794";
   const statusLabel = status ? status.toUpperCase() : "PENDING";
+  const probe = (m.probe_type ?? "tcp").toUpperCase();
+  const probeColor = m.probe_type === "icmp" ? "#9B8FE8" : "#00D4AA";
   return (
     <div style={panel}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
         <span style={{ width: 12, height: 12, borderRadius: "50%", background: dot, boxShadow: status === "up" ? "0 0 10px rgba(0,212,170,0.6)" : undefined }} />
         <div style={{ minWidth: 0, flex: "1 1 220px" }}>
-          <div style={{ color: "#fff", fontWeight: 600 }}>{m.label}</div>
+          <div style={{ color: "#fff", fontWeight: 600 }}>
+            {m.label}{" "}
+            <span style={{ marginLeft: 6, fontSize: 10, padding: "2px 6px", borderRadius: 5, background: `${probeColor}22`, color: probeColor, letterSpacing: 1, verticalAlign: "middle" }}>
+              {probe}
+            </span>
+          </div>
           <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
-            {m.host}:{m.port}
+            {m.host}{m.probe_type === "icmp" ? "" : `:${m.port}`}
           </div>
           {m.expires_at && (
             <div style={{ color: "#8b94b0", fontSize: 11, marginTop: 2 }}>
