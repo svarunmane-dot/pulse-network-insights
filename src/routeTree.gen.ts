@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhoisipRouteImport } from './routes/whoisip'
+import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -30,6 +31,11 @@ import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/publ
 const WhoisipRoute = WhoisipRouteImport.update({
   id: '/whoisip',
   path: '/whoisip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TracerouteRoute = TracerouteRouteImport.update({
+  id: '/traceroute',
+  path: '/traceroute',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/subnet': typeof SubnetRoute
   '/terms': typeof TermsRoute
+  '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/subnet'
     | '/terms'
+    | '/traceroute'
     | '/whoisip'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SubnetRoute: typeof SubnetRoute
   TermsRoute: typeof TermsRoute
+  TracerouteRoute: typeof TracerouteRoute
   WhoisipRoute: typeof WhoisipRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
   ApiPublicHooksMonitorTickRoute: typeof ApiPublicHooksMonitorTickRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/whoisip'
       fullPath: '/whoisip'
       preLoaderRoute: typeof WhoisipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/traceroute': {
+      id: '/traceroute'
+      path: '/traceroute'
+      fullPath: '/traceroute'
+      preLoaderRoute: typeof TracerouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SubnetRoute: SubnetRoute,
   TermsRoute: TermsRoute,
+  TracerouteRoute: TracerouteRoute,
   WhoisipRoute: WhoisipRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
   ApiPublicHooksMonitorTickRoute: ApiPublicHooksMonitorTickRoute,
@@ -398,13 +419,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

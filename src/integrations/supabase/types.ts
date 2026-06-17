@@ -163,6 +163,7 @@ export type Database = {
           last_status: string | null
           last_status_change_at: string | null
           port: number
+          probe_type: string
           updated_at: string
           user_id: string
         }
@@ -178,6 +179,7 @@ export type Database = {
           last_status?: string | null
           last_status_change_at?: string | null
           port?: number
+          probe_type?: string
           updated_at?: string
           user_id: string
         }
@@ -193,6 +195,7 @@ export type Database = {
           last_status?: string | null
           last_status_change_at?: string | null
           port?: number
+          probe_type?: string
           updated_at?: string
           user_id?: string
         }

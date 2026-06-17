@@ -1,0 +1,1 @@
+ALTER TABLE public.wan_monitors ADD COLUMN IF NOT EXISTS probe_type text NOT NULL DEFAULT 'tcp' CHECK (probe_type IN ('tcp','icmp'));

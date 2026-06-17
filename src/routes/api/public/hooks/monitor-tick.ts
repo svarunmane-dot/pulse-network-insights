@@ -18,6 +18,7 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
           "@/integrations/supabase/client.server"
         );
         const { tcpProbe } = await import("@/lib/monitor-probe.server");
+        const { icmpPing } = await import("@/lib/tunnel.server");
 
         // Hard-delete expired monitors first
         const nowIso = new Date().toISOString();
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
 
         const { data: monitors, error } = await supabaseAdmin
           .from("wan_monitors")
-          .select("id, host, port, last_status")
+          .select("id, host, port, last_status, probe_type")
           .eq("enabled", true);
         if (error) {
           return Response.json({ ok: false, error: error.message }, { status: 500 });
@@ -44,10 +45,21 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
         await Promise.all(
           (monitors ?? []).map(async (m) => {
             checked++;
-            const r = await tcpProbe(m.host, m.port, 4000);
-            const status = r.ok ? "up" : "down";
-            const latency = r.ok ? r.ms ?? null : null;
-            const err = r.ok ? null : r.error ?? "down";
+            let status: "up" | "down";
+            let latency: number | null;
+            let err: string | null;
+            if ((m as { probe_type?: string }).probe_type === "icmp") {
+              const r = await icmpPing(m.host, 6000);
+              const up = r.ok && r.status === "UP";
+              status = up ? "up" : "down";
+              latency = up ? r.latency ?? null : null;
+              err = up ? null : r.error ?? "down";
+            } else {
+              const r = await tcpProbe(m.host, m.port, 4000);
+              status = r.ok ? "up" : "down";
+              latency = r.ok ? r.ms ?? null : null;
+              err = r.ok ? null : r.error ?? "down";
+            }
 
             // history (best-effort)
             await supabaseAdmin.from("monitor_checks").insert({

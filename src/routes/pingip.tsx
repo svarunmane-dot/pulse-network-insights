@@ -38,6 +38,7 @@ function PingIpPage() {
   const ping = useServerFn(pingHost);
   const [target, setTarget] = useState("");
   const [port, setPort] = useState(443);
+  const [mode, setMode] = useState<"tcp" | "icmp">("tcp");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -48,14 +49,14 @@ function PingIpPage() {
     setResult(null);
     setError(null);
     try {
-      const res = await ping({ data: { target: target.trim(), port } });
+      const res = await ping({ data: { target: target.trim(), port, mode } });
       setResult(res);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ping failed");
     } finally {
       setLoading(false);
     }
-  }, [ping, target, port]);
+  }, [ping, target, port, mode]);
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px" }}>
@@ -80,6 +81,28 @@ function PingIpPage() {
       </div>
 
       <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 24, marginBottom: 24 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+          {(["tcp", "icmp"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              style={{
+                flex: 1,
+                padding: "10px 12px",
+                borderRadius: 10,
+                border: `1px solid ${mode === m ? TEAL : BORDER}`,
+                background: mode === m ? "rgba(0,212,170,0.08)" : "#0f1422",
+                color: mode === m ? TEAL : TEXT_SEC,
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              {m === "tcp" ? "TCP handshake (edge)" : "ICMP (via private tunnel)"}
+            </button>
+          ))}
+        </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", gap: 12, marginBottom: 14 }}>
           <div>
             <label style={{ display: "block", fontSize: 12, color: TEXT_MUTED, marginBottom: 6, fontWeight: 600 }}>
@@ -96,7 +119,7 @@ function PingIpPage() {
           </div>
           <div>
             <label style={{ display: "block", fontSize: 12, color: TEXT_MUTED, marginBottom: 6, fontWeight: 600 }}>
-              Port
+              {mode === "icmp" ? "Port (n/a)" : "Port"}
             </label>
             <input
               type="number"
@@ -105,11 +128,12 @@ function PingIpPage() {
               style={inputStyle}
               min={1}
               max={65535}
+              disabled={mode === "icmp"}
             />
           </div>
         </div>
         <button onClick={run} disabled={loading || !target.trim()} style={btnStyle(loading || !target.trim())}>
-          {loading ? "Pinging…" : "Ping"}
+          {loading ? "Pinging…" : mode === "icmp" ? "ICMP Ping" : "TCP Ping"}
         </button>
       </div>
 
