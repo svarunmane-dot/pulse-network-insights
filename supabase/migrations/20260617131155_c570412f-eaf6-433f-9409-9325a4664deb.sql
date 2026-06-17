@@ -1,0 +1,1 @@
+ALTER TABLE public.wan_monitors ADD COLUMN IF NOT EXISTS last_error text;
