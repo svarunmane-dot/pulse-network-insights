@@ -66,13 +66,42 @@ async function tcpConnectTime(
 }
 
 export const pingHost = createServerFn({ method: "POST" })
-  .inputValidator((d: { target: string; port?: number }) => {
+  .inputValidator((d: { target: string; port?: number; mode?: string }) => {
     if (!isValidHostOrIp(d.target)) throw new Error("Invalid host or IP");
     const port = d.port ?? 443;
     if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("Invalid port");
-    return { target: d.target.trim(), port };
+    const mode = (d.mode ?? "tcp").toLowerCase();
+    if (mode !== "tcp" && mode !== "icmp") throw new Error("Invalid mode");
+    return { target: d.target.trim(), port, mode: mode as "tcp" | "icmp" };
   })
   .handler(async ({ data }) => {
+    if (data.mode === "icmp") {
+      const { icmpPing } = await import("@/lib/tunnel.server");
+      const probes: Array<{ ok: boolean; ms?: number; error?: string }> = [];
+      for (let i = 0; i < 4; i++) {
+        const r = await icmpPing(data.target, 6000);
+        const up = r.ok && r.status === "UP";
+        probes.push(
+          up
+            ? { ok: true, ms: r.latency ?? 0 }
+            : { ok: false, error: r.error ?? "down" },
+        );
+      }
+      const successes = probes.filter((p) => p.ok && typeof p.ms === "number");
+      const times = successes.map((p) => p.ms!);
+      return {
+        target: data.target,
+        port: data.port,
+        mode: "icmp" as const,
+        sent: probes.length,
+        received: successes.length,
+        loss: Math.round(((probes.length - successes.length) / probes.length) * 100),
+        min: times.length ? Math.min(...times) : null,
+        max: times.length ? Math.max(...times) : null,
+        avg: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : null,
+        probes,
+      };
+    }
     const probes: Array<{ ok: boolean; ms?: number; error?: string }> = [];
     for (let i = 0; i < 4; i++) {
       probes.push(await tcpConnectTime(data.target, data.port, 4000));
@@ -85,6 +114,7 @@ export const pingHost = createServerFn({ method: "POST" })
     return {
       target: data.target,
       port: data.port,
+      mode: "tcp" as const,
       sent: probes.length,
       received: successes.length,
       loss: Math.round(((probes.length - successes.length) / probes.length) * 100),
@@ -107,11 +137,30 @@ export const portCheck = createServerFn({ method: "POST" })
   });
 
 export const traceHost = createServerFn({ method: "POST" })
-  .inputValidator((d: { target: string }) => {
+  .inputValidator((d: { target: string; mode?: string }) => {
     if (!isValidHostOrIp(d.target)) throw new Error("Invalid host or IP");
-    return { target: d.target.trim() };
+    const mode = (d.mode ?? "tcp").toLowerCase();
+    if (mode !== "tcp" && mode !== "icmp") throw new Error("Invalid mode");
+    return { target: d.target.trim(), mode: mode as "tcp" | "icmp" };
   })
   .handler(async ({ data }) => {
+    if (data.mode === "icmp") {
+      const { icmpTraceroute } = await import("@/lib/tunnel.server");
+      const r = await icmpTraceroute(data.target, 30000);
+      if (!r.ok) return { target: data.target, ok: false, error: r.error };
+      const lines = (r.hops ?? []).map((h, i) => {
+        const obj = h as Record<string, unknown>;
+        const ip = obj.ip ?? obj.host ?? obj.address ?? "*";
+        const rtt = obj.rtt ?? obj.latency ?? obj.time ?? "";
+        return `${String(i + 1).padStart(2, " ")}  ${ip}  ${rtt ? `${rtt} ms` : ""}`.trimEnd();
+      });
+      return {
+        target: data.target,
+        ok: true,
+        output: lines.join("\n") || "no hops returned",
+        provider: "tunnel (ICMP)",
+      };
+    }
     try {
       // Use ip.sb public traceroute API (free, reliable, no quota)
       const url = `https://ip.sb/api/traceroute/?host=${encodeURIComponent(data.target)}&lang=en`;
