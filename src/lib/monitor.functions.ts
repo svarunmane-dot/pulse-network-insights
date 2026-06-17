@@ -34,14 +34,16 @@ export const listMonitors = createServerFn({ method: "GET" })
 
 export const createMonitor = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { label: string; host: string; port?: number }) => {
+  .inputValidator((d: { label: string; host: string; port?: number; probe_type?: string }) => {
     const label = (d.label ?? "").trim();
     const host = (d.host ?? "").trim();
     const port = d.port ?? 443;
+    const probe_type = (d.probe_type ?? "tcp").toLowerCase();
     if (label.length < 1 || label.length > 80) throw new Error("Label must be 1-80 chars");
     if (!isValidHostOrIp(host)) throw new Error("Invalid host or IP");
     if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("Invalid port");
-    return { label, host, port };
+    if (probe_type !== "tcp" && probe_type !== "icmp") throw new Error("Invalid probe type");
+    return { label, host, port, probe_type: probe_type as "tcp" | "icmp" };
   })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
@@ -51,17 +53,30 @@ export const createMonitor = createServerFn({ method: "POST" })
         label: data.label,
         host: data.host,
         port: data.port,
+        probe_type: data.probe_type,
       })
       .select("*")
       .single();
     if (error) throw new Error(error.message);
     // Fire an immediate probe so the user sees up/down within seconds.
     try {
-      const { tcpProbe } = await import("@/lib/monitor-probe.server");
-      const r = await tcpProbe(row.host, row.port, 4000);
-      const status = r.ok ? "up" : "down";
-      const latency = r.ok ? r.ms ?? null : null;
-      const err = r.ok ? null : r.error ?? "down";
+      let status: "up" | "down";
+      let latency: number | null;
+      let err: string | null;
+      if (data.probe_type === "icmp") {
+        const { icmpPing } = await import("@/lib/tunnel.server");
+        const r = await icmpPing(row.host, 6000);
+        const up = r.ok && r.status === "UP";
+        status = up ? "up" : "down";
+        latency = up ? r.latency ?? null : null;
+        err = up ? null : r.error ?? "down";
+      } else {
+        const { tcpProbe } = await import("@/lib/monitor-probe.server");
+        const r = await tcpProbe(row.host, row.port, 4000);
+        status = r.ok ? "up" : "down";
+        latency = r.ok ? r.ms ?? null : null;
+        err = r.ok ? null : r.error ?? "down";
+      }
       const now = new Date().toISOString();
       await context.supabase.from("monitor_checks").insert({
         monitor_id: row.id,
