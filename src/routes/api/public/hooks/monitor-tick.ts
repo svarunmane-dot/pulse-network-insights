@@ -50,6 +50,9 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
             let err: string | null;
             if ((m as { probe_type?: string }).probe_type === "icmp") {
               const r = await icmpPing(m.host, 6000);
+              console.log(
+                `[monitor-tick] ICMP probe via tunnel host=${m.host} ok=${r.ok} status=${r.status ?? "-"} latency=${r.latency ?? "-"} error=${r.error ?? "-"}`,
+              );
               const up = r.ok && r.status === "UP";
               status = up ? "up" : "down";
               latency = up ? r.latency ?? null : null;
@@ -76,10 +79,12 @@ export const Route = createFileRoute("/api/public/hooks/monitor-tick")({
               last_latency_ms: number | null;
               last_checked_at: string;
               last_status_change_at?: string;
+              last_error: string | null;
             } = {
               last_status: status,
               last_latency_ms: latency,
               last_checked_at: now,
+              last_error: err,
             };
             if (m.last_status === null || changed) {
               update.last_status_change_at = now;
