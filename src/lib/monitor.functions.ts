@@ -37,12 +37,12 @@ export const createMonitor = createServerFn({ method: "POST" })
   .inputValidator((d: { label: string; host: string; port?: number; probe_type?: string }) => {
     const label = (d.label ?? "").trim();
     const host = (d.host ?? "").trim();
-    const port = d.port ?? 443;
     const probe_type = (d.probe_type ?? "tcp").toLowerCase();
+    const port = probe_type === "icmp" ? 0 : d.port ?? 443;
     if (label.length < 1 || label.length > 80) throw new Error("Label must be 1-80 chars");
     if (!isValidHostOrIp(host)) throw new Error("Invalid host or IP");
-    if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("Invalid port");
     if (probe_type !== "tcp" && probe_type !== "icmp") throw new Error("Invalid probe type");
+    if (probe_type === "tcp" && (!Number.isInteger(port) || port < 1 || port > 65535)) throw new Error("Invalid port");
     return { label, host, port, probe_type: probe_type as "tcp" | "icmp" };
   })
   .handler(async ({ data, context }) => {
