@@ -16,6 +16,15 @@ function tunnelHeaders(): Record<string, string> {
   };
 }
 
+function tunnelError(res: Response, body: string): string {
+  const text = body.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 240);
+  const code = text.match(/error code:\s*(\d+)/i)?.[1];
+  if (res.status === 530 && code === "1016") {
+    return "Tunnel DNS error 1016: the tunnel hostname is not resolving to an active Cloudflare Tunnel public hostname.";
+  }
+  return `Tunnel HTTP ${res.status}${text ? `: ${text}` : ""}`;
+}
+
 export interface IcmpPingResult {
   ok: boolean;
   status?: "UP" | "DOWN" | string;
@@ -37,8 +46,8 @@ export async function icmpPing(ip: string, timeoutMs = 6000): Promise<IcmpPingRe
       signal: ctrl.signal,
     });
     if (!res.ok) {
-      const body = (await res.text().catch(() => "")).slice(0, 200);
-      return { ok: false, error: `Tunnel HTTP ${res.status}${body ? `: ${body}` : ""}` };
+      const body = await res.text().catch(() => "");
+      return { ok: false, error: tunnelError(res, body) };
     }
     const json = (await res.json()) as {
       status?: string;
@@ -79,8 +88,8 @@ export async function icmpTraceroute(ip: string, timeoutMs = 30000): Promise<Icm
       signal: ctrl.signal,
     });
     if (!res.ok) {
-      const body = (await res.text().catch(() => "")).slice(0, 200);
-      return { ok: false, error: `Tunnel HTTP ${res.status}${body ? `: ${body}` : ""}` };
+      const body = await res.text().catch(() => "");
+      return { ok: false, error: tunnelError(res, body) };
     }
     const json = (await res.json()) as { status?: string; hops?: Array<Record<string, unknown>> };
     return { ok: true, status: json.status, hops: json.hops ?? [] };
@@ -97,8 +106,8 @@ export async function tunnelHealth(): Promise<{ ok: boolean; error?: string }> {
   try {
     const res = await fetch(`${base}/health`, { headers: tunnelHeaders() });
     if (!res.ok) {
-      const body = (await res.text().catch(() => "")).slice(0, 200);
-      return { ok: false, error: `HTTP ${res.status}${body ? `: ${body}` : ""}` };
+      const body = await res.text().catch(() => "");
+      return { ok: false, error: tunnelError(res, body) };
     }
     return { ok: true };
   } catch (e) {
