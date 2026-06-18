@@ -36,7 +36,10 @@ export async function icmpPing(ip: string, timeoutMs = 6000): Promise<IcmpPingRe
       body: JSON.stringify({ ip }),
       signal: ctrl.signal,
     });
-    if (!res.ok) return { ok: false, error: `Tunnel HTTP ${res.status}` };
+    if (!res.ok) {
+      const body = (await res.text().catch(() => "")).slice(0, 200);
+      return { ok: false, error: `Tunnel HTTP ${res.status}${body ? `: ${body}` : ""}` };
+    }
     const json = (await res.json()) as {
       status?: string;
       latency?: number;
@@ -75,7 +78,10 @@ export async function icmpTraceroute(ip: string, timeoutMs = 30000): Promise<Icm
       body: JSON.stringify({ ip }),
       signal: ctrl.signal,
     });
-    if (!res.ok) return { ok: false, error: `Tunnel HTTP ${res.status}` };
+    if (!res.ok) {
+      const body = (await res.text().catch(() => "")).slice(0, 200);
+      return { ok: false, error: `Tunnel HTTP ${res.status}${body ? `: ${body}` : ""}` };
+    }
     const json = (await res.json()) as { status?: string; hops?: Array<Record<string, unknown>> };
     return { ok: true, status: json.status, hops: json.hops ?? [] };
   } catch (e) {
@@ -90,7 +96,10 @@ export async function tunnelHealth(): Promise<{ ok: boolean; error?: string }> {
   if (!base) return { ok: false, error: "Tunnel not configured" };
   try {
     const res = await fetch(`${base}/health`, { headers: tunnelHeaders() });
-    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
+    if (!res.ok) {
+      const body = (await res.text().catch(() => "")).slice(0, 200);
+      return { ok: false, error: `HTTP ${res.status}${body ? `: ${body}` : ""}` };
+    }
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "tunnel unreachable" };
