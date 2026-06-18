@@ -169,7 +169,21 @@ function Dashboard({ email }: { email?: string }) {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const p = parseInt(port, 10);
+    const p = probeType === "icmp" ? 0 : parseInt(port, 10);
+    if (probeType === "icmp") {
+      create.mutate(
+        { label, host, port: 0, probe_type: probeType },
+        {
+          onSuccess: () => {
+            setLabel("");
+            setHost("");
+            setPort("443");
+            setProbeType("tcp");
+          },
+        },
+      );
+      return;
+    }
     if (!Number.isInteger(p) || p < 1 || p > 65535) return;
     create.mutate(
       { label, host, port: p, probe_type: probeType },
@@ -216,9 +230,9 @@ function Dashboard({ email }: { email?: string }) {
           display: "grid",
           gridTemplateColumns:
             probeType === "icmp"
-              ? "1.2fr 1.4fr 150px 140px"
-              : "1.2fr 1.4fr 90px 150px 140px",
-          gap: 12,
+              ? "minmax(180px, 1.1fr) minmax(220px, 1.5fr) 170px 150px"
+              : "minmax(180px, 1.1fr) minmax(220px, 1.5fr) 100px 170px 150px",
+          gap: 14,
           alignItems: "end",
         }}
       >
@@ -271,7 +285,7 @@ function Dashboard({ email }: { email?: string }) {
       </div>
 
       <p style={{ marginTop: 28, color: "#6b7794", fontSize: 12 }}>
-        Checks run server-side from our Cloudflare edge every minute via a TCP handshake. ICMP ping is not used.
+        Checks run server-side every minute. TCP monitors use a direct handshake; ICMP monitors use the configured tunnel.
       </p>
 
       {isAdmin && <AdminPanel />}
