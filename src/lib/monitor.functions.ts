@@ -222,18 +222,16 @@ export const adminTunnelStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const { tunnelHealth } = await import("@/lib/tunnel.server");
-    const hostname = process.env.TUNNEL_HOSTNAME ?? null;
-    const hasId = !!process.env.CF_ACCESS_CLIENT_ID;
-    const hasSecret = !!process.env.CF_ACCESS_CLIENT_SECRET;
+    const { tunnelConfigStatus, tunnelHealth } = await import("@/lib/tunnel.server");
+    const config = tunnelConfigStatus();
     const started = Date.now();
     const h = await tunnelHealth();
     const tookMs = Date.now() - started;
     return {
-      hostname,
-      configured: !!hostname && hasId && hasSecret,
-      hasAccessId: hasId,
-      hasAccessSecret: hasSecret,
+      hostname: config.hostname,
+      configured: config.configured,
+      hasAccessId: config.hasAccessId,
+      hasAccessSecret: config.hasAccessSecret,
       ok: h.ok,
       error: h.error ?? null,
       tookMs,

@@ -3,15 +3,22 @@
 // All calls are authenticated with a Cloudflare Access service token.
 
 function tunnelBase(): string | null {
-  const h = process.env.TUNNEL_HOSTNAME?.trim();
+  const h = (process.env.TUNNEL_HOSTNAME ?? "laptop.pulse-speed.com").trim();
   if (!h) return null;
   return h.startsWith("http") ? h.replace(/\/+$/, "") : `https://${h.replace(/\/+$/, "")}`;
+}
+
+export function tunnelConfigStatus() {
+  const hostname = (process.env.TUNNEL_HOSTNAME ?? "laptop.pulse-speed.com").trim();
+  const hasAccessId = !!(process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access").trim();
+  const hasAccessSecret = !!process.env.CF_ACCESS_CLIENT_SECRET?.trim();
+  return { hostname, hasAccessId, hasAccessSecret, configured: !!hostname && hasAccessId && hasAccessSecret };
 }
 
 function tunnelHeaders(): Record<string, string> {
   return {
     "Content-Type": "application/json",
-    "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID ?? "",
+    "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access",
     "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET ?? "",
   };
 }
