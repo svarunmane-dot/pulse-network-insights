@@ -8,10 +8,22 @@ function tunnelBase(): string | null {
   return h.startsWith("http") ? h.replace(/\/+$/, "") : `https://${h.replace(/\/+$/, "")}`;
 }
 
+function accessClientId(): string {
+  return (
+    process.env.CF_ACCESS_CLIENT_ID ??
+    process.env.CLOUDFLARE_ACCESS_CLIENT_ID ??
+    "d7c97dbcff050cef96c5c079c86582ca.access"
+  ).trim();
+}
+
+function accessClientSecret(): string {
+  return (process.env.CF_ACCESS_CLIENT_SECRET ?? process.env.CLOUDFLARE_ACCESS_CLIENT_SECRET ?? "").trim();
+}
+
 export function tunnelConfigStatus() {
   const hostname = (process.env.TUNNEL_HOSTNAME ?? "laptop.pulse-speed.com").trim();
-  const accessId = (process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access").trim();
-  const accessSecret = process.env.CF_ACCESS_CLIENT_SECRET?.trim() ?? "";
+  const accessId = accessClientId();
+  const accessSecret = accessClientSecret();
   const hasAccessId = !!accessId;
   const hasAccessSecret = !!accessSecret;
   return {
@@ -25,8 +37,8 @@ export function tunnelConfigStatus() {
 }
 
 function tunnelHeaders(): Record<string, string> {
-  const accessId = (process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access").trim();
-  const accessSecret = process.env.CF_ACCESS_CLIENT_SECRET?.trim() ?? "";
+  const accessId = accessClientId();
+  const accessSecret = accessClientSecret();
   return {
     "Content-Type": "application/json",
     "CF-Access-Client-Id": accessId,
