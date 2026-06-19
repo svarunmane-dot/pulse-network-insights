@@ -232,6 +232,8 @@ export const adminTunnelStatus = createServerFn({ method: "GET" })
       configured: config.configured,
       hasAccessId: config.hasAccessId,
       hasAccessSecret: config.hasAccessSecret,
+      accessIdSuffix: config.accessIdSuffix,
+      accessSecretLength: config.accessSecretLength,
       ok: h.ok,
       error: h.error ?? null,
       tookMs,
