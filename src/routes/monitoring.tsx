@@ -625,8 +625,8 @@ function AdminDiagnostics() {
               <div style={{ color: "#ffb4b4", fontSize: 12, marginTop: 4 }}>
                 Missing config: {[
                   !t.hostname && "TUNNEL_HOSTNAME",
-                  !t.hasAccessId && "CF_ACCESS_CLIENT_ID",
-                  !t.hasAccessSecret && "CF_ACCESS_CLIENT_SECRET",
+                  !t.hasAccessId && "CF_ACCESS_CLIENT_ID / CLOUDFLARE_ACCESS_CLIENT_ID",
+                  !t.hasAccessSecret && "CF_ACCESS_CLIENT_SECRET / CLOUDFLARE_ACCESS_CLIENT_SECRET",
                 ].filter(Boolean).join(", ")}
               </div>
             )}
@@ -659,7 +659,7 @@ function AdminDiagnostics() {
               <li>In Cloudflare Zero Trust → Tunnels, confirm the public hostname maps to <code>http://localhost:3000</code>.</li>
               <li>Confirm the local service responds: <code>curl http://localhost:3000/health</code>.</li>
               <li>Confirm the Access service-token pair is authorized for this hostname.</li>
-              <li>If the secret length is 0 here, redeploy the GitHub → Cloudflare worker with the production secret bound.</li>
+              <li>If the secret length is 0 here, redeploy the GitHub → Cloudflare worker with the production secret bound as <code>CF_ACCESS_CLIENT_SECRET</code> or <code>CLOUDFLARE_ACCESS_CLIENT_SECRET</code>.</li>
             </ul>
           </details>
         )}
