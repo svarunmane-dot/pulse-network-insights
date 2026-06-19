@@ -17,7 +17,7 @@
   ],
   "vars": {
     "SUPABASE_URL": "https://fkjpvodtlowhorlwajhs.supabase.co",
-    "SUPABASE_PUBLISHABLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYXNlIiwicmVmIjoiZmtqcHZvZHRsb3dob3Jsd2FqaHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc3OTcwNDA3NywiZXhwIjoyMDk1MjgwMDc3fQ.OxDLdSHTbgyuzqjjKMQIhbo6iF3hRhaB1bDLR_GuR1A",
+    "SUPABASE_PUBLISHABLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZranB2b2R0bG93aG9ybHdhamhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3MDQwNzcsImV4cCI6MjA5NTI4MDA3N30.OxDLdSHTbgyuzqjjKMQIhbo6iF3hRhaB1bDLR_GuR1A",
     "TUNNEL_HOSTNAME": "laptop.pulse-speed.com",
     "CF_ACCESS_CLIENT_ID": "d7c97dbcff050cef96c5c079c86582ca.access"
   }
