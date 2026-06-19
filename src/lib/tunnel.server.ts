@@ -10,16 +10,27 @@ function tunnelBase(): string | null {
 
 export function tunnelConfigStatus() {
   const hostname = (process.env.TUNNEL_HOSTNAME ?? "laptop.pulse-speed.com").trim();
-  const hasAccessId = !!(process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access").trim();
-  const hasAccessSecret = !!process.env.CF_ACCESS_CLIENT_SECRET?.trim();
-  return { hostname, hasAccessId, hasAccessSecret, configured: !!hostname && hasAccessId && hasAccessSecret };
+  const accessId = (process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access").trim();
+  const accessSecret = process.env.CF_ACCESS_CLIENT_SECRET?.trim() ?? "";
+  const hasAccessId = !!accessId;
+  const hasAccessSecret = !!accessSecret;
+  return {
+    hostname,
+    hasAccessId,
+    hasAccessSecret,
+    accessIdSuffix: hasAccessId ? accessId.slice(-10) : null,
+    accessSecretLength: accessSecret.length,
+    configured: !!hostname && hasAccessId && hasAccessSecret,
+  };
 }
 
 function tunnelHeaders(): Record<string, string> {
+  const accessId = (process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access").trim();
+  const accessSecret = process.env.CF_ACCESS_CLIENT_SECRET?.trim() ?? "";
   return {
     "Content-Type": "application/json",
-    "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID ?? "d7c97dbcff050cef96c5c079c86582ca.access",
-    "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET ?? "",
+    "CF-Access-Client-Id": accessId,
+    "CF-Access-Client-Secret": accessSecret,
   };
 }
 
