@@ -10,6 +10,8 @@ import {
   adminListUsers,
   adminSetUserLimit,
   getMyLimits,
+  adminTunnelStatus,
+  adminRecentErrors,
 } from "@/lib/monitor.functions";
 
 export const Route = createFileRoute("/monitoring")({
@@ -289,6 +291,7 @@ function Dashboard({ email }: { email?: string }) {
       </p>
 
       {isAdmin && <AdminPanel />}
+      {isAdmin && <AdminDiagnostics />}
     </Shell>
   );
 }
@@ -577,3 +580,132 @@ const badge: React.CSSProperties = {
   verticalAlign: "middle",
   letterSpacing: 1,
 };
+
+// ---- Admin diagnostics: tunnel health + recent service errors ----
+
+function AdminDiagnostics() {
+  const qc = useQueryClient();
+  const tunnelQ = useQuery({
+    queryKey: ["admin-tunnel"],
+    queryFn: () => adminTunnelStatus(),
+    refetchInterval: 30_000,
+  });
+  const errorsQ = useQuery({
+    queryKey: ["admin-errors"],
+    queryFn: () => adminRecentErrors({ data: { limit: 50 } }),
+    refetchInterval: 30_000,
+  });
+
+  const t = tunnelQ.data;
+  const ok = !!t?.ok;
+  const dot = !t ? "#6b7794" : ok ? "#00D4AA" : "#ff5470";
+
+  return (
+    <section style={{ marginTop: 36 }}>
+      <h2 style={{ color: "#fff", fontSize: 22, margin: "0 0 12px" }}>
+        Admin · diagnostics
+      </h2>
+
+      <div style={{ ...panel, marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+          <span style={{ width: 12, height: 12, borderRadius: "50%", background: dot, boxShadow: ok ? "0 0 10px rgba(0,212,170,0.6)" : undefined }} />
+          <div style={{ minWidth: 0, flex: "1 1 260px" }}>
+            <div style={{ color: "#fff", fontWeight: 600 }}>
+              Cloudflare Tunnel · ICMP service
+            </div>
+            <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
+              {t?.hostname ?? "TUNNEL_HOSTNAME not set"} · /health
+            </div>
+            {t && !t.configured && (
+              <div style={{ color: "#ffb4b4", fontSize: 12, marginTop: 4 }}>
+                Missing config: {[
+                  !t.hostname && "TUNNEL_HOSTNAME",
+                  !t.hasAccessId && "CF_ACCESS_CLIENT_ID",
+                  !t.hasAccessSecret && "CF_ACCESS_CLIENT_SECRET",
+                ].filter(Boolean).join(", ")}
+              </div>
+            )}
+            {t && t.configured && !ok && (
+              <div style={{ color: "#ffb4b4", fontSize: 12, marginTop: 4, wordBreak: "break-word" }}>
+                {t.error ?? "Unreachable"}
+              </div>
+            )}
+          </div>
+          <Stat label="Status" value={ok ? "UP" : t ? "DOWN" : "…"} color={dot} />
+          <Stat label="Latency" value={t?.tookMs != null ? `${t.tookMs} ms` : "—"} />
+          <Stat label="Checked" value={fmtRel(t?.checkedAt ?? null)} />
+          <button
+            onClick={() => {
+              qc.invalidateQueries({ queryKey: ["admin-tunnel"] });
+              qc.invalidateQueries({ queryKey: ["admin-errors"] });
+            }}
+            style={ghostBtn}
+          >
+            Refresh
+          </button>
+        </div>
+        {t && !ok && t.configured && (
+          <details style={{ marginTop: 10 }}>
+            <summary style={{ color: "#8b94b0", fontSize: 12, cursor: "pointer" }}>
+              How to fix
+            </summary>
+            <ul style={{ color: "#c8d0e0", fontSize: 12, lineHeight: 1.7, paddingLeft: 18, margin: "8px 0 0" }}>
+              <li>On the laptop, confirm <code>cloudflared tunnel run …</code> is running.</li>
+              <li>In Cloudflare Zero Trust → Tunnels, confirm the public hostname maps to <code>http://localhost:3000</code>.</li>
+              <li>Confirm the local service responds: <code>curl http://localhost:3000/health</code>.</li>
+              <li>Confirm the Access service-token pair is authorized for this hostname.</li>
+            </ul>
+          </details>
+        )}
+      </div>
+
+      <div style={panel}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div style={{ color: "#fff", fontWeight: 600 }}>Recent service errors</div>
+          <div style={{ color: "#8b94b0", fontSize: 12 }}>
+            {errorsQ.data ? `${errorsQ.data.length} failed check${errorsQ.data.length === 1 ? "" : "s"}` : "…"}
+          </div>
+        </div>
+        {errorsQ.isLoading && <div style={{ color: "#8b94b0", fontSize: 13 }}>Loading…</div>}
+        {errorsQ.data && errorsQ.data.length === 0 && (
+          <div style={{ color: "#6b7794", fontSize: 13 }}>No failed checks recorded recently.</div>
+        )}
+        <div style={{ display: "grid", gap: 8 }}>
+          {(errorsQ.data ?? []).map((e) => (
+            <div
+              key={e.id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "150px 1fr",
+                gap: 12,
+                padding: "8px 10px",
+                borderRadius: 8,
+                background: "#0a0e1a",
+                border: "1px solid #1f2740",
+                fontSize: 12,
+              }}
+            >
+              <div style={{ color: "#8b94b0", fontFamily: "DM Mono, monospace" }}>
+                {fmtAbs(e.checked_at)}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ color: "#e8ecf5" }}>
+                  <strong>{e.label}</strong>{" "}
+                  <span style={{ color: "#8b94b0" }}>
+                    {e.host}{e.probe_type === "icmp" ? " (ICMP)" : `:${e.port}`}
+                  </span>
+                  {e.user_email && (
+                    <span style={{ color: "#6b7794" }}> · {e.user_email}</span>
+                  )}
+                </div>
+                <div style={{ color: "#ffb4b4", marginTop: 2, wordBreak: "break-word" }}>
+                  {e.error ?? "down"}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

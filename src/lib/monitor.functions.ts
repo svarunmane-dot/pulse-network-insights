@@ -215,3 +215,79 @@ export const getMyLimits = createServerFn({ method: "GET" })
       retention_days: row?.retention_days ?? 1,
     };
   });
+
+// ---- Admin diagnostics: tunnel + service health, recent errors ----
+
+export const adminTunnelStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { tunnelHealth } = await import("@/lib/tunnel.server");
+    const hostname = process.env.TUNNEL_HOSTNAME ?? null;
+    const hasId = !!process.env.CF_ACCESS_CLIENT_ID;
+    const hasSecret = !!process.env.CF_ACCESS_CLIENT_SECRET;
+    const started = Date.now();
+    const h = await tunnelHealth();
+    const tookMs = Date.now() - started;
+    return {
+      hostname,
+      configured: !!hostname && hasId && hasSecret,
+      hasAccessId: hasId,
+      hasAccessSecret: hasSecret,
+      ok: h.ok,
+      error: h.error ?? null,
+      tookMs,
+      checkedAt: new Date().toISOString(),
+    };
+  });
+
+export const adminRecentErrors = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { limit?: number }) => ({
+    limit: Math.min(Math.max(d?.limit ?? 50, 1), 200),
+  }))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Recent failed checks across ALL monitors, joined to monitor metadata.
+    const { data: checks, error } = await supabaseAdmin
+      .from("monitor_checks")
+      .select("id, monitor_id, status, latency_ms, error, checked_at")
+      .eq("status", "down")
+      .order("checked_at", { ascending: false })
+      .limit(data.limit);
+    if (error) throw new Error(error.message);
+    const ids = Array.from(new Set((checks ?? []).map((c) => c.monitor_id)));
+    let monMap: Record<string, { label: string; host: string; port: number; probe_type: string; user_id: string }> = {};
+    let emailMap: Record<string, string> = {};
+    if (ids.length) {
+      const { data: mons } = await supabaseAdmin
+        .from("wan_monitors")
+        .select("id, label, host, port, probe_type, user_id")
+        .in("id", ids);
+      monMap = Object.fromEntries((mons ?? []).map((m) => [m.id, m]));
+      const uids = Array.from(new Set((mons ?? []).map((m) => m.user_id)));
+      if (uids.length) {
+        const { data: profs } = await supabaseAdmin
+          .from("profiles")
+          .select("id, email")
+          .in("id", uids);
+        emailMap = Object.fromEntries((profs ?? []).map((p) => [p.id, p.email]));
+      }
+    }
+    return (checks ?? []).map((c) => {
+      const m = monMap[c.monitor_id];
+      return {
+        id: c.id,
+        monitor_id: c.monitor_id,
+        label: m?.label ?? "(deleted)",
+        host: m?.host ?? "",
+        port: m?.port ?? 0,
+        probe_type: m?.probe_type ?? "tcp",
+        user_email: m ? emailMap[m.user_id] ?? "" : "",
+        error: c.error,
+        latency_ms: c.latency_ms,
+        checked_at: c.checked_at,
+      };
+    });
+  });
