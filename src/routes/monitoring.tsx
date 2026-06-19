@@ -10,6 +10,8 @@ import {
   adminListUsers,
   adminSetUserLimit,
   getMyLimits,
+  adminTunnelStatus,
+  adminRecentErrors,
 } from "@/lib/monitor.functions";
 
 export const Route = createFileRoute("/monitoring")({
@@ -289,6 +291,7 @@ function Dashboard({ email }: { email?: string }) {
       </p>
 
       {isAdmin && <AdminPanel />}
+      {isAdmin && <AdminDiagnostics />}
     </Shell>
   );
 }
