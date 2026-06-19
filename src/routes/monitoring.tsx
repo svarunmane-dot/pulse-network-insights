@@ -616,6 +616,11 @@ function AdminDiagnostics() {
             <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
               {t?.hostname ?? "TUNNEL_HOSTNAME not set"} · /health
             </div>
+            {t && (
+              <div style={{ color: "#8b94b0", fontSize: 11, fontFamily: "DM Mono, monospace", marginTop: 4 }}>
+                Access ID …{t.accessIdSuffix ?? "missing"} · secret length {t.accessSecretLength ?? 0}
+              </div>
+            )}
             {t && !t.configured && (
               <div style={{ color: "#ffb4b4", fontSize: 12, marginTop: 4 }}>
                 Missing config: {[
@@ -654,6 +659,7 @@ function AdminDiagnostics() {
               <li>In Cloudflare Zero Trust → Tunnels, confirm the public hostname maps to <code>http://localhost:3000</code>.</li>
               <li>Confirm the local service responds: <code>curl http://localhost:3000/health</code>.</li>
               <li>Confirm the Access service-token pair is authorized for this hostname.</li>
+              <li>If the secret length is 0 here, redeploy the GitHub → Cloudflare worker with the production secret bound.</li>
             </ul>
           </details>
         )}
