@@ -20,6 +20,13 @@ function accessClientSecret(): string {
   return (process.env.CF_ACCESS_CLIENT_SECRET ?? process.env.CLOUDFLARE_ACCESS_CLIENT_SECRET ?? "").trim();
 }
 
+function missingAccessConfigError(): string | null {
+  const missing: string[] = [];
+  if (!accessClientId()) missing.push("CF_ACCESS_CLIENT_ID");
+  if (!accessClientSecret()) missing.push("CF_ACCESS_CLIENT_SECRET");
+  return missing.length ? `Tunnel Access config missing: ${missing.join(", ")}` : null;
+}
+
 export function tunnelConfigStatus() {
   const hostname = (process.env.TUNNEL_HOSTNAME ?? "laptop.pulse-speed.com").trim();
   const accessId = accessClientId();
@@ -39,6 +46,9 @@ export function tunnelConfigStatus() {
 function tunnelHeaders(): Record<string, string> {
   const accessId = accessClientId();
   const accessSecret = accessClientSecret();
+  if (!accessId || !accessSecret) {
+    throw new Error(missingAccessConfigError() ?? "Tunnel Access config missing");
+  }
   return {
     "Content-Type": "application/json",
     "CF-Access-Client-Id": accessId,
@@ -66,6 +76,8 @@ export interface IcmpPingResult {
 export async function icmpPing(ip: string, timeoutMs = 6000): Promise<IcmpPingResult> {
   const base = tunnelBase();
   if (!base) return { ok: false, error: "Tunnel not configured" };
+  const configError = missingAccessConfigError();
+  if (configError) return { ok: false, error: configError };
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -108,6 +120,8 @@ export interface IcmpTraceResult {
 export async function icmpTraceroute(ip: string, timeoutMs = 30000): Promise<IcmpTraceResult> {
   const base = tunnelBase();
   if (!base) return { ok: false, error: "Tunnel not configured" };
+  const configError = missingAccessConfigError();
+  if (configError) return { ok: false, error: configError };
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -133,6 +147,8 @@ export async function icmpTraceroute(ip: string, timeoutMs = 30000): Promise<Icm
 export async function tunnelHealth(): Promise<{ ok: boolean; error?: string }> {
   const base = tunnelBase();
   if (!base) return { ok: false, error: "Tunnel not configured" };
+  const configError = missingAccessConfigError();
+  if (configError) return { ok: false, error: configError };
   try {
     const res = await fetch(`${base}/health`, { headers: tunnelHeaders() });
     if (!res.ok) {
