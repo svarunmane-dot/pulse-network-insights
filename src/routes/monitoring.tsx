@@ -401,15 +401,4 @@ const ghostBtn: React.CSSProperties = {
   fontSize: 12,
   cursor: "pointer",
 };
-const badge: React.CSSProperties = {
-  display: "inline-block",
-  marginLeft: 10,
-  fontSize: 11,
-  padding: "2px 8px",
-  borderRadius: 6,
-  background: "rgba(155,143,232,0.18)",
-  color: "#c9bfff",
-  verticalAlign: "middle",
-  letterSpacing: 1,
-};
 
