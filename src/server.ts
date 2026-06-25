@@ -25,6 +25,29 @@ function brandedErrorResponse(): Response {
   });
 }
 
+const ENV_KEYS_TO_BRIDGE = [
+  "SUPABASE_URL",
+  "SUPABASE_PUBLISHABLE_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "TUNNEL_HOSTNAME",
+  "TUNNEL_PORT",
+  "CF_ACCESS_CLIENT_ID",
+  "CF_ACCESS_CLIENT_SECRET",
+  "CLOUDFLARE_ACCESS_CLIENT_ID",
+  "CLOUDFLARE_ACCESS_CLIENT_SECRET",
+] as const;
+
+function bridgeCloudflareEnv(env: unknown) {
+  if (!env || typeof env !== "object") return;
+  const bindings = env as Record<string, unknown>;
+  for (const key of ENV_KEYS_TO_BRIDGE) {
+    const value = bindings[key];
+    if (typeof value === "string" && value.length > 0) {
+      process.env[key] = value;
+    }
+  }
+}
+
 function isCatastrophicSsrErrorBody(body: string, responseStatus: number): boolean {
   let payload: unknown;
   try {
@@ -69,6 +92,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      bridgeCloudflareEnv(env);
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
