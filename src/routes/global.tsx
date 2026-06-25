@@ -55,18 +55,20 @@ function project(lat: number, lon: number) {
 
 function colorFor(ms: number | null): string {
   if (ms === null) return "#4a5568";
-  if (ms < 50) return "#00D4AA";
-  if (ms < 150) return "#facc15";
-  if (ms < 300) return "#fb923c";
+  if (ms <= 50) return "#00D4AA";
+  if (ms <= 100) return "#7be0a4";
+  if (ms <= 300) return "#facc15";
+  if (ms <= 1000) return "#fb923c";
   return "#ef4444";
 }
 
 function labelFor(ms: number | null): string {
   if (ms === null) return "—";
-  if (ms < 50) return "Excellent";
-  if (ms < 150) return "Good";
-  if (ms < 300) return "Fair";
-  return "Poor";
+  if (ms <= 50) return "Excellent";
+  if (ms <= 100) return "Good";
+  if (ms <= 300) return "Fair";
+  if (ms <= 1000) return "Poor";
+  return "Critical";
 }
 
 type Result = { code: string; ms: number | null; loading: boolean };

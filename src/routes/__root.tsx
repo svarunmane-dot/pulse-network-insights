@@ -223,7 +223,7 @@ function SiteHeader() {
             { to: "/pingip", label: "Ping IP" },
             { to: "/whoisip", label: "Whose IP" },
             { to: "/portcheck", label: "Port Check" },
-            { to: "/monitoring", label: "Monitoring" },
+            { to: "/monitoring", label: "App Monitoring" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
@@ -285,7 +285,7 @@ function SiteFooter() {
             { to: "/pingip", label: "Ping IP" },
             { to: "/whoisip", label: "Whose IP" },
             { to: "/portcheck", label: "Port Check" },
-            { to: "/monitoring", label: "Monitoring" },
+            { to: "/monitoring", label: "App Monitoring" },
           ]}
         />
         <FooterCol
