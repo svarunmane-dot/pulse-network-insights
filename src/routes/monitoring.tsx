@@ -7,28 +7,23 @@ import {
   deleteMonitor,
   listEvents,
   listMonitors,
-  adminListUsers,
-  adminSetUserLimit,
-  getMyLimits,
-  adminTunnelStatus,
-  adminRecentErrors,
 } from "@/lib/monitor.functions";
 
 export const Route = createFileRoute("/monitoring")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "WAN Monitoring – Continuous Public IP Uptime Monitor | Pulse Speed" },
+      { title: "Application Monitoring – TCP Port Uptime Monitor | Pulse Speed" },
       {
         name: "description",
         content:
-          "Register a free Pulse Speed account to monitor WAN / public IPs every minute. TCP probe uptime checks, latency, status history and incident timeline.",
+          "Monitor application availability via TCP port checks every minute. Track uptime, latency and incident history for any public host or port.",
       },
-      { property: "og:title", content: "WAN Monitoring – Pulse Speed" },
+      { property: "og:title", content: "Application Monitoring – Pulse Speed" },
       {
         property: "og:description",
         content:
-          "Continuous WAN IP monitoring with 1-minute TCP probes, latency tracking, and incident history. Free for registered users.",
+          "Application availability monitoring with 1-minute TCP probes, latency tracking, and incident history.",
       },
     ],
   }),
@@ -41,7 +36,6 @@ type Monitor = {
   label: string;
   host: string;
   port: number;
-  probe_type: "tcp" | "icmp" | string;
   enabled: boolean;
   last_status: string | null;
   last_latency_ms: number | null;
@@ -95,12 +89,12 @@ function Landing() {
     <Shell>
       <header style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 40, margin: 0, color: "#fff", letterSpacing: "-0.5px" }}>
-          WAN <span style={{ color: "#00D4AA" }}>Monitoring</span>
+          Application <span style={{ color: "#00D4AA" }}>Monitoring</span>
         </h1>
         <p style={{ color: "#8b94b0", maxWidth: 680, marginTop: 12, lineHeight: 1.6 }}>
-          Add your WAN / public IPs and Pulse Speed will TCP-probe them every minute,
+          Add a public host and port and Pulse Speed will TCP-probe it every minute,
           tracking uptime, latency and state changes. Perfect for keeping an eye on
-          firewalls, routers, VPN endpoints, branch circuits and self-hosted services.
+          web apps, APIs, VPN endpoints, mail servers and self-hosted services.
         </p>
       </header>
 
@@ -112,9 +106,9 @@ function Landing() {
           authenticator app — required on every sign-in.
         </p>
         <ul style={{ color: "#c8d0e0", lineHeight: 1.8, paddingLeft: 18, margin: "12px 0" }}>
-          <li>TCP probe every 1 minute (default port 443, configurable)</li>
+          <li>TCP probe every 1 minute (port 443, 80 or any custom port)</li>
           <li>Up / down status, latency and last-checked timestamp</li>
-          <li>Incident timeline showing every state change</li>
+          <li>24-hour incident timeline showing every state change</li>
           <li>Free, no credit card</li>
         </ul>
         <Link
@@ -147,7 +141,7 @@ function Dashboard({ email }: { email?: string }) {
   });
 
   const create = useMutation({
-    mutationFn: (input: { label: string; host: string; port: number; probe_type: "tcp" | "icmp" }) =>
+    mutationFn: (input: { label: string; host: string; port: number }) =>
       createMonitor({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["monitors"] }),
   });
@@ -159,7 +153,6 @@ function Dashboard({ email }: { email?: string }) {
   const [label, setLabel] = useState("");
   const [host, setHost] = useState("");
   const [port, setPort] = useState("443");
-  const [probeType, setProbeType] = useState<"tcp" | "icmp">("tcp");
   const [expanded, setExpanded] = useState<string | null>(null);
 
   async function signOut() {
@@ -171,56 +164,30 @@ function Dashboard({ email }: { email?: string }) {
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const p = probeType === "icmp" ? 0 : parseInt(port, 10);
-    if (probeType === "icmp") {
-      create.mutate(
-        { label, host, port: 0, probe_type: probeType },
-        {
-          onSuccess: () => {
-            setLabel("");
-            setHost("");
-            setPort("443");
-            setProbeType("tcp");
-          },
-        },
-      );
-      return;
-    }
+    const p = parseInt(port, 10);
     if (!Number.isInteger(p) || p < 1 || p > 65535) return;
     create.mutate(
-      { label, host, port: p, probe_type: probeType },
+      { label, host, port: p },
       {
         onSuccess: () => {
           setLabel("");
           setHost("");
           setPort("443");
-          setProbeType("tcp");
         },
       },
     );
   }
 
   const monitors = (monitorsQ.data?.monitors ?? []) as Monitor[];
-  const isAdmin = !!monitorsQ.data?.isAdmin;
-
-  const myLimitsQ = useQuery({
-    queryKey: ["my-limits"],
-    queryFn: () => getMyLimits(),
-  });
 
   return (
     <Shell>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 24, gap: 16, flexWrap: "wrap" }}>
         <div>
           <h1 style={{ fontSize: 30, margin: 0, color: "#fff", letterSpacing: "-0.4px" }}>
-            WAN Monitoring {isAdmin && <span style={badge}>ADMIN</span>}
+            Application Monitoring
           </h1>
-          <p style={{ color: "#8b94b0", margin: "6px 0 0" }}>{email}{isAdmin ? " · viewing all users’ monitors" : ""}</p>
-          {!isAdmin && myLimitsQ.data && (
-            <p style={{ color: "#8b94b0", margin: "4px 0 0", fontSize: 12 }}>
-              Your plan: up to <strong style={{ color: "#c8d0e0" }}>{myLimitsQ.data.max_monitors}</strong> monitor{myLimitsQ.data.max_monitors === 1 ? "" : "s"}, auto-removed after <strong style={{ color: "#c8d0e0" }}>{myLimitsQ.data.retention_days}</strong> day{myLimitsQ.data.retention_days === 1 ? "" : "s"}. Contact admin to increase.
-            </p>
-          )}
+          <p style={{ color: "#8b94b0", margin: "6px 0 0" }}>{email}</p>
         </div>
         <button onClick={signOut} style={ghostBtn}>Sign out</button>
       </header>
@@ -230,34 +197,19 @@ function Dashboard({ email }: { email?: string }) {
         style={{
           ...panel,
           display: "grid",
-          gridTemplateColumns:
-            probeType === "icmp"
-              ? "minmax(180px, 1.1fr) minmax(220px, 1.5fr) 170px 150px"
-              : "minmax(180px, 1.1fr) minmax(220px, 1.5fr) 100px 170px 150px",
+          gridTemplateColumns: "minmax(180px, 1.1fr) minmax(220px, 1.5fr) 110px 150px",
           gap: 14,
           alignItems: "end",
         }}
       >
         <Field label="Label">
-          <input value={label} required maxLength={80} onChange={(e) => setLabel(e.target.value)} style={input} placeholder="HQ firewall" />
+          <input value={label} required maxLength={80} onChange={(e) => setLabel(e.target.value)} style={input} placeholder="Production API" />
         </Field>
         <Field label="Public IP / host">
-          <input value={host} required onChange={(e) => setHost(e.target.value)} style={input} placeholder="203.0.113.5" />
+          <input value={host} required onChange={(e) => setHost(e.target.value)} style={input} placeholder="api.example.com" />
         </Field>
-        {probeType === "tcp" && (
-          <Field label="Port">
-            <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" />
-          </Field>
-        )}
-        <Field label="Probe">
-          <select
-            value={probeType}
-            onChange={(e) => setProbeType(e.target.value as "tcp" | "icmp")}
-            style={input}
-          >
-            <option value="tcp">TCP handshake</option>
-            <option value="icmp">ICMP (via tunnel)</option>
-          </select>
+        <Field label="Port">
+          <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" placeholder="443" />
         </Field>
         <button type="submit" disabled={create.isPending} style={primaryBtn}>
           {create.isPending ? "Adding…" : "Add monitor"}
@@ -271,7 +223,7 @@ function Dashboard({ email }: { email?: string }) {
         {monitorsQ.isLoading && <p style={{ color: "#8b94b0" }}>Loading monitors…</p>}
         {monitorsQ.data && monitors.length === 0 && (
           <div style={{ ...panel, textAlign: "center", color: "#8b94b0" }}>
-            No monitors yet. Add a public IP above to start checking it every minute.
+            No monitors yet. Add a host and port above to start checking it every minute.
           </div>
         )}
         {monitors.map((m) => (
@@ -287,11 +239,8 @@ function Dashboard({ email }: { email?: string }) {
       </div>
 
       <p style={{ marginTop: 28, color: "#6b7794", fontSize: 12 }}>
-        Checks run server-side every minute. TCP monitors use a direct handshake; ICMP monitors use the configured tunnel.
+        Checks run server-side every minute via a TCP handshake to the configured port.
       </p>
-
-      {isAdmin && <AdminPanel />}
-      {isAdmin && <AdminDiagnostics />}
     </Shell>
   );
 }
@@ -312,35 +261,30 @@ function MonitorRow({
   const status = m.last_status;
   const dot = status === "up" ? "#00D4AA" : status === "down" ? "#ff5470" : "#6b7794";
   const statusLabel = status ? status.toUpperCase() : "PENDING";
-  const probe = (m.probe_type ?? "tcp").toUpperCase();
-  const probeColor = m.probe_type === "icmp" ? "#9B8FE8" : "#00D4AA";
+  const latencyLabel = latencyQuality(m.last_latency_ms);
   return (
     <div style={panel}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
         <span style={{ width: 12, height: 12, borderRadius: "50%", background: dot, boxShadow: status === "up" ? "0 0 10px rgba(0,212,170,0.6)" : undefined }} />
         <div style={{ minWidth: 0, flex: "1 1 220px" }}>
           <div style={{ color: "#fff", fontWeight: 600 }}>
-            {m.label}{" "}
-            <span style={{ marginLeft: 6, fontSize: 10, padding: "2px 6px", borderRadius: 5, background: `${probeColor}22`, color: probeColor, letterSpacing: 1, verticalAlign: "middle" }}>
-              {probe}
-            </span>
+            {m.label}
           </div>
           <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
-            {m.host}{m.probe_type === "icmp" ? "" : `:${m.port}`}
+            {m.host}:{m.port}
           </div>
           {m.last_error && m.last_status === "down" && (
             <div style={{ color: "#ffb4b4", fontSize: 11, marginTop: 2 }}>
-              {m.probe_type === "icmp" ? "Tunnel/ICMP: " : "TCP: "}{m.last_error}
-            </div>
-          )}
-          {m.expires_at && (
-            <div style={{ color: "#8b94b0", fontSize: 11, marginTop: 2 }}>
-              Auto-removes in {fmtUntil(m.expires_at)}
+              TCP: {m.last_error}
             </div>
           )}
         </div>
         <Stat label="Status" value={statusLabel} color={dot} />
-        <Stat label="Latency" value={m.last_latency_ms != null ? `${m.last_latency_ms} ms` : "—"} />
+        <Stat
+          label="Latency"
+          value={m.last_latency_ms != null ? `${m.last_latency_ms} ms · ${latencyLabel.label}` : "—"}
+          color={latencyLabel.color}
+        />
         <Stat label="Last check" value={fmtRel(m.last_checked_at)} />
         <button onClick={onToggle} style={ghostBtn}>{expanded ? "Hide" : "Events"}</button>
         <button onClick={onDelete} disabled={deleting} style={{ ...ghostBtn, color: "#ffb4b4", borderColor: "rgba(255,80,80,0.35)" }}>
@@ -350,6 +294,15 @@ function MonitorRow({
       {expanded && <Events monitorId={m.id} />}
     </div>
   );
+}
+
+function latencyQuality(ms: number | null): { label: string; color: string } {
+  if (ms == null) return { label: "—", color: "#8b94b0" };
+  if (ms <= 50) return { label: "Excellent", color: "#00D4AA" };
+  if (ms <= 100) return { label: "Good", color: "#7be0a4" };
+  if (ms <= 300) return { label: "Fair", color: "#facc15" };
+  if (ms <= 1000) return { label: "Poor", color: "#fb923c" };
+  return { label: "Critical", color: "#ef4444" };
 }
 
 function Events({ monitorId }: { monitorId: string }) {
