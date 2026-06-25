@@ -380,23 +380,32 @@ const USE_CASES = [
 const rand = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-function statusFor(latency: number, ideal: number): "good" | "fair" | "poor" {
-  if (latency <= ideal) return "good";
-  if (latency <= ideal * 1.5) return "fair";
-  return "poor";
+function statusFor(
+  latency: number,
+  _ideal: number,
+): "excellent" | "good" | "fair" | "poor" | "critical" {
+  if (latency <= 50) return "excellent";
+  if (latency <= 100) return "good";
+  if (latency <= 300) return "fair";
+  if (latency <= 1000) return "poor";
+  return "critical";
 }
 
 const STATUS_COLOR: Record<string, string> = {
+  excellent: TEAL,
   good: TEAL,
   fair: AMBER,
   poor: RED,
+  critical: RED,
   checking: TEXT_MUTED,
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  good: "Excellent",
+  excellent: "Excellent",
+  good: "Good",
   fair: "Fair",
   poor: "Poor",
+  critical: "Critical",
 };
 
 /* ============================================================
@@ -666,7 +675,10 @@ function Index() {
 
       window.setTimeout(() => {
         const poorApps = APPS.filter(
-          (a, i) => statusFor(latencies[i], a.ideal) === "poor",
+          (a, i) => {
+            const s = statusFor(latencies[i], a.ideal);
+            return s === "poor" || s === "critical";
+          },
         ).map((a) => a.name);
         const full = buildAiText({ ...r, poorApps });
         let i = 0;
