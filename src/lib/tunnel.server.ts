@@ -62,6 +62,9 @@ function tunnelError(res: Response, body: string): string {
   if (res.status === 530 && code === "1016") {
     return "Tunnel DNS error 1016: the tunnel hostname is not resolving to an active Cloudflare Tunnel public hostname.";
   }
+  if (res.status === 530 && code === "1033") {
+    return "Tunnel connector error 1033: Cloudflare found the tunnel hostname, but no healthy cloudflared connector is currently serving it. Check that cloudflared is running on the laptop, connected to the same tunnel/public hostname, and forwarding to the local monitoring service.";
+  }
   return `Tunnel HTTP ${res.status}${text ? `: ${text}` : ""}`;
 }
 
