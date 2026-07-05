@@ -224,6 +224,7 @@ function SiteHeader() {
             { to: "/whoisip", label: "Whose IP" },
             { to: "/portcheck", label: "Port Check" },
             { to: "/monitoring", label: "App Monitoring" },
+            { to: "/ap-planning", label: "AP Planning" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (
@@ -286,6 +287,7 @@ function SiteFooter() {
             { to: "/whoisip", label: "Whose IP" },
             { to: "/portcheck", label: "Port Check" },
             { to: "/monitoring", label: "App Monitoring" },
+            { to: "/ap-planning", label: "AP Planning" },
           ]}
         />
         <FooterCol
