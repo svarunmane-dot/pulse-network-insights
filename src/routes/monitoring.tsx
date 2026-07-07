@@ -1,199 +1,195 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  createMonitor,
-  deleteMonitor,
-  listEvents,
-  listMonitors,
-} from "@/lib/monitor.functions";
+import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { probeTcp } from "@/lib/monitor-public.functions";
 
 export const Route = createFileRoute("/monitoring")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Application Monitoring – TCP Port Uptime Monitor | Pulse Speed" },
+      { title: "Free Application Monitoring – TCP Port Uptime Checker | Pulse Speed" },
       {
         name: "description",
         content:
-          "Monitor application availability via TCP port checks every minute. Track uptime, latency and incident history for any public host or port.",
+          "Free, no-signup TCP port monitor. Check that any public host and port stays online, with live latency and incident history stored right in your browser.",
       },
-      { property: "og:title", content: "Application Monitoring – Pulse Speed" },
+      { property: "og:title", content: "Free Application Monitoring – Pulse Speed" },
       {
         property: "og:description",
         content:
-          "Application availability monitoring with 1-minute TCP probes, latency tracking, and incident history.",
+          "Instant TCP port uptime checks with latency tracking and browser-local history. No sign-up required.",
       },
+      { property: "og:url", content: "https://pulse-speed.com/monitoring" },
     ],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/monitoring" }],
   }),
   component: MonitoringPage,
 });
 
-type Monitor = {
+type LocalMonitor = {
   id: string;
-  user_id: string;
   label: string;
   host: string;
   port: number;
-  enabled: boolean;
-  last_status: string | null;
-  last_latency_ms: number | null;
-  last_checked_at: string | null;
-  last_status_change_at: string | null;
-  last_error?: string | null;
-  created_at: string;
-  expires_at: string | null;
+  createdAt: string;
+  lastStatus: "up" | "down" | null;
+  lastLatency: number | null;
+  lastCheckedAt: string | null;
+  lastError: string | null;
+  events: { at: string; from: "up" | "down" | null; to: "up" | "down"; error: string | null }[];
 };
 
-function MonitoringPage() {
-  const [session, setSession] = useState<null | { userId: string; email?: string }>(null);
-  const [loadingSession, setLoadingSession] = useState(true);
+const STORAGE_KEY = "pulse-speed:monitors:v1";
+const POLL_MS = 60_000;
 
-  useEffect(() => {
-    let mounted = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.user ? { userId: data.user.id, email: data.user.email ?? undefined } : null);
-      setLoadingSession(false);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((evt, s) => {
-      if (evt === "SIGNED_IN" || evt === "SIGNED_OUT" || evt === "USER_UPDATED") {
-        setSession(s?.user ? { userId: s.user.id, email: s.user.email ?? undefined } : null);
-      }
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, []);
-
-  if (loadingSession) {
-    return <Shell><p style={{ color: "#8b94b0" }}>Loading…</p></Shell>;
+function loadMonitors(): LocalMonitor[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
-
-  if (!session) return <Landing />;
-  return <Dashboard email={session.email} />;
+}
+function saveMonitors(list: LocalMonitor[]) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    /* quota exceeded — ignore */
+  }
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px", color: "#e8ecf5" }}>
-      {children}
-    </div>
-  );
-}
-
-function Landing() {
-  return (
-    <Shell>
-      <header style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 40, margin: 0, color: "#fff", letterSpacing: "-0.5px" }}>
-          Application <span style={{ color: "#00D4AA" }}>Monitoring</span>
-        </h1>
-        <p style={{ color: "#8b94b0", maxWidth: 680, marginTop: 12, lineHeight: 1.6 }}>
-          Add a public host and port and Pulse Speed will TCP-probe it every minute,
-          tracking uptime, latency and state changes. Perfect for keeping an eye on
-          web apps, APIs, VPN endpoints, mail servers and self-hosted services.
-        </p>
-      </header>
-
-      <div style={panel}>
-        <h2 style={{ margin: 0, color: "#fff", fontSize: 20 }}>Registered users only</h2>
-        <p style={{ color: "#c8d0e0", marginTop: 10, lineHeight: 1.6 }}>
-          Monitoring is tied to your account so your hosts and incident history stay private.
-          Accounts are protected with email + password and a one-time-password (TOTP)
-          authenticator app — required on every sign-in.
-        </p>
-        <ul style={{ color: "#c8d0e0", lineHeight: 1.8, paddingLeft: 18, margin: "12px 0" }}>
-          <li>TCP probe every 1 minute (port 443, 80 or any custom port)</li>
-          <li>Up / down status, latency and last-checked timestamp</li>
-          <li>24-hour incident timeline showing every state change</li>
-          <li>Free, no credit card</li>
-        </ul>
-        <Link
-          to="/auth"
-          style={{
-            display: "inline-block",
-            marginTop: 8,
-            background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
-            color: "#04150f",
-            padding: "12px 22px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          Create your free account →
-        </Link>
-      </div>
-    </Shell>
-  );
-}
-
-function Dashboard({ email }: { email?: string }) {
-  const qc = useQueryClient();
-  const router = useRouter();
-  const monitorsQ = useQuery({
-    queryKey: ["monitors"],
-    queryFn: () => listMonitors(),
-    refetchInterval: 30_000,
-  });
-
-  const create = useMutation({
-    mutationFn: (input: { label: string; host: string; port: number }) =>
-      createMonitor({ data: input }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["monitors"] }),
-  });
-  const del = useMutation({
-    mutationFn: (id: string) => deleteMonitor({ data: { id } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["monitors"] }),
-  });
-
+function MonitoringPage() {
+  const [monitors, setMonitors] = useState<LocalMonitor[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [label, setLabel] = useState("");
   const [host, setHost] = useState("");
   const [port, setPort] = useState("443");
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const stateRef = useRef<LocalMonitor[]>([]);
 
-  async function signOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    router.navigate({ to: "/auth", replace: true });
-  }
+  useEffect(() => {
+    const list = loadMonitors();
+    setMonitors(list);
+    stateRef.current = list;
+  }, []);
 
-  function submit(e: React.FormEvent) {
+  const persist = useCallback((next: LocalMonitor[]) => {
+    stateRef.current = next;
+    setMonitors(next);
+    saveMonitors(next);
+  }, []);
+
+  const probe = useCallback(
+    async (id: string) => {
+      const current = stateRef.current.find((m) => m.id === id);
+      if (!current) return;
+      try {
+        const r = await probeTcp({ data: { host: current.host, port: current.port } });
+        const next = stateRef.current.map((m) => {
+          if (m.id !== id) return m;
+          const changed = m.lastStatus !== r.status;
+          const events =
+            changed && m.lastStatus !== null
+              ? [{ at: r.checked_at, from: m.lastStatus, to: r.status, error: r.error }, ...m.events].slice(0, 50)
+              : m.lastStatus === null
+                ? [{ at: r.checked_at, from: null, to: r.status, error: r.error }, ...m.events].slice(0, 50)
+                : m.events;
+          return {
+            ...m,
+            lastStatus: r.status,
+            lastLatency: r.latency_ms,
+            lastCheckedAt: r.checked_at,
+            lastError: r.error,
+            events,
+          };
+        });
+        persist(next);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "probe failed";
+        const next = stateRef.current.map((m) =>
+          m.id === id
+            ? {
+                ...m,
+                lastStatus: "down" as const,
+                lastLatency: null,
+                lastCheckedAt: new Date().toISOString(),
+                lastError: msg,
+              }
+            : m,
+        );
+        persist(next);
+      }
+    },
+    [persist],
+  );
+
+  // Poll every minute for every monitor while the tab is open.
+  useEffect(() => {
+    if (!monitors.length) return;
+    const timer = window.setInterval(() => {
+      stateRef.current.forEach((m) => probe(m.id));
+    }, POLL_MS);
+    return () => window.clearInterval(timer);
+  }, [monitors.length, probe]);
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     const p = parseInt(port, 10);
-    if (!Number.isInteger(p) || p < 1 || p > 65535) return;
-    create.mutate(
-      { label, host, port: p },
-      {
-        onSuccess: () => {
-          setLabel("");
-          setHost("");
-          setPort("443");
-        },
-      },
-    );
+    if (!label.trim()) return setError("Label is required");
+    if (!host.trim()) return setError("Host is required");
+    if (!Number.isInteger(p) || p < 1 || p > 65535) return setError("Port must be 1–65535");
+    const m: LocalMonitor = {
+      id: crypto.randomUUID(),
+      label: label.trim().slice(0, 80),
+      host: host.trim(),
+      port: p,
+      createdAt: new Date().toISOString(),
+      lastStatus: null,
+      lastLatency: null,
+      lastCheckedAt: null,
+      lastError: null,
+      events: [],
+    };
+    const next = [m, ...stateRef.current];
+    persist(next);
+    setLabel("");
+    setHost("");
+    setPort("443");
+    setAdding(true);
+    await probe(m.id);
+    setAdding(false);
   }
 
-  const monitors = (monitorsQ.data?.monitors ?? []) as Monitor[];
+  function remove(id: string) {
+    const next = stateRef.current.filter((m) => m.id !== id);
+    persist(next);
+    if (expanded === id) setExpanded(null);
+  }
+
+  function clearAll() {
+    if (!confirm("Clear all monitors from this browser?")) return;
+    persist([]);
+  }
 
   return (
     <Shell>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 24, gap: 16, flexWrap: "wrap" }}>
-        <div>
-          <h1 style={{ fontSize: 30, margin: 0, color: "#fff", letterSpacing: "-0.4px" }}>
-            Application Monitoring
-          </h1>
-          <p style={{ color: "#8b94b0", margin: "6px 0 0" }}>{email}</p>
-        </div>
-        <button onClick={signOut} style={ghostBtn}>Sign out</button>
+      <header style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 34, margin: 0, color: "#fff", letterSpacing: "-0.4px" }}>
+          Application <span style={{ color: "#00D4AA" }}>Monitoring</span>
+        </h1>
+        <p style={{ color: "#8b94b0", maxWidth: 720, marginTop: 10, lineHeight: 1.6 }}>
+          Free TCP port uptime checker — no account needed. Add any public host and
+          port, and Pulse Speed will probe it once a minute while this tab is open,
+          tracking status, latency, and state changes. Monitors live in your browser only.
+        </p>
       </header>
 
       <form
-        onSubmit={submit}
+        onSubmit={onSubmit}
         style={{
           ...panel,
           display: "grid",
@@ -211,17 +207,27 @@ function Dashboard({ email }: { email?: string }) {
         <Field label="Port">
           <input value={port} required onChange={(e) => setPort(e.target.value)} style={input} inputMode="numeric" placeholder="443" />
         </Field>
-        <button type="submit" disabled={create.isPending} style={primaryBtn}>
-          {create.isPending ? "Adding…" : "Add monitor"}
+        <button type="submit" disabled={adding} style={primaryBtn}>
+          {adding ? "Adding…" : "Add monitor"}
         </button>
-        {create.error instanceof Error && (
-          <div style={{ gridColumn: "1 / -1", color: "#ffb4b4", fontSize: 13 }}>{create.error.message}</div>
+        {error && (
+          <div style={{ gridColumn: "1 / -1", color: "#ffb4b4", fontSize: 13 }}>{error}</div>
         )}
       </form>
 
-      <div style={{ marginTop: 24, display: "grid", gap: 12 }}>
-        {monitorsQ.isLoading && <p style={{ color: "#8b94b0" }}>Loading monitors…</p>}
-        {monitorsQ.data && monitors.length === 0 && (
+      <div style={{ marginTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+        <p style={{ color: "#6b7794", fontSize: 12, margin: 0 }}>
+          {monitors.length} monitor{monitors.length === 1 ? "" : "s"} · stored locally in this browser
+        </p>
+        {monitors.length > 0 && (
+          <button onClick={clearAll} style={{ ...ghostBtn, color: "#ffb4b4", borderColor: "rgba(255,80,80,0.35)" }}>
+            Clear all
+          </button>
+        )}
+      </div>
+
+      <div style={{ marginTop: 12, display: "grid", gap: 12 }}>
+        {monitors.length === 0 && (
           <div style={{ ...panel, textAlign: "center", color: "#8b94b0" }}>
             No monitors yet. Add a host and port above to start checking it every minute.
           </div>
@@ -230,8 +236,8 @@ function Dashboard({ email }: { email?: string }) {
           <MonitorRow
             key={m.id}
             m={m}
-            onDelete={() => del.mutate(m.id)}
-            deleting={del.isPending && del.variables === m.id}
+            onDelete={() => remove(m.id)}
+            onRecheck={() => probe(m.id)}
             expanded={expanded === m.id}
             onToggle={() => setExpanded(expanded === m.id ? null : m.id)}
           />
@@ -239,29 +245,38 @@ function Dashboard({ email }: { email?: string }) {
       </div>
 
       <p style={{ marginTop: 28, color: "#6b7794", fontSize: 12 }}>
-        Checks run server-side every minute via a TCP handshake to the configured port.
+        Probes run from Pulse Speed's edge as a TCP handshake to the configured port,
+        triggered while this tab is open. Data never leaves your browser.
       </p>
     </Shell>
+  );
+}
+
+function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px", color: "#e8ecf5" }}>
+      {children}
+    </div>
   );
 }
 
 function MonitorRow({
   m,
   onDelete,
-  deleting,
+  onRecheck,
   expanded,
   onToggle,
 }: {
-  m: Monitor;
+  m: LocalMonitor;
   onDelete: () => void;
-  deleting: boolean;
+  onRecheck: () => void;
   expanded: boolean;
   onToggle: () => void;
 }) {
-  const status = m.last_status;
+  const status = m.lastStatus;
   const dot = status === "up" ? "#00D4AA" : status === "down" ? "#ff5470" : "#6b7794";
   const statusLabel = status ? status.toUpperCase() : "PENDING";
-  const latencyLabel = latencyQuality(m.last_latency_ms);
+  const latencyLabel = latencyQuality(m.lastLatency);
   return (
     <div style={panel}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
@@ -273,25 +288,24 @@ function MonitorRow({
           <div style={{ color: "#8b94b0", fontSize: 12, fontFamily: "DM Mono, monospace" }}>
             {m.host}:{m.port}
           </div>
-          {m.last_error && m.last_status === "down" && (
+          {m.lastError && m.lastStatus === "down" && (
             <div style={{ color: "#ffb4b4", fontSize: 11, marginTop: 2 }}>
-              TCP: {m.last_error}
+              TCP: {m.lastError}
             </div>
           )}
         </div>
         <Stat label="Status" value={statusLabel} color={dot} />
         <Stat
           label="Latency"
-          value={m.last_latency_ms != null ? `${m.last_latency_ms} ms · ${latencyLabel.label}` : "—"}
+          value={m.lastLatency != null ? `${m.lastLatency} ms · ${latencyLabel.label}` : "—"}
           color={latencyLabel.color}
         />
-        <Stat label="Last check" value={fmtRel(m.last_checked_at)} />
+        <Stat label="Last check" value={fmtRel(m.lastCheckedAt)} />
+        <button onClick={onRecheck} style={ghostBtn}>Recheck</button>
         <button onClick={onToggle} style={ghostBtn}>{expanded ? "Hide" : "Events"}</button>
-        <button onClick={onDelete} disabled={deleting} style={{ ...ghostBtn, color: "#ffb4b4", borderColor: "rgba(255,80,80,0.35)" }}>
-          {deleting ? "…" : "Delete"}
-        </button>
+        <button onClick={onDelete} style={{ ...ghostBtn, color: "#ffb4b4", borderColor: "rgba(255,80,80,0.35)" }}>Delete</button>
       </div>
-      {expanded && <Events monitorId={m.id} />}
+      {expanded && <Events events={m.events} />}
     </div>
   );
 }
@@ -305,24 +319,19 @@ function latencyQuality(ms: number | null): { label: string; color: string } {
   return { label: "Critical", color: "#ef4444" };
 }
 
-function Events({ monitorId }: { monitorId: string }) {
-  const q = useQuery({
-    queryKey: ["events", monitorId],
-    queryFn: () => listEvents({ data: { monitorId, limit: 25 } }),
-  });
+function Events({ events }: { events: LocalMonitor["events"] }) {
   return (
     <div style={{ marginTop: 14, borderTop: "1px solid #1f2740", paddingTop: 12 }}>
       <div style={{ color: "#8b94b0", fontSize: 12, marginBottom: 8 }}>Recent state changes</div>
-      {q.isLoading && <div style={{ color: "#8b94b0", fontSize: 13 }}>Loading…</div>}
-      {q.data && q.data.length === 0 && (
+      {events.length === 0 && (
         <div style={{ color: "#6b7794", fontSize: 13 }}>No state changes recorded yet.</div>
       )}
       <div style={{ display: "grid", gap: 6 }}>
-        {(q.data ?? []).map((e) => (
-          <div key={e.id} style={{ display: "flex", gap: 12, fontSize: 13, color: "#c8d0e0" }}>
-            <span style={{ fontFamily: "DM Mono, monospace", color: "#8b94b0" }}>{fmtAbs(e.created_at)}</span>
+        {events.map((e, i) => (
+          <div key={i} style={{ display: "flex", gap: 12, fontSize: 13, color: "#c8d0e0" }}>
+            <span style={{ fontFamily: "DM Mono, monospace", color: "#8b94b0" }}>{fmtAbs(e.at)}</span>
             <span>
-              {(e.from_status ?? "—").toUpperCase()} → <strong style={{ color: e.to_status === "up" ? "#00D4AA" : "#ff5470" }}>{e.to_status.toUpperCase()}</strong>
+              {(e.from ?? "—").toString().toUpperCase()} → <strong style={{ color: e.to === "up" ? "#00D4AA" : "#ff5470" }}>{e.to.toUpperCase()}</strong>
             </span>
             {e.error && <span style={{ color: "#ffb4b4" }}>{e.error}</span>}
           </div>
