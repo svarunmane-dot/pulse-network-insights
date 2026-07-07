@@ -1777,6 +1777,210 @@ function SeoContent() {
 /* ============================================================
    LAYOUT COMPONENTS
    ============================================================ */
+const TOOLS: {
+  to: string;
+  icon: string;
+  title: string;
+  desc: string;
+  cta: string;
+}[] = [
+  {
+    to: "/",
+    icon: "⚡",
+    title: "Internet Speed Test",
+    desc: "Measure download, upload, ping and jitter with a Cloudflare-backed engine — accurate on fiber, cable, 5G and Wi-Fi.",
+    cta: "Run speed test",
+  },
+  {
+    to: "/ping",
+    icon: "📶",
+    title: "Ping a Friend",
+    desc: "Share a live latency link so you and a friend see round-trip times between your networks in real time.",
+    cta: "Start a session",
+  },
+  {
+    to: "/global",
+    icon: "🌍",
+    title: "Global Latency Map",
+    desc: "Ping edge locations around the world from your browser to see where your connection is fast — and where it isn't.",
+    cta: "See the map",
+  },
+  {
+    to: "/subnet",
+    icon: "🧮",
+    title: "IP Subnet Calculator",
+    desc: "IPv4 & IPv6 subnetting: CIDR, network, broadcast, usable hosts, wildcard mask — everything a network engineer needs.",
+    cta: "Open calculator",
+  },
+  {
+    to: "/dnslookup",
+    icon: "🔎",
+    title: "DNS Lookup",
+    desc: "Resolve A, AAAA, MX, TXT, NS, CNAME and SOA records for any domain with authoritative answers.",
+    cta: "Look up DNS",
+  },
+  {
+    to: "/pingip",
+    icon: "🎯",
+    title: "Ping IP",
+    desc: "Probe any public IP or hostname from our edge and get latency in milliseconds — great for reachability checks.",
+    cta: "Ping an IP",
+  },
+  {
+    to: "/whoisip",
+    icon: "🕵",
+    title: "Whose IP – WHOIS & Geolocation",
+    desc: "Look up owner, ASN, ISP, country and city for any IPv4 or IPv6 address. Perfect for abuse and security triage.",
+    cta: "Check an IP",
+  },
+  {
+    to: "/portcheck",
+    icon: "🚪",
+    title: "Open Port Checker",
+    desc: "See whether a TCP port on a public host is reachable — useful for firewall, NAT and server debugging.",
+    cta: "Check a port",
+  },
+  {
+    to: "/monitoring",
+    icon: "📈",
+    title: "Application Monitoring",
+    desc: "Free TCP uptime monitor with 1-minute checks, latency tracking and incident history. No sign-up needed.",
+    cta: "Add a monitor",
+  },
+  {
+    to: "/ap-planning",
+    icon: "📡",
+    title: "AP Planning Simulator",
+    desc: "Upload a floor plan, pick your Wi-Fi vendor, and get ranked access point placement suggestions with coverage overlays.",
+    cta: "Plan Wi-Fi coverage",
+  },
+];
+
+function ToolsShowcase({ variant = "web" }: { variant?: "web" | "mobile" }) {
+  const padX = variant === "mobile" ? 24 : 32;
+  return (
+    <section
+      className="pulse-fadeUp"
+      aria-labelledby="tools-heading"
+      style={{ padding: `48px ${padX}px 0` }}
+    >
+      <div style={{ textAlign: "center", maxWidth: 780, margin: "0 auto 28px" }}>
+        <div
+          className="font-mono-pulse"
+          style={{
+            fontSize: 12,
+            letterSpacing: 3,
+            color: TEAL,
+            textTransform: "uppercase",
+            marginBottom: 10,
+          }}
+        >
+          Every tool on Pulse Speed
+        </div>
+        <h2
+          id="tools-heading"
+          style={{
+            fontSize: variant === "mobile" ? 26 : 32,
+            margin: 0,
+            color: "#fff",
+            letterSpacing: "-0.5px",
+            lineHeight: 1.2,
+          }}
+        >
+          Free network tools for engineers, gamers &amp; curious users
+        </h2>
+        <p style={{ color: TEXT_SEC, marginTop: 10, lineHeight: 1.6, fontSize: 15 }}>
+          Speed test, ping, DNS lookup, WHOIS &amp; IP geolocation, port checker,
+          subnet calculator, uptime monitoring and Wi-Fi AP planning — all in one
+          place, no sign-up required.
+        </p>
+      </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            variant === "mobile"
+              ? "1fr"
+              : "repeat(auto-fill, minmax(260px, 1fr))",
+          gap: 14,
+        }}
+      >
+        {TOOLS.map((t) => (
+          <Link
+            key={t.to}
+            to={t.to}
+            style={{
+              textDecoration: "none",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              padding: 20,
+              borderRadius: 16,
+              border: `1px solid ${BORDER}`,
+              background: `linear-gradient(160deg, ${SURFACE}, ${SURFACE2})`,
+              color: TEXT_SEC,
+              transition: "transform 160ms ease, border-color 160ms ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = `${TEAL}66`;
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = BORDER;
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span
+                aria-hidden
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: `linear-gradient(135deg, ${TEAL}22, ${PURPLE}22)`,
+                  border: `1px solid ${TEAL}44`,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                }}
+              >
+                {t.icon}
+              </span>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 16,
+                  color: "#fff",
+                  fontWeight: 700,
+                  letterSpacing: "-0.2px",
+                }}
+              >
+                {t.title}
+              </h3>
+            </div>
+            <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: TEXT_SEC }}>
+              {t.desc}
+            </p>
+            <span
+              style={{
+                marginTop: "auto",
+                paddingTop: 8,
+                fontSize: 12,
+                color: TEAL,
+                fontWeight: 600,
+                letterSpacing: 0.3,
+              }}
+            >
+              {t.cta} →
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function WebLayout(p: PanelProps) {
   const {
     status,
