@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback } from "react";
+import { toolHead } from "@/lib/seo";
 
 /* ============================================================
    IP SUBNET CALCULATOR
@@ -157,36 +158,24 @@ function calculateSubnet(ipStr: string, maskStr: string): SubnetResult | { error
    ============================================================ */
 export const Route = createFileRoute("/subnet")({
   component: SubnetPage,
-  head: () => ({
-    meta: [
-      { title: "IP Subnet Calculator – Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Free IP subnet calculator. Enter an IP address and subnet mask to instantly get network address, broadcast address, usable IP range, host count, wildcard mask and binary representation. Part of Pulse Speed networking tools.",
-      },
-      {
-        name: "keywords",
-        content:
-          "ip subnet calculator, subnet mask calculator, cidr calculator, network calculator, ip range calculator, broadcast address, usable hosts, networking tools, ipv4 subnet",
-      },
-      { property: "og:title", content: "IP Subnet Calculator – Pulse Speed" },
-      {
-        property: "og:description",
-        content:
-          "Instantly calculate network address, broadcast address, usable IP ranges and maximum hosts for any subnet.",
-      },
-      { property: "og:url", content: "https://pulse-speed.com/subnet" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "IP Subnet Calculator – Pulse Speed" },
-      {
-        name: "twitter:description",
-        content:
-          "Instantly calculate network address, broadcast address, usable IP ranges and maximum hosts for any subnet.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/subnet" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/subnet",
+      name: "IP Subnet Calculator",
+      title: "IP Subnet Calculator — CIDR, Mask & Host Range Tool",
+      description:
+        "Free IPv4 subnet calculator. Enter any IP and CIDR to get the network address, broadcast, usable host range, wildcard mask and total hosts.",
+      faqs: [
+        {
+          q: "What does the subnet calculator return?",
+          a: "Network address, broadcast address, usable host range, wildcard mask, total and usable host count, plus binary representations for the given IP and CIDR mask.",
+        },
+        {
+          q: "Does it support CIDR notation?",
+          a: "Yes. You can enter a mask as CIDR (for example /24) or as a dotted mask (255.255.255.0).",
+        },
+      ],
+    }),
 });
 
 function SubnetPage() {

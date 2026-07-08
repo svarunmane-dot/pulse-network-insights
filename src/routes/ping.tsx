@@ -2,15 +2,28 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { toolHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/ping")({
   component: PingPage,
-  head: () => ({
-    meta: [
-      { title: "Ping a friend — Pulse" },
-      { name: "description", content: "Measure real peer-to-peer round-trip latency between two devices over a direct WebRTC connection." },
-    ],
-  }),
+  head: () =>
+    toolHead({
+      path: "/ping",
+      name: "Ping a Friend",
+      title: "Ping a Friend — Peer-to-Peer WebRTC Latency Tester",
+      description:
+        "Measure real peer-to-peer round-trip latency between two devices over a direct WebRTC connection. No installs — just share a code and connect.",
+      faqs: [
+        {
+          q: "How is this different from a normal ping test?",
+          a: "Both devices connect directly over WebRTC, so the measured round-trip time reflects the actual network path between the two peers instead of a server.",
+        },
+        {
+          q: "Do I need to install anything?",
+          a: "No. Ping a Friend runs entirely in the browser on both devices. Share your 4-digit code and start measuring latency.",
+        },
+      ],
+    }),
 });
 
 type Phase = "idle" | "signaling" | "connecting" | "connected" | "failed";

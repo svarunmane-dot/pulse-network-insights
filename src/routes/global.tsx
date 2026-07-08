@@ -1,21 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toolHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/global")({
   component: GlobalLatencyPage,
-  head: () => ({
-    meta: [
-      { title: "Global Latency Map – Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Measure your latency to Cloudflare edge locations around the world on an interactive map.",
-      },
-      { property: "og:title", content: "Global Latency Map – Pulse Speed" },
-      { property: "og:url", content: "https://pulse-speed.com/global" },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/global" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/global",
+      name: "Global Latency Map",
+      title: "Global Latency Map — Test Ping to Cloudflare Worldwide",
+      description:
+        "Measure real-time latency from your device to Cloudflare edge locations around the world on an interactive map. Free, no-signup network test.",
+      faqs: [
+        {
+          q: "What does the global latency map measure?",
+          a: "It measures round-trip time (RTT) in milliseconds from your browser to Cloudflare data centres in different cities and shows the result on a live world map.",
+        },
+        {
+          q: "Is the global latency test free?",
+          a: "Yes. Pulse Speed's global latency map is completely free, requires no sign-up and runs entirely in your browser.",
+        },
+      ],
+    }),
 });
 
 type Edge = {

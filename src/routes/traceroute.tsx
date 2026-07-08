@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { traceHost } from "@/lib/nettools.functions";
+import { toolHead } from "@/lib/seo";
 
 const TEAL = "#00D4AA";
 const SURFACE = "#131829";
@@ -13,18 +14,20 @@ type TraceResult = Awaited<ReturnType<typeof traceHost>>;
 
 export const Route = createFileRoute("/traceroute")({
   component: TraceroutePage,
-  head: () => ({
-    meta: [
-      { title: "Traceroute – Path to a Public IP | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Trace the network path to any public IP or hostname. Choose between an edge-based traceroute or a real ICMP traceroute from a private tunnel.",
-      },
-      { property: "og:title", content: "Traceroute – Pulse Speed" },
-      { property: "og:description", content: "Trace the path to a public IP or hostname (TCP or ICMP)." },
-    ],
-  }),
+  head: () =>
+    toolHead({
+      path: "/traceroute",
+      name: "Traceroute",
+      title: "Traceroute — Trace the Network Path to a Public IP",
+      description:
+        "Trace every network hop between our edge and any public IP or hostname. Choose a TCP traceroute from the edge or a real ICMP trace via tunnel.",
+      faqs: [
+        {
+          q: "What is the difference between TCP and ICMP traceroute?",
+          a: "TCP traceroute uses TCP SYN packets and runs from our edge network. ICMP traceroute uses classic ICMP echo probes through a private tunnel.",
+        },
+      ],
+    }),
 });
 
 function TraceroutePage() {

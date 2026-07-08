@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useCallback } from "react";
 import { whoisIp } from "@/lib/nettools.functions";
+import { toolHead } from "@/lib/seo";
 
 const TEAL = "#00D4AA";
 const PURPLE = "#9B8FE8";
@@ -14,26 +15,24 @@ type WhoisResult = Awaited<ReturnType<typeof whoisIp>>;
 
 export const Route = createFileRoute("/whoisip")({
   component: WhoisIpPage,
-  head: () => ({
-    meta: [
-      { title: "Whose IP – IP Geolocation, ISP & ASN Lookup | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Free IP lookup tool. Enter any public IPv4 address to find its country, city, ISP, organisation, ASN, hosting status and reverse DNS hostname.",
-      },
-      {
-        name: "keywords",
-        content:
-          "whose ip, whois ip, ip geolocation, ip lookup, isp lookup, asn lookup, ip address location, find ip owner, network tools",
-      },
-      { property: "og:title", content: "Whose IP – IP Geolocation, ISP & ASN Lookup | Pulse Speed" },
-      { property: "og:description", content: "Find the location, ISP and organisation behind any public IP address." },
-      { property: "og:url", content: "https://pulse-speed.com/whoisip" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/whoisip" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/whoisip",
+      name: "Whose IP",
+      title: "Whose IP — Free IP Geolocation, ISP & ASN Lookup Tool",
+      description:
+        "Free IP lookup tool. Find the country, city, ISP, organisation, ASN, reverse DNS and hosting flags behind any public IPv4 address instantly.",
+      faqs: [
+        {
+          q: "What does the Whose IP tool return?",
+          a: "Country, region, city, coordinates, timezone, ISP, organisation, ASN, reverse DNS, plus flags for mobile, proxy/VPN and hosting/datacentre networks.",
+        },
+        {
+          q: "How accurate is IP geolocation?",
+          a: "Country and ISP accuracy is high. City-level results are approximate because IP-to-location mapping is based on operator-reported ranges.",
+        },
+      ],
+    }),
 });
 
 function WhoisIpPage() {
