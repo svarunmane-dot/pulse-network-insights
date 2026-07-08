@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toolHead } from "@/lib/seo";
 
 const TEAL = "#00D4AA";
 const SURFACE = "#131829";
@@ -14,29 +15,26 @@ const AMBER = "#f5a623";
 
 export const Route = createFileRoute("/ap-planning")({
   component: ApPlanningPage,
-  head: () => ({
-    meta: [
-      { title: "AP Planning Simulation – Wi-Fi Access Point Placement Optimizer | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Optimize Wi-Fi Access Point placement on your floor plan. Upload a PNG/JPG, pick vendor & model (Fortinet, Cisco Meraki, Ubiquiti, TP-Link, Aruba), and get ranked AP placements with coverage visualization.",
-      },
-      {
-        name: "keywords",
-        content:
-          "AP placement, wifi planning, access point simulator, wireless site survey, wifi heatmap, coverage planner, fortinet ap, cisco meraki, ubiquiti unifi, aruba, tp-link",
-      },
-      { property: "og:title", content: "AP Planning Simulation – Wi-Fi Coverage Planner | Pulse Speed" },
-      {
-        property: "og:description",
-        content: "Upload a floor plan and get ranked Access Point placement suggestions with coverage visualization.",
-      },
-      { property: "og:url", content: "https://pulse-speed.com/ap-planning" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/ap-planning" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/ap-planning",
+      name: "AP Planning Simulator",
+      title: "AP Planning Simulator — WiFi Access Point Placement",
+      description:
+        "Upload a floor plan and get ranked Wi-Fi access point placements with coverage overlays for Fortinet, Cisco Meraki, Ubiquiti, TP-Link and Aruba APs.",
+      category: "DesignApplication",
+      faqs: [
+        {
+          q: "Which access point vendors are supported?",
+          o: "",
+          a: "Fortinet FortiAP, Cisco Meraki, Ubiquiti UniFi, TP-Link Omada and Aruba Instant On, with realistic indoor coverage radii per model.",
+        },
+        {
+          q: "How are the AP placements chosen?",
+          a: "A greedy set-cover algorithm samples the floor plan on a grid and picks positions that maximise coverage while minimising overlap and AP count.",
+        },
+      ],
+    }),
 });
 
 // --- AP Model database ------------------------------------------------------
