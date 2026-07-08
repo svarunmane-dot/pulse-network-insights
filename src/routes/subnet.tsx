@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback } from "react";
+import { toolHead } from "@/lib/seo";
 
 /* ============================================================
    IP SUBNET CALCULATOR
