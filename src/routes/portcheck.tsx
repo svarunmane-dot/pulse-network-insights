@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useCallback } from "react";
 import { portCheck } from "@/lib/nettools.functions";
+import { toolHead } from "@/lib/seo";
 
 const TEAL = "#00D4AA";
 const SURFACE = "#131829";
@@ -25,26 +26,24 @@ const COMMON_PORTS = [
 
 export const Route = createFileRoute("/portcheck")({
   component: PortCheckPage,
-  head: () => ({
-    meta: [
-      { title: "Port Check – Test if a TCP Port is Open on a Public IP | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Free online port checker. Test whether a TCP port (HTTP 80, HTTPS 443, SSH 22, RDP 3389, etc.) is open and listening on any public IP or hostname.",
-      },
-      {
-        name: "keywords",
-        content:
-          "port check, open port checker, tcp port test, is port open, firewall test, port scanner online, network tools",
-      },
-      { property: "og:title", content: "Port Check – Test if a TCP Port is Open on a Public IP | Pulse Speed" },
-      { property: "og:description", content: "Test if a TCP port is open and responding on any public IP or hostname." },
-      { property: "og:url", content: "https://pulse-speed.com/portcheck" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/portcheck" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/portcheck",
+      name: "Open Port Checker",
+      title: "Open Port Checker — Test TCP Ports on Any Public IP",
+      description:
+        "Free online TCP port checker. Test whether ports like 22, 80, 443, 3389 or any custom port are open and listening on any public IP or hostname.",
+      faqs: [
+        {
+          q: "What is an open port checker?",
+          a: "It opens a TCP connection to a given host and port from our edge to test whether the service is reachable and responding to new connections.",
+        },
+        {
+          q: "Which ports can I test?",
+          a: "Any TCP port from 1 to 65535 on a public IP or hostname. Common services like SSH (22), HTTP (80), HTTPS (443) and RDP (3389) are one-click presets.",
+        },
+      ],
+    }),
 });
 
 function PortCheckPage() {
