@@ -26,7 +26,6 @@ export const Route = createFileRoute("/ap-planning")({
       faqs: [
         {
           q: "Which access point vendors are supported?",
-          o: "",
           a: "Fortinet FortiAP, Cisco Meraki, Ubiquiti UniFi, TP-Link Omada and Aruba Instant On, with realistic indoor coverage radii per model.",
         },
         {
