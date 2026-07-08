@@ -87,8 +87,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#0A0E1A" },
       { property: "og:site_name", content: "Pulse Speed" },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://pulse-speed.com/" },
-      { property: "og:image", content: "https://pulse-speed.com/favicon.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@pulsespeed" },
       // Analytics placeholders – replace IDs when ready
