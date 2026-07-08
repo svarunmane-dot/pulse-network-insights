@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback } from "react";
+import { toolHead } from "@/lib/seo";
 
 /* ============================================================
    DNS LOOKUP TOOL
@@ -104,35 +105,24 @@ async function reverseLookup(ip: string): Promise<DNSResult> {
 
 export const Route = createFileRoute("/dnslookup")({
   component: DnsLookupPage,
-  head: () => ({
-    meta: [
-      { title: "DNS Lookup – IP to Domain & Domain to IP Resolver | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Free DNS lookup tool. Enter a domain name to find its IP address, or enter a public IP to find its hostname. Fast reverse DNS and forward DNS resolver powered by Cloudflare.",
-      },
-      {
-        name: "keywords",
-        content:
-          "dns lookup, reverse dns, domain to ip, ip to domain, dns resolver, ptr lookup, a record lookup, ip address lookup, dns checker, network tools",
-      },
-      { property: "og:title", content: "DNS Lookup – IP to Domain & Domain to IP Resolver | Pulse Speed" },
-      {
-        property: "og:description",
-        content:
-          "Free DNS lookup tool. Enter a domain name to find its IP address, or enter a public IP to find its hostname.",
-      },
-      { property: "og:url", content: "https://pulse-speed.com/dnslookup" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "DNS Lookup – IP to Domain & Domain to IP Resolver | Pulse Speed" },
-      {
-        name: "twitter:description",
-        content: "Free DNS lookup tool. Enter a domain name to find its IP address, or enter a public IP to find its hostname.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/dnslookup" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/dnslookup",
+      name: "DNS Lookup",
+      title: "DNS Lookup — Domain to IP & Reverse DNS Resolver Tool",
+      description:
+        "Free DNS lookup tool. Resolve any domain to its A and AAAA records, or reverse-lookup a public IPv4 address to its hostname in seconds.",
+      faqs: [
+        {
+          q: "What record types does the DNS lookup support?",
+          a: "Forward lookups return A (IPv4) and AAAA (IPv6) records. Reverse lookups return PTR records for a public IPv4 address.",
+        },
+        {
+          q: "Which DNS resolver is used?",
+          a: "Queries run against Google Public DNS over HTTPS so results are fast, encrypted and independent of your local resolver.",
+        },
+      ],
+    }),
 });
 
 function DnsLookupPage() {
