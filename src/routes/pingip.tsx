@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useCallback } from "react";
 import { pingHost } from "@/lib/nettools.functions";
+import { toolHead } from "@/lib/seo";
 
 const TEAL = "#00D4AA";
 const SURFACE = "#131829";
@@ -13,25 +14,24 @@ type PingResult = Awaited<ReturnType<typeof pingHost>>;
 
 export const Route = createFileRoute("/pingip")({
   component: PingIpPage,
-  head: () => ({
-    meta: [
-      { title: "Ping IP – Test Reachability of a Public IP | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Free online ping tool. Enter a public IP or hostname to check reachability, latency (min/avg/max) and packet loss using a TCP-based ping from our edge network.",
-      },
-      {
-        name: "keywords",
-        content: "ping ip, online ping, tcp ping, ping test, reachability test, latency test, network tools",
-      },
-      { property: "og:title", content: "Ping IP – Test Reachability of a Public IP | Pulse Speed" },
-      { property: "og:description", content: "Check if a public IP or hostname is reachable and measure latency." },
-      { property: "og:url", content: "https://pulse-speed.com/pingip" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/pingip" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/pingip",
+      name: "Ping IP",
+      title: "Ping IP — Test Reachability & Latency of a Public IP",
+      description:
+        "Free online ping tool. Check if a public IPv4 or hostname is reachable from our edge and measure round-trip latency to it in milliseconds.",
+      faqs: [
+        {
+          q: "How does the online ping work?",
+          a: "Because browsers cannot send ICMP echo packets, Pulse Speed opens a TCP connection to the target from our edge and measures how long the handshake takes.",
+        },
+        {
+          q: "Can I ping any IP or hostname?",
+          a: "You can ping any public IPv4 address or hostname. Private, reserved and loopback addresses are blocked to prevent abuse.",
+        },
+      ],
+    }),
 });
 
 function PingIpPage() {
