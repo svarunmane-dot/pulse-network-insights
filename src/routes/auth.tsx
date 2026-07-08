@@ -6,13 +6,14 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sign In / Sign Up – Pulse Speed WAN Monitoring" },
+      { title: "Sign In — Pulse Speed" },
       {
         name: "description",
-        content:
-          "Create your free Pulse Speed account to monitor WAN IPs with TCP probes every minute and view uptime history.",
+        content: "Sign in to Pulse Speed.",
       },
+      { name: "robots", content: "noindex, follow" },
     ],
+    links: [{ rel: "canonical", href: "https://pulse-speed.com/auth" }],
   }),
   component: AuthPage,
 });
