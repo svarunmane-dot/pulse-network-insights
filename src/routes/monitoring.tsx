@@ -1,27 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { probeTcp } from "@/lib/monitor-public.functions";
+import { toolHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/monitoring")({
   ssr: false,
-  head: () => ({
-    meta: [
-      { title: "Free Application Monitoring – TCP Port Uptime Checker | Pulse Speed" },
-      {
-        name: "description",
-        content:
-          "Free, no-signup TCP port monitor. Check that any public host and port stays online, with live latency and incident history stored right in your browser.",
-      },
-      { property: "og:title", content: "Free Application Monitoring – Pulse Speed" },
-      {
-        property: "og:description",
-        content:
-          "Instant TCP port uptime checks with latency tracking and browser-local history. No sign-up required.",
-      },
-      { property: "og:url", content: "https://pulse-speed.com/monitoring" },
-    ],
-    links: [{ rel: "canonical", href: "https://pulse-speed.com/monitoring" }],
-  }),
+  head: () =>
+    toolHead({
+      path: "/monitoring",
+      name: "Application Monitoring",
+      title: "App Monitoring — Free TCP Port Uptime Checker Online",
+      description:
+        "Free, no-signup TCP port monitor. Check that any public host and port stays online with live latency tracking and incident history in your browser.",
+      faqs: [
+        {
+          q: "Is application monitoring really free?",
+          a: "Yes. Monitors run entirely from your browser session, require no account and store history locally so there is no cost or sign-up.",
+        },
+        {
+          q: "What can I monitor?",
+          a: "Any public host and TCP port — for example a website on port 443, an SSH server on 22 or a game server on a custom port.",
+        },
+      ],
+    }),
   component: MonitoringPage,
 });
 
