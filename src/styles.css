@@ -196,17 +196,28 @@ html, body {
 
 /* ============================================================
    Light theme (applied via <html data-theme="light">).
-   The site is authored dark with inline styles, so we use the
-   CSS filter inversion technique and counter-invert media.
+   The site is authored dark with inline styles, so we invert
+   the whole document and counter-invert media / brand marks so
+   photos and gradients keep their real colors.
    ============================================================ */
+html[data-theme="light"],
 html[data-theme="light"] body {
-  background: #ffffff;
-  filter: invert(1) hue-rotate(180deg);
+  background: #f5f3ee !important;
+  color: #1a1f2e;
 }
+html[data-theme="light"] body {
+  filter: invert(0.92) hue-rotate(180deg);
+}
+/* After the body-wide inversion, media would look wrong.
+   Counter-invert so they render with their true colors. */
 html[data-theme="light"] img,
 html[data-theme="light"] video,
 html[data-theme="light"] canvas,
 html[data-theme="light"] iframe,
+html[data-theme="light"] svg image,
 html[data-theme="light"] [data-no-invert] {
   filter: invert(1) hue-rotate(180deg);
 }
+/* Scrollbar in light mode */
+html[data-theme="light"] ::-webkit-scrollbar-track { background: #e8e4dd; }
+html[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c9c3b8; }
