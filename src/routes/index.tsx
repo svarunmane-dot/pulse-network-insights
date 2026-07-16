@@ -618,6 +618,11 @@ function Index() {
   const runTest = async () => {
     if (status === "testing") return;
     setStatus("testing");
+    // Refresh the "Your Network" panel each time a test runs so the
+    // detected public IP / ISP / location reflect the current session.
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("pulse-speed:refresh-network"));
+    }
     setProgress(0);
     setPhase("ping");
     setResults(null);
