@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -243,8 +244,54 @@ function SiteHeader() {
             </Link>
           ))}
         </nav>
+        <ThemeToggle />
       </div>
     </header>
+  );
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    const stored = (typeof window !== "undefined" &&
+      (window.localStorage.getItem("pulse-speed:theme") as
+        | "dark"
+        | "light"
+        | null)) || "dark";
+    setTheme(stored);
+    document.documentElement.setAttribute("data-theme", stored);
+  }, []);
+  const toggle = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      window.localStorage.setItem("pulse-speed:theme", next);
+    } catch {}
+  };
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+      title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+      style={{
+        marginLeft: 8,
+        width: 36,
+        height: 36,
+        borderRadius: 10,
+        border: "1px solid #1f2740",
+        background: "#0f1422",
+        color: "#c8d0e0",
+        cursor: "pointer",
+        fontSize: 16,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {theme === "dark" ? "☀️" : "🌙"}
+    </button>
   );
 }
 
