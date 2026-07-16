@@ -1450,11 +1450,21 @@ function NetworkInfo() {
     timezone?: string;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  useEffect(() => {
+    const bump = () => setRefreshKey((k) => k + 1);
+    window.addEventListener("pulse-speed:refresh-network", bump);
+    return () =>
+      window.removeEventListener("pulse-speed:refresh-network", bump);
+  }, []);
   useEffect(() => {
     let cancelled = false;
+    setError(null);
     (async () => {
       try {
-        const res = await fetch("https://ipapi.co/json/");
+        const res = await fetch(`https://ipapi.co/json/?_=${Date.now()}`, {
+          cache: "no-store",
+        });
         if (!res.ok) throw new Error("lookup failed");
         const j = await res.json();
         if (cancelled) return;
@@ -1476,7 +1486,7 @@ function NetworkInfo() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshKey]);
   const rows = [
     { label: "PUBLIC IP", value: info?.ip },
     { label: "ISP / ORG", value: info?.org },
