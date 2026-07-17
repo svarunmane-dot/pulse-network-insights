@@ -27,6 +27,7 @@ import { Route as ApPlanningRouteImport } from './routes/ap-planning'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
 
@@ -120,6 +121,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AcademyIndexRoute = AcademyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   id: '/api/public/upload',
   path: '/api/public/upload',
@@ -135,7 +141,7 @@ const ApiPublicHooksMonitorTickRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/academy': typeof AcademyRoute
+  '/academy': typeof AcademyRouteWithChildren
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -151,13 +157,13 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/academy': typeof AcademyRoute
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -173,6 +179,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -180,7 +187,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/academy': typeof AcademyRoute
+  '/academy': typeof AcademyRouteWithChildren
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -196,6 +203,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -220,13 +228,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/academy'
     | '/ap-planning'
     | '/auth'
     | '/contact'
@@ -242,6 +250,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   id:
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   fileRoutesById: FileRoutesById
@@ -271,7 +281,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AcademyRoute: typeof AcademyRoute
+  AcademyRoute: typeof AcademyRouteWithChildren
   ApPlanningRoute: typeof ApPlanningRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
@@ -419,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/academy/': {
+      id: '/academy/'
+      path: '/'
+      fullPath: '/academy/'
+      preLoaderRoute: typeof AcademyIndexRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/api/public/upload': {
       id: '/api/public/upload'
       path: '/api/public/upload'
@@ -436,10 +453,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AcademyRouteChildren {
+  AcademyIndexRoute: typeof AcademyIndexRoute
+}
+
+const AcademyRouteChildren: AcademyRouteChildren = {
+  AcademyIndexRoute: AcademyIndexRoute,
+}
+
+const AcademyRouteWithChildren =
+  AcademyRoute._addFileChildren(AcademyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AcademyRoute: AcademyRoute,
+  AcademyRoute: AcademyRouteWithChildren,
   ApPlanningRoute: ApPlanningRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
