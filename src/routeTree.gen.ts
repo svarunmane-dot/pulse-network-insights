@@ -28,6 +28,7 @@ import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
+import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
 
@@ -126,6 +127,11 @@ const AcademyIndexRoute = AcademyIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyLesson1Route = AcademyLesson1RouteImport.update({
+  id: '/lesson-1',
+  path: '/lesson-1',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   id: '/api/public/upload',
   path: '/api/public/upload',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/lesson-1'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/lesson-1'
     | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/lesson-1'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -436,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyIndexRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-1': {
+      id: '/academy/lesson-1'
+      path: '/lesson-1'
+      fullPath: '/academy/lesson-1'
+      preLoaderRoute: typeof AcademyLesson1RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/api/public/upload': {
       id: '/api/public/upload'
       path: '/api/public/upload'
@@ -454,10 +473,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AcademyRouteChildren {
+  AcademyLesson1Route: typeof AcademyLesson1Route
   AcademyIndexRoute: typeof AcademyIndexRoute
 }
 
 const AcademyRouteChildren: AcademyRouteChildren = {
+  AcademyLesson1Route: AcademyLesson1Route,
   AcademyIndexRoute: AcademyIndexRoute,
 }
 

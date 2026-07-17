@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { toolHead } from "@/lib/seo";
 import heroImg from "@/assets/academy-lesson1-hero.jpg";
 import networksImg from "@/assets/academy-lesson1-networks.jpg";
