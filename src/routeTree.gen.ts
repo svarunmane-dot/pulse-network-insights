@@ -24,8 +24,11 @@ import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApPlanningRouteImport } from './routes/ap-planning'
+import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AcademyIndexRouteImport } from './routes/academy.index'
+import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
 
@@ -104,6 +107,11 @@ const ApPlanningRoute = ApPlanningRouteImport.update({
   path: '/ap-planning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AcademyRoute = AcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -113,6 +121,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AcademyIndexRoute = AcademyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson1Route = AcademyLesson1RouteImport.update({
+  id: '/lesson-1',
+  path: '/lesson-1',
+  getParentRoute: () => AcademyRoute,
 } as any)
 const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   id: '/api/public/upload',
@@ -129,6 +147,7 @@ const ApiPublicHooksMonitorTickRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRouteWithChildren
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -144,6 +163,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -165,6 +186,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -172,6 +195,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRouteWithChildren
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -187,6 +211,8 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -195,6 +221,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/academy'
     | '/ap-planning'
     | '/auth'
     | '/contact'
@@ -210,6 +237,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/lesson-1'
+    | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   fileRoutesByTo: FileRoutesByTo
@@ -231,12 +260,15 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/lesson-1'
+    | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/academy'
     | '/ap-planning'
     | '/auth'
     | '/contact'
@@ -252,6 +284,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
+    | '/academy/lesson-1'
+    | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   fileRoutesById: FileRoutesById
@@ -259,6 +293,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AcademyRoute: typeof AcademyRouteWithChildren
   ApPlanningRoute: typeof ApPlanningRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
@@ -385,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApPlanningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/academy': {
+      id: '/academy'
+      path: '/academy'
+      fullPath: '/academy'
+      preLoaderRoute: typeof AcademyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -398,6 +440,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/academy/': {
+      id: '/academy/'
+      path: '/'
+      fullPath: '/academy/'
+      preLoaderRoute: typeof AcademyIndexRouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-1': {
+      id: '/academy/lesson-1'
+      path: '/lesson-1'
+      fullPath: '/academy/lesson-1'
+      preLoaderRoute: typeof AcademyLesson1RouteImport
+      parentRoute: typeof AcademyRoute
     }
     '/api/public/upload': {
       id: '/api/public/upload'
@@ -416,9 +472,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AcademyRouteChildren {
+  AcademyLesson1Route: typeof AcademyLesson1Route
+  AcademyIndexRoute: typeof AcademyIndexRoute
+}
+
+const AcademyRouteChildren: AcademyRouteChildren = {
+  AcademyLesson1Route: AcademyLesson1Route,
+  AcademyIndexRoute: AcademyIndexRoute,
+}
+
+const AcademyRouteWithChildren =
+  AcademyRoute._addFileChildren(AcademyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AcademyRoute: AcademyRouteWithChildren,
   ApPlanningRoute: ApPlanningRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
@@ -440,13 +510,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
