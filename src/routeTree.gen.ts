@@ -24,6 +24,7 @@ import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApPlanningRouteImport } from './routes/ap-planning'
+import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
@@ -104,6 +105,11 @@ const ApPlanningRoute = ApPlanningRouteImport.update({
   path: '/ap-planning',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AcademyRoute = AcademyRouteImport.update({
+  id: '/academy',
+  path: '/academy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -129,6 +135,7 @@ const ApiPublicHooksMonitorTickRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/academy': typeof AcademyRoute
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/academy'
     | '/ap-planning'
     | '/auth'
     | '/contact'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/academy'
     | '/ap-planning'
     | '/auth'
     | '/contact'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/academy'
     | '/ap-planning'
     | '/auth'
     | '/contact'
@@ -259,6 +271,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AcademyRoute: typeof AcademyRoute
   ApPlanningRoute: typeof ApPlanningRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
@@ -385,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApPlanningRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/academy': {
+      id: '/academy'
+      path: '/academy'
+      fullPath: '/academy'
+      preLoaderRoute: typeof AcademyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -419,6 +439,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AcademyRoute: AcademyRoute,
   ApPlanningRoute: ApPlanningRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
