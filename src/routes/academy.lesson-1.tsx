@@ -432,10 +432,14 @@ Internet`}</pre>
       <H2>What's Next?</H2>
       <P>Continue your networking journey with upcoming lessons:</P>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
-        <li>LAN vs WAN vs MAN vs PAN Explained</li>
-        <li>What is an IP Address?</li>
-        <li>IPv4 vs IPv6</li>
-        <li>Understanding the OSI Model</li>
+        <li>
+          <Link to="/academy/lesson-2" style={{ color: "#00D4AA", textDecoration: "none" }}>
+            Lesson 2: LAN vs WAN vs MAN vs PAN Explained →
+          </Link>
+        </li>
+        <li>Lesson 3: What is an IP Address?</li>
+        <li>Lesson 4: IPv4 vs IPv6</li>
+        <li>Lesson 5: Understanding the OSI Model</li>
       </ul>
 
       <div style={{ marginTop: 32 }}>
