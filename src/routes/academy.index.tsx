@@ -43,10 +43,10 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 2,
-    slug: "#",
+    slug: "/academy/lesson-2",
     title: "LAN vs WAN vs MAN vs PAN Explained",
     desc: "Compare the four network scopes with real-world examples.",
-    status: "soon",
+    status: "live",
   },
   {
     n: 3,
