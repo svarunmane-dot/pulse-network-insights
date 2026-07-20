@@ -22,6 +22,7 @@ import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BlacklistRouteImport } from './routes/blacklist'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApPlanningRouteImport } from './routes/ap-planning'
 import { Route as AcademyRouteImport } from './routes/academy'
@@ -98,6 +99,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlacklistRoute = BlacklistRouteImport.update({
+  id: '/blacklist',
+  path: '/blacklist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/academy': typeof AcademyRouteWithChildren
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
+  '/blacklist': typeof BlacklistRoute
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
+  '/blacklist': typeof BlacklistRoute
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/academy': typeof AcademyRouteWithChildren
   '/ap-planning': typeof ApPlanningRoute
   '/auth': typeof AuthRoute
+  '/blacklist': typeof BlacklistRoute
   '/contact': typeof ContactRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/ap-planning'
     | '/auth'
+    | '/blacklist'
     | '/contact'
     | '/dnslookup'
     | '/global'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/ap-planning'
     | '/auth'
+    | '/blacklist'
     | '/contact'
     | '/dnslookup'
     | '/global'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/academy'
     | '/ap-planning'
     | '/auth'
+    | '/blacklist'
     | '/contact'
     | '/dnslookup'
     | '/global'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   AcademyRoute: typeof AcademyRouteWithChildren
   ApPlanningRoute: typeof ApPlanningRoute
   AuthRoute: typeof AuthRoute
+  BlacklistRoute: typeof BlacklistRoute
   ContactRoute: typeof ContactRoute
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
@@ -418,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blacklist': {
+      id: '/blacklist'
+      path: '/blacklist'
+      fullPath: '/blacklist'
+      preLoaderRoute: typeof BlacklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -512,6 +532,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademyRoute: AcademyRouteWithChildren,
   ApPlanningRoute: ApPlanningRoute,
   AuthRoute: AuthRoute,
+  BlacklistRoute: BlacklistRoute,
   ContactRoute: ContactRoute,
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
@@ -531,13 +552,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

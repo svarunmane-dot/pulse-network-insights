@@ -1,0 +1,445 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useState } from "react";
+import { toolHead } from "@/lib/seo";
+
+/* ============================================================
+   BLACKLIST CHECK
+   Queries multiple public DNSBL zones for an IPv4 or domain via
+   Google DNS-over-HTTPS. Returns per-list status + response code.
+   ============================================================ */
+
+const TEAL = "#00D4AA";
+const SURFACE = "#131829";
+const BORDER = "#1f2740";
+const TEXT_SEC = "#c8d0e0";
+const TEXT_MUTED = "#6b7794";
+
+function isValidIPv4(ip: string): boolean {
+  const parts = ip.trim().split(".");
+  if (parts.length !== 4) return false;
+  return parts.every((p) => {
+    const n = parseInt(p, 10);
+    return String(n) === p && n >= 0 && n <= 255;
+  });
+}
+
+function isValidDomain(s: string): boolean {
+  const v = s.trim();
+  return /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v) && v.length <= 253;
+}
+
+function reverseIPv4(ip: string): string {
+  return ip.trim().split(".").reverse().join(".");
+}
+
+interface DNSBL {
+  zone: string;
+  name: string;
+  description: string;
+  supports: "ip" | "domain" | "both";
+}
+
+const LISTS: DNSBL[] = [
+  { zone: "zen.spamhaus.org", name: "Spamhaus ZEN", description: "Combined SBL, XBL, and PBL — spam sources, exploits, and dynamic IPs.", supports: "ip" },
+  { zone: "b.barracudacentral.org", name: "Barracuda BRBL", description: "Barracuda Reputation Block List — spam senders.", supports: "ip" },
+  { zone: "bl.spamcop.net", name: "SpamCop SCBL", description: "IPs reported by SpamCop users for sending unsolicited email.", supports: "ip" },
+  { zone: "dnsbl.sorbs.net", name: "SORBS DNSBL", description: "Aggregated abuse list — spam, proxies, dynamic ranges.", supports: "ip" },
+  { zone: "cbl.abuseat.org", name: "CBL / Abuseat", description: "Composite Blocking List — malware, botnets, and open proxies.", supports: "ip" },
+  { zone: "dnsbl-1.uceprotect.net", name: "UCEPROTECT L1", description: "Single IPs caught sending abuse in the last 7 days.", supports: "ip" },
+  { zone: "psbl.surriel.com", name: "PSBL", description: "Passive Spam Block List — automated spamtrap listings.", supports: "ip" },
+  { zone: "spam.dnsbl.anonmails.de", name: "AnonMails DNSBL", description: "Spam sources reported by anonymous mail operators.", supports: "ip" },
+  { zone: "dbl.spamhaus.org", name: "Spamhaus DBL", description: "Domains observed in spam, phishing, or malware campaigns.", supports: "domain" },
+  { zone: "multi.surbl.org", name: "SURBL Multi", description: "Domains found in unsolicited messages across many feeds.", supports: "domain" },
+];
+
+interface CheckResult {
+  list: DNSBL;
+  status: "listed" | "clean" | "error";
+  code?: string;
+  error?: string;
+}
+
+async function dohA(name: string): Promise<{ Status: number; Answer?: Array<{ data: string }> }> {
+  const url = `https://dns.google/resolve?name=${encodeURIComponent(name)}&type=A`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function checkList(query: string, list: DNSBL): Promise<CheckResult> {
+  try {
+    const r = await dohA(`${query}.${list.zone}`);
+    if (r.Answer && r.Answer.length > 0) {
+      const code = r.Answer.map((a) => a.data).find((d) => d.startsWith("127.")) ?? r.Answer[0].data;
+      return { list, status: "listed", code };
+    }
+    return { list, status: "clean" };
+  } catch (e) {
+    return { list, status: "error", error: e instanceof Error ? e.message : "query failed" };
+  }
+}
+
+export const Route = createFileRoute("/blacklist")({
+  component: BlacklistPage,
+  head: () =>
+    toolHead({
+      path: "/blacklist",
+      name: "Blacklist Check",
+      title: "Blacklist Check — DNSBL & IP Reputation Lookup Tool",
+      description:
+        "Free blacklist check tool. Instantly test if an IP address or domain is listed on major DNSBL / RBL threat feeds like Spamhaus, Barracuda, SpamCop and more.",
+      faqs: [
+        {
+          q: "What is a DNSBL blacklist check?",
+          a: "A DNSBL (DNS-based Blackhole List) is a database of IPs or domains flagged for spam, malware, or abuse. This tool queries several major public lists in parallel and returns the per-list status.",
+        },
+        {
+          q: "Does it work for domains too?",
+          a: "Yes. Enter an IPv4 address to query IP-based lists (Spamhaus ZEN, Barracuda, SpamCop, SORBS, CBL, UCEPROTECT, PSBL, AnonMails). Enter a domain to query domain lists (Spamhaus DBL, SURBL).",
+        },
+        {
+          q: "What do the 127.0.0.x return codes mean?",
+          a: "DNSBLs answer with a loopback A-record like 127.0.0.2 or 127.0.0.3 when the asset is listed. The exact octet identifies the abuse category defined by the vendor.",
+        },
+      ],
+    }),
+});
+
+function BlacklistPage() {
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState<CheckResult[] | null>(null);
+  const [queried, setQueried] = useState<{ kind: "ip" | "domain"; value: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const runCheck = useCallback(async () => {
+    const raw = input.trim();
+    setError(null);
+    setResults(null);
+    if (!raw) return;
+
+    let kind: "ip" | "domain";
+    let query: string;
+    let applicable: DNSBL[];
+
+    if (isValidIPv4(raw)) {
+      kind = "ip";
+      query = reverseIPv4(raw);
+      applicable = LISTS.filter((l) => l.supports === "ip" || l.supports === "both");
+    } else {
+      const clean = raw.replace(/^https?:\/\//i, "").replace(/\/.*$/, "").toLowerCase();
+      if (!isValidDomain(clean)) {
+        setError("Enter a valid public IPv4 address or domain name.");
+        return;
+      }
+      kind = "domain";
+      query = clean;
+      applicable = LISTS.filter((l) => l.supports === "domain" || l.supports === "both");
+    }
+
+    setQueried({ kind, value: kind === "ip" ? raw : query });
+    setLoading(true);
+    const out = await Promise.all(applicable.map((l) => checkList(query, l)));
+    setResults(out);
+    setLoading(false);
+  }, [input]);
+
+  const listedCount = results?.filter((r) => r.status === "listed").length ?? 0;
+  const totalCount = results?.length ?? 0;
+
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <h1
+          style={{
+            fontSize: 32,
+            fontWeight: 800,
+            letterSpacing: "-0.5px",
+            background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            marginBottom: 10,
+          }}
+        >
+          Blacklist Check
+        </h1>
+        <p style={{ color: TEXT_MUTED, fontSize: 15, maxWidth: 620, margin: "0 auto", lineHeight: 1.6 }}>
+          Check an IPv4 address or domain against major public DNSBL / RBL reputation feeds — Spamhaus,
+          Barracuda, SpamCop, SORBS, CBL and more — in one click.
+        </p>
+      </div>
+
+      <div
+        style={{
+          background: SURFACE,
+          border: `1px solid ${BORDER}`,
+          borderRadius: 16,
+          padding: 24,
+          marginBottom: 24,
+        }}
+      >
+        <label style={{ display: "block", fontSize: 12, color: TEXT_MUTED, marginBottom: 6, fontWeight: 600 }}>
+          IP Address or Domain
+        </label>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+            setResults(null);
+            setError(null);
+          }}
+          placeholder="e.g. 8.8.8.8  or  example.com"
+          onKeyDown={(e) => e.key === "Enter" && runCheck()}
+          style={{
+            width: "100%",
+            padding: "12px 14px",
+            borderRadius: 10,
+            border: `1px solid ${BORDER}`,
+            background: "#0f1422",
+            color: "#fff",
+            fontSize: 15,
+            fontFamily: "'DM Mono', monospace",
+            outline: "none",
+            marginBottom: 14,
+          }}
+        />
+        <div style={{ marginBottom: 14, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+          <span style={{ fontSize: 12, color: TEXT_MUTED, marginRight: 4 }}>Try:</span>
+          {["8.8.8.8", "1.1.1.1", "127.0.0.2", "spamhaus.org"].map((ex) => (
+            <button
+              key={ex}
+              onClick={() => {
+                setInput(ex);
+                setResults(null);
+                setError(null);
+              }}
+              style={{
+                padding: "4px 10px",
+                borderRadius: 6,
+                border: `1px solid ${BORDER}`,
+                background: input === ex ? "rgba(0,212,170,0.15)" : "transparent",
+                color: input === ex ? TEAL : TEXT_SEC,
+                fontSize: 12,
+                cursor: "pointer",
+                fontFamily: "'DM Mono', monospace",
+              }}
+            >
+              {ex}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={runCheck}
+          disabled={loading || !input.trim()}
+          style={{
+            width: "100%",
+            padding: "14px",
+            borderRadius: 12,
+            border: "none",
+            background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
+            color: "#04150f",
+            fontWeight: 700,
+            fontSize: 15,
+            cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+            opacity: loading || !input.trim() ? 0.6 : 1,
+          }}
+        >
+          {loading ? "Checking lists…" : "Check Blacklists"}
+        </button>
+      </div>
+
+      {error && (
+        <div
+          style={{
+            background: "rgba(255,77,109,0.08)",
+            border: "1px solid rgba(255,77,109,0.25)",
+            borderRadius: 12,
+            padding: "16px 20px",
+            color: "#ff4d6d",
+            fontSize: 14,
+            marginBottom: 24,
+          }}
+        >
+          {error}
+        </div>
+      )}
+
+      {loading && (
+        <div style={{ display: "grid", gap: 10, marginBottom: 24 }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                height: 56,
+                borderRadius: 10,
+                background: "linear-gradient(90deg,#131829,#1a2038,#131829)",
+                backgroundSize: "200% 100%",
+                animation: "pulseShimmer 1.4s ease-in-out infinite",
+                border: `1px solid ${BORDER}`,
+              }}
+            />
+          ))}
+          <style>{`@keyframes pulseShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
+        </div>
+      )}
+
+      {results && queried && !loading && (
+        <>
+          <div
+            style={{
+              background: SURFACE,
+              border: `1px solid ${BORDER}`,
+              borderRadius: 16,
+              padding: "16px 20px",
+              marginBottom: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 12, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 1 }}>
+                {queried.kind === "ip" ? "IP" : "Domain"}
+              </div>
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 16, color: "#fff", fontWeight: 600 }}>
+                {queried.value}
+              </div>
+            </div>
+            <div
+              style={{
+                padding: "8px 14px",
+                borderRadius: 999,
+                fontSize: 13,
+                fontWeight: 700,
+                background:
+                  listedCount > 0 ? "rgba(255,77,109,0.15)" : "rgba(0,212,170,0.15)",
+                color: listedCount > 0 ? "#ff4d6d" : TEAL,
+                border: `1px solid ${
+                  listedCount > 0 ? "rgba(255,77,109,0.35)" : "rgba(0,212,170,0.35)"
+                }`,
+              }}
+            >
+              {listedCount} / {totalCount} lists flagged
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gap: 10, marginBottom: 32 }}>
+            {results.map((r) => (
+              <div
+                key={r.list.zone}
+                style={{
+                  background: SURFACE,
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: 12,
+                  padding: "14px 18px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ flex: "1 1 240px", minWidth: 0 }}>
+                  <div style={{ color: "#fff", fontWeight: 600, fontSize: 14 }}>{r.list.name}</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 12, marginTop: 2 }}>{r.list.description}</div>
+                  <div style={{ color: TEXT_MUTED, fontSize: 11, fontFamily: "'DM Mono', monospace", marginTop: 4 }}>
+                    {r.list.zone}
+                  </div>
+                </div>
+                <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                  {r.status === "listed" && (
+                    <>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "4px 10px",
+                          borderRadius: 999,
+                          background: "rgba(255,77,109,0.15)",
+                          border: "1px solid rgba(255,77,109,0.35)",
+                          color: "#ff4d6d",
+                          fontWeight: 700,
+                          fontSize: 12,
+                        }}
+                      >
+                        🔴 Listed
+                      </span>
+                      {r.code && (
+                        <div style={{ color: TEXT_MUTED, fontSize: 11, fontFamily: "'DM Mono', monospace", marginTop: 4 }}>
+                          {r.code}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {r.status === "clean" && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "4px 10px",
+                        borderRadius: 999,
+                        background: "rgba(0,212,170,0.15)",
+                        border: "1px solid rgba(0,212,170,0.35)",
+                        color: TEAL,
+                        fontWeight: 700,
+                        fontSize: 12,
+                      }}
+                    >
+                      🟢 Clean
+                    </span>
+                  )}
+                  {r.status === "error" && (
+                    <>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "4px 10px",
+                          borderRadius: 999,
+                          background: "rgba(255,193,7,0.12)",
+                          border: "1px solid rgba(255,193,7,0.35)",
+                          color: "#ffc107",
+                          fontWeight: 700,
+                          fontSize: 12,
+                        }}
+                      >
+                        ⚠️ Error
+                      </span>
+                      {r.error && (
+                        <div style={{ color: TEXT_MUTED, fontSize: 11, marginTop: 4 }}>{r.error}</div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      <div style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.7 }}>
+        <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>How it works</h2>
+        <p style={{ marginBottom: 10 }}>
+          Each DNSBL (DNS-based Blackhole List) is queried by sending a specially crafted DNS A-record
+          request. For an IP like <code style={{ color: TEAL, fontFamily: "'DM Mono', monospace" }}>192.0.2.1</code>,
+          the octets are reversed and the vendor zone appended — e.g.{" "}
+          <code style={{ color: TEAL, fontFamily: "'DM Mono', monospace" }}>1.2.0.192.zen.spamhaus.org</code>.
+          A response of <code style={{ color: TEAL, fontFamily: "'DM Mono', monospace" }}>127.0.0.2</code> or
+          similar means the asset is listed for a specific abuse category.
+        </p>
+        <p>
+          Queries are executed in parallel over Google Public DNS (DoH) so results return in a second or two,
+          with no server-side rate limits or API keys required.
+        </p>
+      </div>
+    </div>
+  );
+}
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/blacklist')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  return <div>Hello "/blacklist"!</div>
+}
