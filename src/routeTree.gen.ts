@@ -21,6 +21,7 @@ import { Route as PingRouteImport } from './routes/ping'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
+import { Route as CyberNewsRouteImport } from './routes/cyber-news'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlacklistRouteImport } from './routes/blacklist'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -93,6 +94,11 @@ const GlobalRoute = GlobalRouteImport.update({
 const DnslookupRoute = DnslookupRouteImport.update({
   id: '/dnslookup',
   path: '/dnslookup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CyberNewsRoute = CyberNewsRouteImport.update({
+  id: '/cyber-news',
+  path: '/cyber-news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/blacklist': typeof BlacklistRoute
   '/contact': typeof ContactRoute
+  '/cyber-news': typeof CyberNewsRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/blacklist': typeof BlacklistRoute
   '/contact': typeof ContactRoute
+  '/cyber-news': typeof CyberNewsRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/blacklist': typeof BlacklistRoute
   '/contact': typeof ContactRoute
+  '/cyber-news': typeof CyberNewsRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blacklist'
     | '/contact'
+    | '/cyber-news'
     | '/dnslookup'
     | '/global'
     | '/monitoring'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blacklist'
     | '/contact'
+    | '/cyber-news'
     | '/dnslookup'
     | '/global'
     | '/monitoring'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/blacklist'
     | '/contact'
+    | '/cyber-news'
     | '/dnslookup'
     | '/global'
     | '/monitoring'
@@ -334,6 +346,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BlacklistRoute: typeof BlacklistRoute
   ContactRoute: typeof ContactRoute
+  CyberNewsRoute: typeof CyberNewsRoute
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
   MonitoringRoute: typeof MonitoringRoute
@@ -434,6 +447,13 @@ declare module '@tanstack/react-router' {
       path: '/dnslookup'
       fullPath: '/dnslookup'
       preLoaderRoute: typeof DnslookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cyber-news': {
+      id: '/cyber-news'
+      path: '/cyber-news'
+      fullPath: '/cyber-news'
+      preLoaderRoute: typeof CyberNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -555,6 +575,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BlacklistRoute: BlacklistRoute,
   ContactRoute: ContactRoute,
+  CyberNewsRoute: CyberNewsRoute,
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
   MonitoringRoute: MonitoringRoute,

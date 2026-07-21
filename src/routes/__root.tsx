@@ -225,6 +225,7 @@ function SiteHeader() {
             { to: "/blacklist", label: "Blacklist Check" },
             { to: "/monitoring", label: "App Monitoring" },
             { to: "/ap-planning", label: "AP Planning" },
+            { to: "/cyber-news", label: "📰 Cyber News" },
             { to: "/academy", label: "Academy" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
