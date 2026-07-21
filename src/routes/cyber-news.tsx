@@ -1,4 +1,5 @@
-import { createFileRoute, useServerFn } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchCyberNews, type NewsItem } from "@/lib/cybernews.functions";
 import { toolHead } from "@/lib/seo";
@@ -77,13 +78,13 @@ function CyberNewsPage() {
         setSources(res.sources);
         setFetchedAt(res.fetchedAt);
         if (background && seenLinks.current.size > 0) {
-          const newOnes = res.items.filter((i) => !seenLinks.current.has(i.link));
+          const newOnes = res.items.filter((i: NewsItem) => !seenLinks.current.has(i.link));
           if (newOnes.length > 0) {
             setPending(newOnes);
           }
         } else {
           setItems(res.items);
-          seenLinks.current = new Set(res.items.map((i) => i.link));
+          seenLinks.current = new Set(res.items.map((i: NewsItem) => i.link));
         }
       } catch (e) {
         setError("Unable to fetch news. Try again later.");
