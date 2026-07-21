@@ -50,10 +50,10 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 3,
-    slug: "#",
+    slug: "/academy/lesson-3",
     title: "What is an IP Address?",
     desc: "Public vs private, static vs dynamic, and how IPs identify devices.",
-    status: "soon",
+    status: "live",
   },
   {
     n: 4,

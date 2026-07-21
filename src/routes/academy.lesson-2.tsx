@@ -495,7 +495,11 @@ function Lesson2() {
             ← Lesson 1: What is a Computer Network?
           </Link>
         </li>
-        <li>Lesson 3: What is an IP Address?</li>
+        <li>
+          <Link to="/academy/lesson-3" style={{ color: "#00D4AA", textDecoration: "none" }}>
+            Lesson 3: What is an IP Address? →
+          </Link>
+        </li>
         <li>Lesson 4: IPv4 vs IPv6</li>
         <li>Lesson 5: Understanding the OSI Model</li>
       </ul>
