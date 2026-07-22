@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import { toolHead } from "@/lib/seo";
+import { hashLookup } from "@/lib/hashlookup.functions";
 
 /* ============================================================
    BLACKLIST CHECK
@@ -138,14 +139,36 @@ async function checkList(query: string, list: DNSBL): Promise<CheckResult> {
   try {
     const r = await dohA(`${query}.${list.zone}`);
     if (r.Answer && r.Answer.length > 0) {
-      const code = r.Answer.map((a) => a.data).find((d) => d.startsWith("127.")) ?? r.Answer[0].data;
-      return { list, status: "listed", code };
+      const codes = r.Answer.map((a) => a.data);
+      const loopback = codes.find((d) => /^127\.\d+\.\d+\.\d+$/.test(d));
+      // Only 127.0.0.0/8 responses are valid DNSBL "listed" signals.
+      // A non-loopback answer means the zone is dead / parked / hijacked.
+      if (!loopback) {
+        return { list, status: "error", error: `zone returned non-DNSBL address (${codes[0]}) — feed likely retired` };
+      }
+      // 127.255.255.255 conventionally means "query blocked / quota exceeded / not authorised"
+      // (used by Spamhaus, SORBS, SenderScore etc.), not an actual listing.
+      if (loopback === "127.255.255.255" || loopback === "127.255.255.254") {
+        return { list, status: "error", error: "query blocked / quota exceeded by feed" };
+      }
+      return { list, status: "listed", code: loopback };
     }
     return { list, status: "clean" };
   } catch (e) {
     return { list, status: "error", error: e instanceof Error ? e.message : "query failed" };
   }
 }
+
+function isHexHash(s: string): "md5" | "sha1" | "sha256" | null {
+  const v = s.trim();
+  if (!/^[a-fA-F0-9]+$/.test(v)) return null;
+  if (v.length === 32) return "md5";
+  if (v.length === 40) return "sha1";
+  if (v.length === 64) return "sha256";
+  return null;
+}
+
+type HashResult = Awaited<ReturnType<typeof hashLookup>>;
 
 export const Route = createFileRoute("/blacklist")({
   component: BlacklistPage,
@@ -179,12 +202,29 @@ function BlacklistPage() {
   const [results, setResults] = useState<CheckResult[] | null>(null);
   const [queried, setQueried] = useState<{ kind: "ip" | "domain"; value: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hashResult, setHashResult] = useState<HashResult | null>(null);
 
   const runCheck = useCallback(async () => {
     const raw = input.trim();
     setError(null);
     setResults(null);
+    setHashResult(null);
+    setQueried(null);
     if (!raw) return;
+
+    // Hash detection takes priority
+    const hashType = isHexHash(raw);
+    if (hashType) {
+      setLoading(true);
+      try {
+        const r = await hashLookup({ data: { hash: raw } });
+        setHashResult(r);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Hash lookup failed");
+      }
+      setLoading(false);
+      return;
+    }
 
     let kind: "ip" | "domain";
     let query: string;
@@ -197,7 +237,7 @@ function BlacklistPage() {
     } else {
       const clean = raw.replace(/^https?:\/\//i, "").replace(/\/.*$/, "").toLowerCase();
       if (!isValidDomain(clean)) {
-        setError("Enter a valid public IPv4 address or domain name.");
+        setError("Enter a valid IPv4 address, domain name, or file hash (MD5 / SHA-1 / SHA-256).");
         return;
       }
       kind = "domain";
@@ -247,7 +287,7 @@ function BlacklistPage() {
         }}
       >
         <label style={{ display: "block", fontSize: 12, color: TEXT_MUTED, marginBottom: 6, fontWeight: 600 }}>
-          IP Address or Domain
+          IP Address, Domain or File Hash
         </label>
         <input
           type="text"
@@ -255,9 +295,10 @@ function BlacklistPage() {
           onChange={(e) => {
             setInput(e.target.value);
             setResults(null);
+            setHashResult(null);
             setError(null);
           }}
-          placeholder="e.g. 8.8.8.8  or  example.com"
+          placeholder="e.g. 8.8.8.8, example.com, or 64-char SHA-256"
           onKeyDown={(e) => e.key === "Enter" && runCheck()}
           style={{
             width: "100%",
@@ -274,12 +315,19 @@ function BlacklistPage() {
         />
         <div style={{ marginBottom: 14, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
           <span style={{ fontSize: 12, color: TEXT_MUTED, marginRight: 4 }}>Try:</span>
-          {["8.8.8.8", "1.1.1.1", "127.0.0.2", "spamhaus.org"].map((ex) => (
+          {[
+            "8.8.8.8",
+            "1.1.1.1",
+            "127.0.0.2",
+            "spamhaus.org",
+            "094fd325049b8a9cf6d3e5ef2a6d4cc6a567d7d49c35f8bb8dd9e3c6acf3d78d",
+          ].map((ex) => (
             <button
               key={ex}
               onClick={() => {
                 setInput(ex);
                 setResults(null);
+                setHashResult(null);
                 setError(null);
               }}
               style={{
@@ -291,9 +339,13 @@ function BlacklistPage() {
                 fontSize: 12,
                 cursor: "pointer",
                 fontFamily: "'DM Mono', monospace",
+                maxWidth: 220,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
-              {ex}
+              {ex.length > 24 ? `${ex.slice(0, 10)}…${ex.slice(-6)}` : ex}
             </button>
           ))}
         </div>
@@ -352,8 +404,113 @@ function BlacklistPage() {
         </div>
       )}
 
+      {hashResult && !loading && (
+        <div style={{ marginBottom: 32 }}>
+          <div
+            style={{
+              background: SURFACE,
+              border: `1px solid ${BORDER}`,
+              borderRadius: 16,
+              padding: "18px 22px",
+              marginBottom: 12,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 1 }}>
+                {hashResult.type.toUpperCase()} hash
+              </div>
+              <div
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: 13,
+                  color: "#fff",
+                  fontWeight: 600,
+                  wordBreak: "break-all",
+                }}
+              >
+                {hashResult.hash}
+              </div>
+            </div>
+            <div
+              style={{
+                padding: "8px 14px",
+                borderRadius: 999,
+                fontSize: 13,
+                fontWeight: 700,
+                background:
+                  hashResult.verdict === "malicious"
+                    ? "rgba(255,77,109,0.15)"
+                    : hashResult.verdict === "known-good"
+                      ? "rgba(0,212,170,0.15)"
+                      : "rgba(255,193,7,0.12)",
+                color:
+                  hashResult.verdict === "malicious"
+                    ? "#ff4d6d"
+                    : hashResult.verdict === "known-good"
+                      ? TEAL
+                      : "#ffc107",
+                border: `1px solid ${
+                  hashResult.verdict === "malicious"
+                    ? "rgba(255,77,109,0.35)"
+                    : hashResult.verdict === "known-good"
+                      ? "rgba(0,212,170,0.35)"
+                      : "rgba(255,193,7,0.35)"
+                }`,
+              }}
+            >
+              {hashResult.verdict === "malicious"
+                ? "🔴 Malicious"
+                : hashResult.verdict === "known-good"
+                  ? "🟢 Known Good"
+                  : "⚪ Unknown"}
+            </div>
+          </div>
+          <div
+            style={{
+              background: SURFACE,
+              border: `1px solid ${BORDER}`,
+              borderRadius: 12,
+              padding: "14px 18px",
+              color: TEXT_SEC,
+              fontSize: 13,
+              lineHeight: 1.7,
+            }}
+          >
+            <div><span style={{ color: TEXT_MUTED }}>Source:</span> {hashResult.source}</div>
+            {hashResult.malicious_source && (
+              <div><span style={{ color: TEXT_MUTED }}>Reported by:</span> {hashResult.malicious_source}</div>
+            )}
+            {hashResult.filename && (
+              <div><span style={{ color: TEXT_MUTED }}>Filename:</span> {hashResult.filename}</div>
+            )}
+            {hashResult.product && (
+              <div><span style={{ color: TEXT_MUTED }}>Product:</span> {hashResult.product}</div>
+            )}
+            {hashResult.filesize && (
+              <div><span style={{ color: TEXT_MUTED }}>Size:</span> {hashResult.filesize} bytes</div>
+            )}
+            {typeof hashResult.trust === "number" && (
+              <div><span style={{ color: TEXT_MUTED }}>Trust score:</span> {hashResult.trust} / 100</div>
+            )}
+            {hashResult.verdict === "unknown" && (
+              <div style={{ color: TEXT_MUTED, marginTop: 4 }}>
+                Not present in CIRCL hashlookup (NSRL known-good corpus + partner malicious feeds).
+                Absence is not proof of safety — scan the file with an AV engine to be sure.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {results && queried && !loading && (
         <>
+          {null}
+          {/* DNSBL results below */}
           <div
             style={{
               background: SURFACE,
