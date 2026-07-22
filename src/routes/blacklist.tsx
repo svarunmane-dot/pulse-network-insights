@@ -404,6 +404,109 @@ function BlacklistPage() {
         </div>
       )}
 
+      {hashResult && !loading && (
+        <div style={{ marginBottom: 32 }}>
+          <div
+            style={{
+              background: SURFACE,
+              border: `1px solid ${BORDER}`,
+              borderRadius: 16,
+              padding: "18px 22px",
+              marginBottom: 12,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 1 }}>
+                {hashResult.type.toUpperCase()} hash
+              </div>
+              <div
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: 13,
+                  color: "#fff",
+                  fontWeight: 600,
+                  wordBreak: "break-all",
+                }}
+              >
+                {hashResult.hash}
+              </div>
+            </div>
+            <div
+              style={{
+                padding: "8px 14px",
+                borderRadius: 999,
+                fontSize: 13,
+                fontWeight: 700,
+                background:
+                  hashResult.verdict === "malicious"
+                    ? "rgba(255,77,109,0.15)"
+                    : hashResult.verdict === "known-good"
+                      ? "rgba(0,212,170,0.15)"
+                      : "rgba(255,193,7,0.12)",
+                color:
+                  hashResult.verdict === "malicious"
+                    ? "#ff4d6d"
+                    : hashResult.verdict === "known-good"
+                      ? TEAL
+                      : "#ffc107",
+                border: `1px solid ${
+                  hashResult.verdict === "malicious"
+                    ? "rgba(255,77,109,0.35)"
+                    : hashResult.verdict === "known-good"
+                      ? "rgba(0,212,170,0.35)"
+                      : "rgba(255,193,7,0.35)"
+                }`,
+              }}
+            >
+              {hashResult.verdict === "malicious"
+                ? "🔴 Malicious"
+                : hashResult.verdict === "known-good"
+                  ? "🟢 Known Good"
+                  : "⚪ Unknown"}
+            </div>
+          </div>
+          <div
+            style={{
+              background: SURFACE,
+              border: `1px solid ${BORDER}`,
+              borderRadius: 12,
+              padding: "14px 18px",
+              color: TEXT_SEC,
+              fontSize: 13,
+              lineHeight: 1.7,
+            }}
+          >
+            <div><span style={{ color: TEXT_MUTED }}>Source:</span> {hashResult.source}</div>
+            {hashResult.malicious_source && (
+              <div><span style={{ color: TEXT_MUTED }}>Reported by:</span> {hashResult.malicious_source}</div>
+            )}
+            {hashResult.filename && (
+              <div><span style={{ color: TEXT_MUTED }}>Filename:</span> {hashResult.filename}</div>
+            )}
+            {hashResult.product && (
+              <div><span style={{ color: TEXT_MUTED }}>Product:</span> {hashResult.product}</div>
+            )}
+            {hashResult.filesize && (
+              <div><span style={{ color: TEXT_MUTED }}>Size:</span> {hashResult.filesize} bytes</div>
+            )}
+            {typeof hashResult.trust === "number" && (
+              <div><span style={{ color: TEXT_MUTED }}>Trust score:</span> {hashResult.trust} / 100</div>
+            )}
+            {hashResult.verdict === "unknown" && (
+              <div style={{ color: TEXT_MUTED, marginTop: 4 }}>
+                Not present in CIRCL hashlookup (NSRL known-good corpus + partner malicious feeds).
+                Absence is not proof of safety — scan the file with an AV engine to be sure.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {results && queried && !loading && (
         <>
           {null}
