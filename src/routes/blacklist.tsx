@@ -406,6 +406,7 @@ function BlacklistPage() {
 
       {results && queried && !loading && (
         <>
+          {null}
           <div
             style={{
               background: SURFACE,
