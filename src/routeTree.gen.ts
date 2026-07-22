@@ -30,6 +30,7 @@ import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
+import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
 import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
@@ -141,6 +142,11 @@ const AcademyIndexRoute = AcademyIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyLesson4Route = AcademyLesson4RouteImport.update({
+  id: '/lesson-4',
+  path: '/lesson-4',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyLesson3Route = AcademyLesson3RouteImport.update({
   id: '/lesson-3',
   path: '/lesson-3',
@@ -192,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
+  '/academy/lesson-4': typeof AcademyLesson4Route
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
+  '/academy/lesson-4': typeof AcademyLesson4Route
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
+  '/academy/lesson-4': typeof AcademyLesson4Route
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-1'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
+    | '/academy/lesson-4'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-1'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
+    | '/academy/lesson-4'
     | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -333,6 +344,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-1'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
+    | '/academy/lesson-4'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -512,6 +524,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyIndexRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-4': {
+      id: '/academy/lesson-4'
+      path: '/lesson-4'
+      fullPath: '/academy/lesson-4'
+      preLoaderRoute: typeof AcademyLesson4RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lesson-3': {
       id: '/academy/lesson-3'
       path: '/lesson-3'
@@ -554,6 +573,7 @@ interface AcademyRouteChildren {
   AcademyLesson1Route: typeof AcademyLesson1Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
+  AcademyLesson4Route: typeof AcademyLesson4Route
   AcademyIndexRoute: typeof AcademyIndexRoute
 }
 
@@ -561,6 +581,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLesson1Route: AcademyLesson1Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
+  AcademyLesson4Route: AcademyLesson4Route,
   AcademyIndexRoute: AcademyIndexRoute,
 }
 

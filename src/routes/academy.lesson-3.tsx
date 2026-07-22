@@ -430,6 +430,11 @@ function Lesson3() {
       <P>Continue your networking journey with upcoming lessons:</P>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
         <li>
+          <Link to="/academy/lesson-4" style={{ color: "#00D4AA", textDecoration: "none" }}>
+            Lesson 4: IPv4 Classes (A, B, C, D & E) Explained →
+          </Link>
+        </li>
+        <li>
           <Link to="/academy/lesson-2" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 2: LAN vs WAN vs MAN vs PAN Explained
           </Link>
@@ -439,7 +444,6 @@ function Lesson3() {
             ← Lesson 1: What is a Computer Network?
           </Link>
         </li>
-        <li>Lesson 4: IPv4 vs IPv6</li>
         <li>Lesson 5: Understanding the OSI Model</li>
       </ul>
 
