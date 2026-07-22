@@ -57,10 +57,10 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 4,
-    slug: "#",
-    title: "IPv4 vs IPv6",
-    desc: "Address exhaustion, notation differences and why IPv6 matters.",
-    status: "soon",
+    slug: "/academy/lesson-4",
+    title: "IPv4 Classes (A, B, C, D & E) Explained",
+    desc: "First octet ranges, default subnet masks, private ranges and real-world examples.",
+    status: "live",
   },
   {
     n: 5,
