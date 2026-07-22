@@ -24,23 +24,23 @@ export const hashLookup = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const url = `https://hashlookup.circl.lu/lookup/${data.type}/${encodeURIComponent(data.hash)}`;
     const res = await fetch(url, { headers: { Accept: "application/json" } });
+    const base = { hash: data.hash, type: data.type, source: "CIRCL hashlookup" };
     if (res.status === 404) {
-      return {
-        hash: data.hash,
-        type: data.type,
-        verdict: "unknown" as const,
-        source: "CIRCL hashlookup",
-        details: null as Record<string, unknown> | null,
-      };
+      return { ...base, verdict: "unknown" as const, malicious_source: null as string | null, filename: null as string | null, filesize: null as string | null, product: null as string | null, trust: null as number | null };
     }
     if (!res.ok) throw new Error(`Lookup failed: HTTP ${res.status}`);
     const json = (await res.json()) as Record<string, unknown>;
     const malicious = typeof json.KnownMalicious === "string" && json.KnownMalicious.length > 0;
+    const product = json.ProductCode && typeof json.ProductCode === "object"
+      ? String((json.ProductCode as Record<string, unknown>).ProductName ?? "") || null
+      : null;
     return {
-      hash: data.hash,
-      type: data.type,
+      ...base,
       verdict: (malicious ? "malicious" : "known-good") as "malicious" | "known-good",
-      source: "CIRCL hashlookup" + (malicious ? ` (${String(json.KnownMalicious)})` : ""),
-      details: json,
+      malicious_source: malicious ? String(json.KnownMalicious) : null,
+      filename: typeof json.FileName === "string" ? json.FileName : null,
+      filesize: typeof json.FileSize === "string" ? json.FileSize : null,
+      product,
+      trust: typeof json["hashlookup:trust"] === "number" ? (json["hashlookup:trust"] as number) : null,
     };
   });
