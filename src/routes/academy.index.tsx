@@ -64,6 +64,13 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 5,
+    slug: "/academy/lesson-5",
+    title: "Public vs Private IP Addresses",
+    desc: "Understand the difference between public and private IPs, private ranges, and how NAT lets many devices share one connection.",
+    status: "live",
+  },
+  {
+    n: 6,
     slug: "#",
     title: "Understanding the OSI Model",
     desc: "The 7 layers, what runs at each, and how to troubleshoot with them.",

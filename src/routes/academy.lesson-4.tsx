@@ -469,7 +469,11 @@ function Lesson4() {
             ← Lesson 1: What is a Computer Network?
           </Link>
         </li>
-        <li>Lesson 5: Understanding the OSI Model</li>
+        <li>
+          <Link to="/academy/lesson-5" style={{ color: "#00D4AA", textDecoration: "none" }}>
+            → Lesson 5: Public vs Private IP Addresses
+          </Link>
+        </li>
       </ul>
 
       <div style={{ marginTop: 32 }}>
