@@ -71,6 +71,13 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 6,
+    slug: "/academy/lesson-6",
+    title: "What is Subnetting? A Beginner's Guide",
+    desc: "Divide large networks into smaller, more efficient subnets. Real-world examples, benefits, and hands-on subnet calculator practice.",
+    status: "live",
+  },
+  {
+    n: 7,
     slug: "#",
     title: "Understanding the OSI Model",
     desc: "The 7 layers, what runs at each, and how to troubleshoot with them.",
