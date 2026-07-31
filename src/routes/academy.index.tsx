@@ -78,8 +78,15 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 7,
-    slug: "#",
+    slug: "/academy/lesson-7",
+    title: "Understanding Subnet Masks (255.255.255.0) Made Simple",
+    desc: "How a subnet mask splits network and host, CIDR equivalents, usable host counts and when a router is needed.",
+    status: "live",
+  },
+  {
+    n: 8,
     title: "Understanding the OSI Model",
+    slug: "#",
     desc: "The 7 layers, what runs at each, and how to troubleshoot with them.",
     status: "soon",
   },
