@@ -85,6 +85,13 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 8,
+    slug: "/academy/lesson-8",
+    title: "CIDR Notation Explained (/24, /25, /26, /27)",
+    desc: "What the slash means, how CIDR replaces subnet masks, and why larger CIDR numbers mean smaller networks.",
+    status: "live",
+  },
+  {
+    n: 9,
     title: "Understanding the OSI Model",
     slug: "#",
     desc: "The 7 layers, what runs at each, and how to troubleshoot with them.",
