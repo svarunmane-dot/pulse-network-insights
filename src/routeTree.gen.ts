@@ -10,19 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhoseIpRouteImport } from './routes/whose-ip'
+import { Route as WhoisipRouteImport } from './routes/whoisip'
 import { Route as TracerouteRouteImport } from './routes/traceroute'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SubnetCalculatorRouteImport } from './routes/subnet-calculator'
+import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PortcheckRouteImport } from './routes/portcheck'
 import { Route as PortCheckRouteImport } from './routes/port-check'
+import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PingIpRouteImport } from './routes/ping-ip'
 import { Route as PingRouteImport } from './routes/ping'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as GlobalRouteImport } from './routes/global'
+import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as DnsLookupRouteImport } from './routes/dns-lookup'
 import { Route as CyberNewsRouteImport } from './routes/cyber-news'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BlacklistCheckRouteImport } from './routes/blacklist-check'
+import { Route as BlacklistRouteImport } from './routes/blacklist'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppMonitoringRouteImport } from './routes/app-monitoring'
 import { Route as ApPlanningRouteImport } from './routes/ap-planning'
@@ -35,6 +42,15 @@ import { Route as AcademySubnettingRouteImport } from './routes/academy.subnetti
 import { Route as AcademySubnetMasksRouteImport } from './routes/academy.subnet-masks'
 import { Route as AcademyPublicVsPrivateIpRouteImport } from './routes/academy.public-vs-private-ip'
 import { Route as AcademyNetworkBroadcastUsableIpRouteImport } from './routes/academy.network-broadcast-usable-ip'
+import { Route as AcademyLesson9RouteImport } from './routes/academy.lesson-9'
+import { Route as AcademyLesson8RouteImport } from './routes/academy.lesson-8'
+import { Route as AcademyLesson7RouteImport } from './routes/academy.lesson-7'
+import { Route as AcademyLesson6RouteImport } from './routes/academy.lesson-6'
+import { Route as AcademyLesson5RouteImport } from './routes/academy.lesson-5'
+import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
+import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
+import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
+import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
 import { Route as AcademyLanWanManPanRouteImport } from './routes/academy.lan-wan-man-pan'
 import { Route as AcademyIpv4AddressClassesRouteImport } from './routes/academy.ipv4-address-classes'
 import { Route as AcademyIpAddressingRouteImport } from './routes/academy.ip-addressing'
@@ -45,6 +61,11 @@ import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/publ
 const WhoseIpRoute = WhoseIpRouteImport.update({
   id: '/whose-ip',
   path: '/whose-ip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhoisipRoute = WhoisipRouteImport.update({
+  id: '/whoisip',
+  path: '/whoisip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TracerouteRoute = TracerouteRouteImport.update({
@@ -62,6 +83,11 @@ const SubnetCalculatorRoute = SubnetCalculatorRouteImport.update({
   path: '/subnet-calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubnetRoute = SubnetRouteImport.update({
+  id: '/subnet',
+  path: '/subnet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -72,9 +98,19 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortcheckRoute = PortcheckRouteImport.update({
+  id: '/portcheck',
+  path: '/portcheck',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortCheckRoute = PortCheckRouteImport.update({
   id: '/port-check',
   path: '/port-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PingipRoute = PingipRouteImport.update({
+  id: '/pingip',
+  path: '/pingip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PingIpRoute = PingIpRouteImport.update({
@@ -87,9 +123,19 @@ const PingRoute = PingRouteImport.update({
   path: '/ping',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GlobalRoute = GlobalRouteImport.update({
   id: '/global',
   path: '/global',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DnslookupRoute = DnslookupRouteImport.update({
+  id: '/dnslookup',
+  path: '/dnslookup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DnsLookupRoute = DnsLookupRouteImport.update({
@@ -110,6 +156,11 @@ const ContactRoute = ContactRouteImport.update({
 const BlacklistCheckRoute = BlacklistCheckRouteImport.update({
   id: '/blacklist-check',
   path: '/blacklist-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlacklistRoute = BlacklistRouteImport.update({
+  id: '/blacklist',
+  path: '/blacklist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -175,6 +226,51 @@ const AcademyNetworkBroadcastUsableIpRoute =
     path: '/network-broadcast-usable-ip',
     getParentRoute: () => AcademyRoute,
   } as any)
+const AcademyLesson9Route = AcademyLesson9RouteImport.update({
+  id: '/lesson-9',
+  path: '/lesson-9',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson8Route = AcademyLesson8RouteImport.update({
+  id: '/lesson-8',
+  path: '/lesson-8',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson7Route = AcademyLesson7RouteImport.update({
+  id: '/lesson-7',
+  path: '/lesson-7',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson6Route = AcademyLesson6RouteImport.update({
+  id: '/lesson-6',
+  path: '/lesson-6',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson5Route = AcademyLesson5RouteImport.update({
+  id: '/lesson-5',
+  path: '/lesson-5',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson4Route = AcademyLesson4RouteImport.update({
+  id: '/lesson-4',
+  path: '/lesson-4',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson3Route = AcademyLesson3RouteImport.update({
+  id: '/lesson-3',
+  path: '/lesson-3',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson2Route = AcademyLesson2RouteImport.update({
+  id: '/lesson-2',
+  path: '/lesson-2',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson1Route = AcademyLesson1RouteImport.update({
+  id: '/lesson-1',
+  path: '/lesson-1',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyLanWanManPanRoute = AcademyLanWanManPanRouteImport.update({
   id: '/lan-wan-man-pan',
   path: '/lan-wan-man-pan',
@@ -215,24 +311,40 @@ export interface FileRoutesByFullPath {
   '/ap-planning': typeof ApPlanningRoute
   '/app-monitoring': typeof AppMonitoringRoute
   '/auth': typeof AuthRoute
+  '/blacklist': typeof BlacklistRoute
   '/blacklist-check': typeof BlacklistCheckRoute
   '/contact': typeof ContactRoute
   '/cyber-news': typeof CyberNewsRoute
   '/dns-lookup': typeof DnsLookupRoute
+  '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
+  '/pingip': typeof PingipRoute
   '/port-check': typeof PortCheckRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subnet': typeof SubnetRoute
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
   '/academy/ip-addressing': typeof AcademyIpAddressingRoute
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/lesson-2': typeof AcademyLesson2Route
+  '/academy/lesson-3': typeof AcademyLesson3Route
+  '/academy/lesson-4': typeof AcademyLesson4Route
+  '/academy/lesson-5': typeof AcademyLesson5Route
+  '/academy/lesson-6': typeof AcademyLesson6Route
+  '/academy/lesson-7': typeof AcademyLesson7Route
+  '/academy/lesson-8': typeof AcademyLesson8Route
+  '/academy/lesson-9': typeof AcademyLesson9Route
   '/academy/network-broadcast-usable-ip': typeof AcademyNetworkBroadcastUsableIpRoute
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
@@ -248,24 +360,40 @@ export interface FileRoutesByTo {
   '/ap-planning': typeof ApPlanningRoute
   '/app-monitoring': typeof AppMonitoringRoute
   '/auth': typeof AuthRoute
+  '/blacklist': typeof BlacklistRoute
   '/blacklist-check': typeof BlacklistCheckRoute
   '/contact': typeof ContactRoute
   '/cyber-news': typeof CyberNewsRoute
   '/dns-lookup': typeof DnsLookupRoute
+  '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
+  '/pingip': typeof PingipRoute
   '/port-check': typeof PortCheckRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subnet': typeof SubnetRoute
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
   '/academy/ip-addressing': typeof AcademyIpAddressingRoute
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/lesson-2': typeof AcademyLesson2Route
+  '/academy/lesson-3': typeof AcademyLesson3Route
+  '/academy/lesson-4': typeof AcademyLesson4Route
+  '/academy/lesson-5': typeof AcademyLesson5Route
+  '/academy/lesson-6': typeof AcademyLesson6Route
+  '/academy/lesson-7': typeof AcademyLesson7Route
+  '/academy/lesson-8': typeof AcademyLesson8Route
+  '/academy/lesson-9': typeof AcademyLesson9Route
   '/academy/network-broadcast-usable-ip': typeof AcademyNetworkBroadcastUsableIpRoute
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
@@ -283,24 +411,40 @@ export interface FileRoutesById {
   '/ap-planning': typeof ApPlanningRoute
   '/app-monitoring': typeof AppMonitoringRoute
   '/auth': typeof AuthRoute
+  '/blacklist': typeof BlacklistRoute
   '/blacklist-check': typeof BlacklistCheckRoute
   '/contact': typeof ContactRoute
   '/cyber-news': typeof CyberNewsRoute
   '/dns-lookup': typeof DnsLookupRoute
+  '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/monitoring': typeof MonitoringRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
+  '/pingip': typeof PingipRoute
   '/port-check': typeof PortCheckRoute
+  '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/subnet': typeof SubnetRoute
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
   '/academy/ip-addressing': typeof AcademyIpAddressingRoute
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
+  '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/lesson-2': typeof AcademyLesson2Route
+  '/academy/lesson-3': typeof AcademyLesson3Route
+  '/academy/lesson-4': typeof AcademyLesson4Route
+  '/academy/lesson-5': typeof AcademyLesson5Route
+  '/academy/lesson-6': typeof AcademyLesson6Route
+  '/academy/lesson-7': typeof AcademyLesson7Route
+  '/academy/lesson-8': typeof AcademyLesson8Route
+  '/academy/lesson-9': typeof AcademyLesson9Route
   '/academy/network-broadcast-usable-ip': typeof AcademyNetworkBroadcastUsableIpRoute
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
@@ -319,24 +463,40 @@ export interface FileRouteTypes {
     | '/ap-planning'
     | '/app-monitoring'
     | '/auth'
+    | '/blacklist'
     | '/blacklist-check'
     | '/contact'
     | '/cyber-news'
     | '/dns-lookup'
+    | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/ping-ip'
+    | '/pingip'
     | '/port-check'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
+    | '/subnet'
     | '/subnet-calculator'
     | '/terms'
     | '/traceroute'
+    | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
     | '/academy/ip-addressing'
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
+    | '/academy/lesson-1'
+    | '/academy/lesson-2'
+    | '/academy/lesson-3'
+    | '/academy/lesson-4'
+    | '/academy/lesson-5'
+    | '/academy/lesson-6'
+    | '/academy/lesson-7'
+    | '/academy/lesson-8'
+    | '/academy/lesson-9'
     | '/academy/network-broadcast-usable-ip'
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
@@ -352,24 +512,40 @@ export interface FileRouteTypes {
     | '/ap-planning'
     | '/app-monitoring'
     | '/auth'
+    | '/blacklist'
     | '/blacklist-check'
     | '/contact'
     | '/cyber-news'
     | '/dns-lookup'
+    | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/ping-ip'
+    | '/pingip'
     | '/port-check'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
+    | '/subnet'
     | '/subnet-calculator'
     | '/terms'
     | '/traceroute'
+    | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
     | '/academy/ip-addressing'
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
+    | '/academy/lesson-1'
+    | '/academy/lesson-2'
+    | '/academy/lesson-3'
+    | '/academy/lesson-4'
+    | '/academy/lesson-5'
+    | '/academy/lesson-6'
+    | '/academy/lesson-7'
+    | '/academy/lesson-8'
+    | '/academy/lesson-9'
     | '/academy/network-broadcast-usable-ip'
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
@@ -386,24 +562,40 @@ export interface FileRouteTypes {
     | '/ap-planning'
     | '/app-monitoring'
     | '/auth'
+    | '/blacklist'
     | '/blacklist-check'
     | '/contact'
     | '/cyber-news'
     | '/dns-lookup'
+    | '/dnslookup'
     | '/global'
+    | '/monitoring'
     | '/ping'
     | '/ping-ip'
+    | '/pingip'
     | '/port-check'
+    | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
+    | '/subnet'
     | '/subnet-calculator'
     | '/terms'
     | '/traceroute'
+    | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
     | '/academy/ip-addressing'
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
+    | '/academy/lesson-1'
+    | '/academy/lesson-2'
+    | '/academy/lesson-3'
+    | '/academy/lesson-4'
+    | '/academy/lesson-5'
+    | '/academy/lesson-6'
+    | '/academy/lesson-7'
+    | '/academy/lesson-8'
+    | '/academy/lesson-9'
     | '/academy/network-broadcast-usable-ip'
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
@@ -421,19 +613,26 @@ export interface RootRouteChildren {
   ApPlanningRoute: typeof ApPlanningRoute
   AppMonitoringRoute: typeof AppMonitoringRoute
   AuthRoute: typeof AuthRoute
+  BlacklistRoute: typeof BlacklistRoute
   BlacklistCheckRoute: typeof BlacklistCheckRoute
   ContactRoute: typeof ContactRoute
   CyberNewsRoute: typeof CyberNewsRoute
   DnsLookupRoute: typeof DnsLookupRoute
+  DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
+  MonitoringRoute: typeof MonitoringRoute
   PingRoute: typeof PingRoute
   PingIpRoute: typeof PingIpRoute
+  PingipRoute: typeof PingipRoute
   PortCheckRoute: typeof PortCheckRoute
+  PortcheckRoute: typeof PortcheckRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SubnetRoute: typeof SubnetRoute
   SubnetCalculatorRoute: typeof SubnetCalculatorRoute
   TermsRoute: typeof TermsRoute
   TracerouteRoute: typeof TracerouteRoute
+  WhoisipRoute: typeof WhoisipRoute
   WhoseIpRoute: typeof WhoseIpRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
   ApiPublicHooksMonitorTickRoute: typeof ApiPublicHooksMonitorTickRoute
@@ -446,6 +645,13 @@ declare module '@tanstack/react-router' {
       path: '/whose-ip'
       fullPath: '/whose-ip'
       preLoaderRoute: typeof WhoseIpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/whoisip': {
+      id: '/whoisip'
+      path: '/whoisip'
+      fullPath: '/whoisip'
+      preLoaderRoute: typeof WhoisipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/traceroute': {
@@ -469,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubnetCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/subnet': {
+      id: '/subnet'
+      path: '/subnet'
+      fullPath: '/subnet'
+      preLoaderRoute: typeof SubnetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -483,11 +696,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portcheck': {
+      id: '/portcheck'
+      path: '/portcheck'
+      fullPath: '/portcheck'
+      preLoaderRoute: typeof PortcheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/port-check': {
       id: '/port-check'
       path: '/port-check'
       fullPath: '/port-check'
       preLoaderRoute: typeof PortCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pingip': {
+      id: '/pingip'
+      path: '/pingip'
+      fullPath: '/pingip'
+      preLoaderRoute: typeof PingipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ping-ip': {
@@ -504,11 +731,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/global': {
       id: '/global'
       path: '/global'
       fullPath: '/global'
       preLoaderRoute: typeof GlobalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dnslookup': {
+      id: '/dnslookup'
+      path: '/dnslookup'
+      fullPath: '/dnslookup'
+      preLoaderRoute: typeof DnslookupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dns-lookup': {
@@ -537,6 +778,13 @@ declare module '@tanstack/react-router' {
       path: '/blacklist-check'
       fullPath: '/blacklist-check'
       preLoaderRoute: typeof BlacklistCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blacklist': {
+      id: '/blacklist'
+      path: '/blacklist'
+      fullPath: '/blacklist'
+      preLoaderRoute: typeof BlacklistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -623,6 +871,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyNetworkBroadcastUsableIpRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-9': {
+      id: '/academy/lesson-9'
+      path: '/lesson-9'
+      fullPath: '/academy/lesson-9'
+      preLoaderRoute: typeof AcademyLesson9RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-8': {
+      id: '/academy/lesson-8'
+      path: '/lesson-8'
+      fullPath: '/academy/lesson-8'
+      preLoaderRoute: typeof AcademyLesson8RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-7': {
+      id: '/academy/lesson-7'
+      path: '/lesson-7'
+      fullPath: '/academy/lesson-7'
+      preLoaderRoute: typeof AcademyLesson7RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-6': {
+      id: '/academy/lesson-6'
+      path: '/lesson-6'
+      fullPath: '/academy/lesson-6'
+      preLoaderRoute: typeof AcademyLesson6RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-5': {
+      id: '/academy/lesson-5'
+      path: '/lesson-5'
+      fullPath: '/academy/lesson-5'
+      preLoaderRoute: typeof AcademyLesson5RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-4': {
+      id: '/academy/lesson-4'
+      path: '/lesson-4'
+      fullPath: '/academy/lesson-4'
+      preLoaderRoute: typeof AcademyLesson4RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-3': {
+      id: '/academy/lesson-3'
+      path: '/lesson-3'
+      fullPath: '/academy/lesson-3'
+      preLoaderRoute: typeof AcademyLesson3RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-2': {
+      id: '/academy/lesson-2'
+      path: '/lesson-2'
+      fullPath: '/academy/lesson-2'
+      preLoaderRoute: typeof AcademyLesson2RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-1': {
+      id: '/academy/lesson-1'
+      path: '/lesson-1'
+      fullPath: '/academy/lesson-1'
+      preLoaderRoute: typeof AcademyLesson1RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lan-wan-man-pan': {
       id: '/academy/lan-wan-man-pan'
       path: '/lan-wan-man-pan'
@@ -673,6 +984,15 @@ interface AcademyRouteChildren {
   AcademyIpAddressingRoute: typeof AcademyIpAddressingRoute
   AcademyIpv4AddressClassesRoute: typeof AcademyIpv4AddressClassesRoute
   AcademyLanWanManPanRoute: typeof AcademyLanWanManPanRoute
+  AcademyLesson1Route: typeof AcademyLesson1Route
+  AcademyLesson2Route: typeof AcademyLesson2Route
+  AcademyLesson3Route: typeof AcademyLesson3Route
+  AcademyLesson4Route: typeof AcademyLesson4Route
+  AcademyLesson5Route: typeof AcademyLesson5Route
+  AcademyLesson6Route: typeof AcademyLesson6Route
+  AcademyLesson7Route: typeof AcademyLesson7Route
+  AcademyLesson8Route: typeof AcademyLesson8Route
+  AcademyLesson9Route: typeof AcademyLesson9Route
   AcademyNetworkBroadcastUsableIpRoute: typeof AcademyNetworkBroadcastUsableIpRoute
   AcademyPublicVsPrivateIpRoute: typeof AcademyPublicVsPrivateIpRoute
   AcademySubnetMasksRoute: typeof AcademySubnetMasksRoute
@@ -686,6 +1006,15 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyIpAddressingRoute: AcademyIpAddressingRoute,
   AcademyIpv4AddressClassesRoute: AcademyIpv4AddressClassesRoute,
   AcademyLanWanManPanRoute: AcademyLanWanManPanRoute,
+  AcademyLesson1Route: AcademyLesson1Route,
+  AcademyLesson2Route: AcademyLesson2Route,
+  AcademyLesson3Route: AcademyLesson3Route,
+  AcademyLesson4Route: AcademyLesson4Route,
+  AcademyLesson5Route: AcademyLesson5Route,
+  AcademyLesson6Route: AcademyLesson6Route,
+  AcademyLesson7Route: AcademyLesson7Route,
+  AcademyLesson8Route: AcademyLesson8Route,
+  AcademyLesson9Route: AcademyLesson9Route,
   AcademyNetworkBroadcastUsableIpRoute: AcademyNetworkBroadcastUsableIpRoute,
   AcademyPublicVsPrivateIpRoute: AcademyPublicVsPrivateIpRoute,
   AcademySubnetMasksRoute: AcademySubnetMasksRoute,
@@ -704,19 +1033,26 @@ const rootRouteChildren: RootRouteChildren = {
   ApPlanningRoute: ApPlanningRoute,
   AppMonitoringRoute: AppMonitoringRoute,
   AuthRoute: AuthRoute,
+  BlacklistRoute: BlacklistRoute,
   BlacklistCheckRoute: BlacklistCheckRoute,
   ContactRoute: ContactRoute,
   CyberNewsRoute: CyberNewsRoute,
   DnsLookupRoute: DnsLookupRoute,
+  DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
+  MonitoringRoute: MonitoringRoute,
   PingRoute: PingRoute,
   PingIpRoute: PingIpRoute,
+  PingipRoute: PingipRoute,
   PortCheckRoute: PortCheckRoute,
+  PortcheckRoute: PortcheckRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SubnetRoute: SubnetRoute,
   SubnetCalculatorRoute: SubnetCalculatorRoute,
   TermsRoute: TermsRoute,
   TracerouteRoute: TracerouteRoute,
+  WhoisipRoute: WhoisipRoute,
   WhoseIpRoute: WhoseIpRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,
   ApiPublicHooksMonitorTickRoute: ApiPublicHooksMonitorTickRoute,
@@ -724,13 +1060,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
