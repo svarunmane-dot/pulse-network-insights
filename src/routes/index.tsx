@@ -237,29 +237,30 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Pulse Speed – Internet Speed Test, Ping & Latency Checker" },
+      { title: "Internet Speed Test & Ping Checker | Pulse Speed" },
       {
         name: "description",
         content:
-          "Test your internet speed, ping, jitter and latency instantly with Pulse Speed. Also explore our free IP subnet calculator and DNS lookup tools. Fast, accurate and lightweight internet performance testing platform.",
+          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
       },
       {
         name: "keywords",
         content:
           "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns",
       },
-      { property: "og:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
+      { property: "og:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
       {
         property: "og:description",
         content:
-          "Measure download speed, upload speed, ping, jitter and latency instantly. Free, accurate and lightweight.",
+          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
       },
       { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
+      { name: "twitter:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
       {
         name: "twitter:description",
-        content: "Measure download speed, upload speed, ping, jitter and latency instantly.",
+        content:
+          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
       },
     ],
     links: [{ rel: "canonical", href: "https://pulse-speed.com/" }],
@@ -1821,42 +1822,42 @@ const TOOLS: {
     cta: "See the map",
   },
   {
-    to: "/subnet",
+    to: "/subnet-calculator",
     icon: "🧮",
     title: "IP Subnet Calculator",
     desc: "IPv4 & IPv6 subnetting: CIDR, network, broadcast, usable hosts, wildcard mask — everything a network engineer needs.",
     cta: "Open calculator",
   },
   {
-    to: "/dnslookup",
+    to: "/dns-lookup",
     icon: "🔎",
     title: "DNS Lookup",
     desc: "Resolve A, AAAA, MX, TXT, NS, CNAME and SOA records for any domain with authoritative answers.",
     cta: "Look up DNS",
   },
   {
-    to: "/pingip",
+    to: "/ping-ip",
     icon: "🎯",
     title: "Ping IP",
     desc: "Probe any public IP or hostname from our edge and get latency in milliseconds — great for reachability checks.",
     cta: "Ping an IP",
   },
   {
-    to: "/whoisip",
+    to: "/whose-ip",
     icon: "🕵",
     title: "Whose IP – WHOIS & Geolocation",
     desc: "Look up owner, ASN, ISP, country and city for any IPv4 or IPv6 address. Perfect for abuse and security triage.",
     cta: "Check an IP",
   },
   {
-    to: "/portcheck",
+    to: "/port-check",
     icon: "🚪",
     title: "Open Port Checker",
     desc: "See whether a TCP port on a public host is reachable — useful for firewall, NAT and server debugging.",
     cta: "Check a port",
   },
   {
-    to: "/monitoring",
+    to: "/app-monitoring",
     icon: "📈",
     title: "Application Monitoring",
     desc: "Free TCP uptime monitor with 1-minute checks, latency tracking and incident history. No sign-up needed.",

@@ -9,7 +9,7 @@ export const SITE_NAME = "Pulse Speed";
 export type FaqItem = { q: string; a: string };
 
 export interface ToolSeoInput {
-  path: string; // e.g. "/portcheck"
+  path: string; // e.g. "/port-check"
   title: string; // 50-60 chars ideal
   description: string; // 140-160 chars ideal
   name: string; // short tool name for SoftwareApplication

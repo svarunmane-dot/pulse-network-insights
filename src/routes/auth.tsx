@@ -45,7 +45,7 @@ function AuthPage() {
     void supabase.auth.mfa.getAuthenticatorAssuranceLevel().then(({ data }) => {
       if (!data) return;
       if (data.currentLevel === "aal2" || (data.currentLevel === "aal1" && data.nextLevel === "aal1")) {
-        router.navigate({ to: "/monitoring" });
+        router.navigate({ to: "/app-monitoring" });
       }
     });
   }, [router]);
@@ -110,7 +110,7 @@ function AuthPage() {
         code: mfaCode.trim(),
       });
       if (error) throw error;
-      router.navigate({ to: "/monitoring" });
+      router.navigate({ to: "/app-monitoring" });
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : "Invalid code");
     } finally {
@@ -135,7 +135,7 @@ function AuthPage() {
       });
       if (error) throw error;
       setMsg("Two-factor enabled — signing you in…");
-      router.navigate({ to: "/monitoring" });
+      router.navigate({ to: "/app-monitoring" });
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : "Invalid code");
     } finally {
