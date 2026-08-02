@@ -237,29 +237,30 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Pulse Speed – Internet Speed Test, Ping & Latency Checker" },
+      { title: "Internet Speed Test & Ping Checker | Pulse Speed" },
       {
         name: "description",
         content:
-          "Test your internet speed, ping, jitter and latency instantly with Pulse Speed. Also explore our free IP subnet calculator and DNS lookup tools. Fast, accurate and lightweight internet performance testing platform.",
+          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
       },
       {
         name: "keywords",
         content:
           "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns",
       },
-      { property: "og:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
+      { property: "og:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
       {
         property: "og:description",
         content:
-          "Measure download speed, upload speed, ping, jitter and latency instantly. Free, accurate and lightweight.",
+          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
       },
       { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Pulse Speed – Internet Speed Test & Ping Checker" },
+      { name: "twitter:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
       {
         name: "twitter:description",
-        content: "Measure download speed, upload speed, ping, jitter and latency instantly.",
+        content:
+          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
       },
     ],
     links: [{ rel: "canonical", href: "https://pulse-speed.com/" }],
