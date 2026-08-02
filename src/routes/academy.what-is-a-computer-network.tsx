@@ -9,7 +9,7 @@ export const Route = createFileRoute("/academy/what-is-a-computer-network")({
   head: () =>
     toolHead({
       path: "/academy/what-is-a-computer-network",
-      title: "Lesson 1: What is a Computer Network? – Pulse Speed Academy",
+      title: "Lesson 1: What is a Computer Network? | Pulse Speed Academy",
       description:
         "Learn what a computer network is, its components (switch, router, firewall, AP), types (PAN, LAN, MAN, WAN) and how data travels — with hands-on practice.",
       name: "Lesson 1 – What is a Computer Network?",

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/academy/subnet-masks")({
   head: () =>
     toolHead({
       path: "/academy/subnet-masks",
-      title: "Lesson 7: Understanding Subnet Masks (255.255.255.0) – Pulse Speed Academy",
+      title: "Lesson 7: Understanding Subnet Masks (255.255.255.0) | Pulse Speed Academy",
       description:
         "Learn what a subnet mask is, how 255.255.255.0 (/24) splits network and host portions, CIDR equivalents, usable host counts, real examples and a quiz.",
       name: "Lesson 7 – Understanding Subnet Masks",

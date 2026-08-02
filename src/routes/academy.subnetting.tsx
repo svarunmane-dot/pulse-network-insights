@@ -7,7 +7,7 @@ export const Route = createFileRoute("/academy/subnetting")({
   head: () =>
     toolHead({
       path: "/academy/subnetting",
-      title: "Lesson 6: What is Subnetting? A Beginner's Guide – Pulse Speed Academy",
+      title: "Lesson 6: What is Subnetting? A Beginner's Guide | Pulse Speed Academy",
       description:
         "Learn subnetting basics: how dividing a large network into smaller subnets improves performance, security and scalability. Real-world examples, quiz and hands-on subnet calculator.",
       name: "Lesson 6 – What is Subnetting?",

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/academy/network-broadcast-usable-ip")({
   head: () =>
     toolHead({
       path: "/academy/network-broadcast-usable-ip",
-      title: "Lesson 9: Network, Broadcast & Usable IP Range – Pulse Speed Academy",
+      title: "Lesson 9: Network, Broadcast & Usable IP Range | Pulse Speed Academy",
       description:
         "Learn how to calculate the network address, broadcast address, and usable IP range for any IPv4 subnet. Essential skill for CCNA and network engineers.",
       name: "Lesson 9 – Network, Broadcast & Usable IP Range",

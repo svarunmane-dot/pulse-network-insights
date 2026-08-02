@@ -8,7 +8,7 @@ export const Route = createFileRoute("/academy/lan-wan-man-pan")({
   head: () =>
     toolHead({
       path: "/academy/lan-wan-man-pan",
-      title: "Lesson 2: LAN vs WAN vs MAN vs PAN Explained – Pulse Speed Academy",
+      title: "Lesson 2: LAN vs WAN vs MAN vs PAN Explained | Pulse Speed Academy",
       description:
         "Learn the differences between PAN, LAN, MAN and WAN network types with real-world examples, comparison tables and a quick quiz — plus hands-on practice tools.",
       name: "Lesson 2 – LAN vs WAN vs MAN vs PAN Explained",

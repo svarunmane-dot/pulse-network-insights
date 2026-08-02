@@ -7,7 +7,7 @@ export const Route = createFileRoute("/academy/public-vs-private-ip")({
   head: () =>
     toolHead({
       path: "/academy/public-vs-private-ip",
-      title: "Lesson 5: Public vs Private IP Addresses – Pulse Speed Academy",
+      title: "Lesson 5: Public vs Private IP Addresses | Pulse Speed Academy",
       description:
         "Learn the difference between public and private IP addresses, the reserved private ranges, and how NAT lets many devices share one Internet connection. Includes a quick quiz and interactive 'Public or Private?' game.",
       name: "Lesson 5 – Public vs Private IP Addresses",

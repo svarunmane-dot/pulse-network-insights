@@ -7,7 +7,7 @@ export const Route = createFileRoute("/academy/cidr-notation")({
   head: () =>
     toolHead({
       path: "/academy/cidr-notation",
-      title: "Lesson 8: CIDR Notation Explained (/24, /25, /26, /27) – Pulse Speed Academy",
+      title: "Lesson 8: CIDR Notation Explained (/24, /25, /26, /27) | Pulse Speed Academy",
       description:
         "Learn CIDR notation in plain English. Understand what /24, /25, /26 and /27 mean, how they relate to subnet masks, and when to use smaller subnets.",
       name: "Lesson 8 – CIDR Notation Explained",

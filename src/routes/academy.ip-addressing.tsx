@@ -8,7 +8,7 @@ export const Route = createFileRoute("/academy/ip-addressing")({
   head: () =>
     toolHead({
       path: "/academy/ip-addressing",
-      title: "Lesson 3: What is an IP Address? IPv4 Explained – Pulse",
+      title: "Lesson 3: What is an IP Address? IPv4 Explained | Pulse Speed Academy",
       description:
         "Learn what an IP address is, how IPv4 works, the difference between public and private IPs, static vs dynamic addresses, and test your knowledge with a quick quiz.",
       name: "Lesson 3 – What is an IP Address? IPv4 Explained for Beginners",

@@ -8,7 +8,7 @@ export const Route = createFileRoute("/academy/ipv4-address-classes")({
   head: () =>
     toolHead({
       path: "/academy/ipv4-address-classes",
-      title: "Lesson 4: IPv4 Classes (A, B, C, D & E) Explained – Pulse Speed Academy",
+      title: "Lesson 4: IPv4 Classes (A, B, C, D & E) Explained | Pulse Speed Academy",
       description:
         "Learn the five IPv4 address classes, their ranges, default subnet masks, private ranges and real-world examples. Includes a quick quiz and hands-on practice tools.",
       name: "Lesson 4 – IPv4 Classes (A, B, C, D & E) Explained",
