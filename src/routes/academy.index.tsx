@@ -6,9 +6,9 @@ export const Route = createFileRoute("/academy/")({
   head: () =>
     toolHead({
       path: "/academy",
-      title: "Network Engineer Academy – Learn Networking Daily",
+      title: "Network Engineer Academy & Lessons | Pulse Speed",
       description:
-        "Free daily networking lessons for engineers. Learn computer networks, IP, DNS, subnetting, routing and more with hands-on practice tools.",
+        "Free networking guides and lessons. Learn IP addressing, subnet masking, routing fundamentals, and core concepts.",
       name: "Network Engineer Academy",
       category: "EducationalApplication",
       faqs: [
