@@ -92,6 +92,13 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 9,
+    slug: "/academy/lesson-9",
+    title: "Network, Broadcast & Usable IP Range",
+    desc: "How to calculate the four key addresses for any subnet: network, broadcast, first and last usable IP.",
+    status: "live",
+  },
+  {
+    n: 10,
     title: "Understanding the OSI Model",
     slug: "#",
     desc: "The 7 layers, what runs at each, and how to troubleshoot with them.",

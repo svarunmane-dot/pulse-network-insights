@@ -349,19 +349,14 @@ function Lesson8() {
             ← Lesson 7: Understanding Subnet Masks
           </Link>
         </div>
-        <Link
-          to="/academy"
-          style={{
-            background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
-            color: "#04150f",
-            padding: "10px 16px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          Back to Academy →
-        </Link>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>
+            NEXT LESSON
+          </div>
+          <Link to="/academy/lesson-9" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 9: Network, Broadcast & Usable IP Range →
+          </Link>
+        </div>
       </div>
     </article>
   );
