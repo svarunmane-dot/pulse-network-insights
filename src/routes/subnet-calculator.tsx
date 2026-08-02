@@ -162,9 +162,9 @@ export const Route = createFileRoute("/subnet-calculator")({
     toolHead({
       path: "/subnet-calculator",
       name: "IP Subnet Calculator",
-      title: "IP Subnet Calculator — CIDR, Mask & Host Range Tool",
+      title: "IP Subnet Calculator (IPv4 & IPv6 CIDR) | Pulse Speed",
       description:
-        "Free IPv4 subnet calculator. Enter any IP and CIDR to get the network address, broadcast, usable host range, wildcard mask and total hosts.",
+        "Free network tool to calculate CIDR masks, network addresses, usable host ranges, broadcast addresses, and wildcards.",
       faqs: [
         {
           q: "What does the subnet calculator return?",
@@ -396,7 +396,9 @@ function SubnetPage() {
 
       {/* Explanation */}
       <div style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.7 }}>
-        <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>How it works</h2>
+        <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>
+          How to Use the IP Subnet Calculator
+        </h2>
         <p>
           A subnet divides a larger network into smaller, manageable sections. The subnet mask defines which
           portion of an IP address represents the network and which part identifies individual hosts. Enter any
@@ -405,6 +407,25 @@ function SubnetPage() {
           <code style={{ color: TEAL, fontFamily: "'DM Mono', monospace" }}>255.255.255.0</code>) and the
           calculator instantly returns the network address, broadcast address, usable IP range, and maximum
           number of hosts.
+        </p>
+        <p style={{ marginTop: 12 }}>
+          <strong style={{ color: "#fff" }}>CIDR notation</strong> (Classless Inter-Domain Routing) writes the
+          mask as the number of network bits — <code style={{ color: TEAL }}>/24</code> means the first 24 bits
+          identify the network block and the remaining 8 bits address hosts inside it. Smaller prefixes such as{" "}
+          <code style={{ color: TEAL }}>/16</code> create larger blocks; longer prefixes such as{" "}
+          <code style={{ color: TEAL }}>/30</code> carve a block into tiny point-to-point links.
+        </p>
+        <p style={{ marginTop: 12 }}>
+          <strong style={{ color: "#fff" }}>Network blocks and host ranges:</strong> the first address in every
+          block is the network address and the last is the broadcast address — neither can be assigned to a
+          device. Everything between them is the usable host range, so a <code style={{ color: TEAL }}>/24</code>{" "}
+          block gives 256 total addresses and 254 usable hosts. The wildcard mask (the inverse of the subnet mask)
+          is what firewalls and access-control lists use to match the same range.
+        </p>
+        <p style={{ marginTop: 14 }}>
+          <Link to="/academy" style={{ color: TEAL, fontWeight: 600, textDecoration: "none" }}>
+            Confused about network blocks? Learn step-by-step in our Network Engineer Academy →
+          </Link>
         </p>
       </div>
     </div>
