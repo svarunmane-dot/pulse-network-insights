@@ -13,11 +13,11 @@ const TEXT_MUTED = "#6b7794";
 
 type WhoisResult = Awaited<ReturnType<typeof whoisIp>>;
 
-export const Route = createFileRoute("/whoisip")({
+export const Route = createFileRoute("/whose-ip")({
   component: WhoisIpPage,
   head: () =>
     toolHead({
-      path: "/whoisip",
+      path: "/whose-ip",
       name: "Whose IP",
       title: "Whose IP — Free IP Geolocation, ISP & ASN Lookup Tool",
       description:

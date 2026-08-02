@@ -103,11 +103,11 @@ async function reverseLookup(ip: string): Promise<DNSResult> {
   return { ip, records };
 }
 
-export const Route = createFileRoute("/dnslookup")({
+export const Route = createFileRoute("/dns-lookup")({
   component: DnsLookupPage,
   head: () =>
     toolHead({
-      path: "/dnslookup",
+      path: "/dns-lookup",
       name: "DNS Lookup",
       title: "DNS Lookup — Domain to IP & Reverse DNS Resolver Tool",
       description:

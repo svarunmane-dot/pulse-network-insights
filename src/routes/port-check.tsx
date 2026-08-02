@@ -24,11 +24,11 @@ const COMMON_PORTS = [
   { p: 6379, label: "Redis" },
 ];
 
-export const Route = createFileRoute("/portcheck")({
+export const Route = createFileRoute("/port-check")({
   component: PortCheckPage,
   head: () =>
     toolHead({
-      path: "/portcheck",
+      path: "/port-check",
       name: "Open Port Checker",
       title: "Open Port Checker — Test TCP Ports on Any Public IP",
       description:

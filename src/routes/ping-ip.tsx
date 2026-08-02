@@ -12,11 +12,11 @@ const TEXT_MUTED = "#6b7794";
 
 type PingResult = Awaited<ReturnType<typeof pingHost>>;
 
-export const Route = createFileRoute("/pingip")({
+export const Route = createFileRoute("/ping-ip")({
   component: PingIpPage,
   head: () =>
     toolHead({
-      path: "/pingip",
+      path: "/ping-ip",
       name: "Ping IP",
       title: "Ping IP — Test Reachability & Latency of a Public IP",
       description:

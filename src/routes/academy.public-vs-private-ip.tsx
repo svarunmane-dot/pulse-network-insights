@@ -3,10 +3,10 @@ import { useMemo, useState } from "react";
 import { toolHead } from "@/lib/seo";
 import heroImg from "@/assets/academy-lesson5-hero.jpg";
 
-export const Route = createFileRoute("/academy/lesson-5")({
+export const Route = createFileRoute("/academy/public-vs-private-ip")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-5",
+      path: "/academy/public-vs-private-ip",
       title: "Lesson 5: Public vs Private IP Addresses – Pulse Speed Academy",
       description:
         "Learn the difference between public and private IP addresses, the reserved private ranges, and how NAT lets many devices share one Internet connection. Includes a quick quiz and interactive 'Public or Private?' game.",
@@ -236,7 +236,7 @@ function Lesson5() {
         on Pulse Speed.
       </P>
       <TryItCard
-        to="/whoisip"
+        to="/whose-ip"
         title="Find your public IP now"
         body="See the exact public IP the Internet uses to reach your network, plus location and ISP details."
       />
@@ -300,10 +300,10 @@ function Lesson5() {
         }}
       >
         {[
-          { to: "/whoisip", label: "🌍 What's My IP" },
-          { to: "/pingip", label: "📡 Ping Tool" },
-          { to: "/whoisip", label: "🔍 WHOIS Lookup" },
-          { to: "/subnet", label: "🧮 Subnet Calculator" },
+          { to: "/whose-ip", label: "🌍 What's My IP" },
+          { to: "/ping-ip", label: "📡 Ping Tool" },
+          { to: "/whose-ip", label: "🔍 WHOIS Lookup" },
+          { to: "/subnet-calculator", label: "🧮 Subnet Calculator" },
         ].map((t) => (
           <Link
             key={t.to + t.label}
@@ -325,7 +325,7 @@ function Lesson5() {
       <H2>What's Next?</H2>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
         <li>
-          <Link to="/academy/lesson-4" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/ipv4-address-classes" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 4: IPv4 Classes (A, B, C, D & E) Explained
           </Link>
         </li>

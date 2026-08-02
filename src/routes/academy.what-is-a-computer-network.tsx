@@ -5,10 +5,10 @@ import heroImg from "@/assets/academy-lesson1-hero.jpg";
 import networksImg from "@/assets/academy-lesson1-networks.jpg";
 import flowImg from "@/assets/academy-lesson1-flow.jpg";
 
-export const Route = createFileRoute("/academy/lesson-1")({
+export const Route = createFileRoute("/academy/what-is-a-computer-network")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-1",
+      path: "/academy/what-is-a-computer-network",
       title: "Lesson 1: What is a Computer Network? – Pulse Speed Academy",
       description:
         "Learn what a computer network is, its components (switch, router, firewall, AP), types (PAN, LAN, MAN, WAN) and how data travels — with hands-on practice.",
@@ -346,7 +346,7 @@ Internet`}</pre>
       <P>This process usually happens in less than a second.</P>
 
       <TryItCard
-        to="/dnslookup"
+        to="/dns-lookup"
         title="See DNS in action"
         body="Look up any domain and reveal the IP address behind it using our DNS Lookup tool."
       />
@@ -386,7 +386,7 @@ Internet`}</pre>
       />
 
       <TryItCard
-        to="/whoisip"
+        to="/whose-ip"
         title="Find your public IP"
         body="Use the Whose IP tool to see the public IP your network shows to the internet."
       />
@@ -405,10 +405,10 @@ Internet`}</pre>
         }}
       >
         {[
-          { to: "/whoisip", label: "🌍 What's My IP" },
-          { to: "/dnslookup", label: "📡 DNS Lookup" },
-          { to: "/pingip", label: "📶 Ping IP" },
-          { to: "/subnet", label: "🧮 Subnet Calculator" },
+          { to: "/whose-ip", label: "🌍 What's My IP" },
+          { to: "/dns-lookup", label: "📡 DNS Lookup" },
+          { to: "/ping-ip", label: "📶 Ping IP" },
+          { to: "/subnet-calculator", label: "🧮 Subnet Calculator" },
           { to: "/", label: "⚡ Speed Test" },
           { to: "/ap-planning", label: "📐 AP Planning" },
         ].map((t) => (
@@ -433,7 +433,7 @@ Internet`}</pre>
       <P>Continue your networking journey with upcoming lessons:</P>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
         <li>
-          <Link to="/academy/lesson-2" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/lan-wan-man-pan" style={{ color: "#00D4AA", textDecoration: "none" }}>
             Lesson 2: LAN vs WAN vs MAN vs PAN Explained →
           </Link>
         </li>

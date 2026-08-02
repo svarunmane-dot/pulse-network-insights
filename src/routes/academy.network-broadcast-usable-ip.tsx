@@ -3,10 +3,10 @@ import { useState } from "react";
 import { toolHead } from "@/lib/seo";
 import heroImg from "@/assets/academy-lesson9-hero.jpg";
 
-export const Route = createFileRoute("/academy/lesson-9")({
+export const Route = createFileRoute("/academy/network-broadcast-usable-ip")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-9",
+      path: "/academy/network-broadcast-usable-ip",
       title: "Lesson 9: Network, Broadcast & Usable IP Range – Pulse Speed Academy",
       description:
         "Learn how to calculate the network address, broadcast address, and usable IP range for any IPv4 subnet. Essential skill for CCNA and network engineers.",
@@ -421,7 +421,7 @@ function Lesson9() {
         ]}
       />
       <TryItCard
-        to="/subnet"
+        to="/subnet-calculator"
         title="🧮 Subnet Calculator"
         body="Enter any IP and CIDR to instantly see the network, broadcast, and usable host range."
       />
@@ -454,7 +454,7 @@ function Lesson9() {
           <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>
             PREVIOUS LESSON
           </div>
-          <Link to="/academy/lesson-8" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+          <Link to="/academy/cidr-notation" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
             ← Lesson 8: CIDR Notation Explained
           </Link>
         </div>

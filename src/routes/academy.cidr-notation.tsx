@@ -1,33 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toolHead } from "@/lib/seo";
-import heroImg from "@/assets/academy-lesson7-hero.jpg";
+import heroImg from "@/assets/academy-lesson8-hero.jpg";
 
-export const Route = createFileRoute("/academy/lesson-7")({
+export const Route = createFileRoute("/academy/cidr-notation")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-7",
-      title: "Lesson 7: Understanding Subnet Masks (255.255.255.0) – Pulse Speed Academy",
+      path: "/academy/cidr-notation",
+      title: "Lesson 8: CIDR Notation Explained (/24, /25, /26, /27) – Pulse Speed Academy",
       description:
-        "Learn what a subnet mask is, how 255.255.255.0 (/24) splits network and host portions, CIDR equivalents, usable host counts, real examples and a quiz.",
-      name: "Lesson 7 – Understanding Subnet Masks",
+        "Learn CIDR notation in plain English. Understand what /24, /25, /26 and /27 mean, how they relate to subnet masks, and when to use smaller subnets.",
+      name: "Lesson 8 – CIDR Notation Explained",
       category: "EducationalApplication",
       faqs: [
         {
-          q: "What is a subnet mask?",
-          a: "A subnet mask is a number that tells a device which part of an IP address identifies the network and which part identifies the host.",
+          q: "What does /24 mean in CIDR notation?",
+          a: "/24 is a shorter way of writing the subnet mask 255.255.255.0. It means the first 24 bits identify the network and the remaining 8 bits identify hosts.",
         },
         {
-          q: "What is 255.255.255.0 in CIDR notation?",
-          a: "255.255.255.0 is written as /24 in CIDR notation. It provides 254 usable host addresses.",
+          q: "Is a larger CIDR number a bigger or smaller network?",
+          a: "A larger CIDR number means a smaller network. For example, /27 is smaller than /24 because fewer host addresses are available.",
         },
         {
-          q: "Can 192.168.1.10 and 192.168.2.20 communicate directly with a /24 mask?",
-          a: "No. With a /24 mask they are on different networks (192.168.1.0 and 192.168.2.0), so traffic must pass through a router or Layer 3 switch.",
+          q: "How many usable IP addresses does /26 provide?",
+          a: "/26 provides 62 usable IP addresses.",
         },
       ],
     }),
-  component: Lesson7,
+  component: Lesson8,
 });
 
 const H2 = ({ children }: { children: React.ReactNode }) => (
@@ -124,19 +124,7 @@ function Callout({ tone, title, children }: { tone: "info" | "warn"; title: stri
   );
 }
 
-const preStyle: React.CSSProperties = {
-  background: "#0f1422",
-  border: "1px solid #1f2740",
-  borderRadius: 12,
-  padding: 16,
-  color: "#c8d0e0",
-  fontFamily: "monospace",
-  fontSize: 13,
-  overflowX: "auto",
-  lineHeight: 1.6,
-};
-
-function Lesson7() {
+function Lesson8() {
   return (
     <article style={{ maxWidth: 820, margin: "0 auto", padding: "40px 24px 80px" }}>
       <nav style={{ fontSize: 13, color: "#6b7794", marginBottom: 14 }}>
@@ -146,7 +134,7 @@ function Lesson7() {
       </nav>
 
       <div style={{ fontSize: 12, color: "#00D4AA", fontWeight: 700, letterSpacing: 0.5 }}>
-        LESSON 07 · BEGINNER · 10 MIN READ
+        LESSON 08 · BEGINNER · 10 MIN READ
       </div>
       <h1
         style={{
@@ -158,16 +146,15 @@ function Lesson7() {
           lineHeight: 1.1,
         }}
       >
-        Understanding Subnet Masks (255.255.255.0) Made Simple
+        CIDR Notation Explained (/24, /25, /26, /27) Without the Confusion
       </h1>
       <p style={{ color: "#c8d0e0", fontSize: 18, lineHeight: 1.6, margin: 0 }}>
-        A subnet mask draws the boundary between the network part and the host
-        part of an IP address. Here's how it works, in plain English.
+        Learn what the slash means after an IP address, how CIDR relates to subnet masks, and why modern networks use it instead of classes.
       </p>
 
       <img
         src={heroImg}
-        alt="Diagram showing IP address 192.168.1.25 split into network portion 192.168.1 and host portion 25 by subnet mask 255.255.255.0 (/24)"
+        alt="CIDR notation visualised as a pizza sliced into /24, /25, /26 and /27 subnets"
         width={1024}
         height={1024}
         style={{ width: "100%", height: "auto", borderRadius: 16, border: "1px solid #1f2740", margin: "24px 0" }}
@@ -175,132 +162,135 @@ function Lesson7() {
 
       <H2>Introduction</H2>
       <P>
-        You've learned what an IP address is and why subnetting is important.
-        Now it's time to answer a common question: what is a subnet mask?
+        If you've ever seen an IP address like <Code>192.168.1.0/24</Code>, you might have wondered: what does "/24" actually mean?
       </P>
-      <P>A subnet mask works together with an IP address to identify:</P>
-      <ul style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.8, paddingLeft: 22 }}>
-        <li>Which part is the network</li>
-        <li>Which part is the device (host)</li>
-      </ul>
       <P>
-        Without a subnet mask, devices wouldn't know whether another device is
-        on the same local network or somewhere else on the Internet.
+        The number after the slash is called <strong style={{ color: "#fff" }}>CIDR notation</strong> (Classless Inter-Domain Routing). It tells us how large or small a network is.
+      </P>
+      <P>
+        Don't worry — you don't need to understand binary to understand CIDR. By the end of this lesson, you'll know exactly what /24, /25, /26 and /27 mean.
       </P>
 
-      <H2>What is a Subnet Mask?</H2>
+      <H2>What is CIDR?</H2>
       <P>
-        A subnet mask is a number that tells a device which part of an IP
-        address identifies the network and which part identifies the host.
-        Think of it as a boundary line.
+        CIDR (Classless Inter-Domain Routing) is a short way of writing a subnet mask.
       </P>
-      <pre style={preStyle}>{`IP Address:     192.168.1.25
-Subnet Mask:    255.255.255.0
-
-192.168.1  =  Network
-       25  =  Device (Host)`}</pre>
-
-      <H2>Why Do We Need a Subnet Mask?</H2>
       <P>
-        Imagine a city. Every house has a street name and a house number — for
-        example, <Code>25, Oxford Street</Code>. Oxford Street is the network
-        and 25 is the house. A subnet mask tells devices where the "street name"
-        ends and the "house number" begins.
-      </P>
-
-      <H2>The Most Common Subnet Mask</H2>
-      <P>
-        The subnet mask you'll see most often is <Code>255.255.255.0</Code>,
-        also written as <Code>/24</Code>. These two notations mean exactly the
-        same thing.
+        Instead of writing <Code>255.255.255.0</Code>, we simply write <Code>/24</Code>. Both represent the same subnet mask.
       </P>
       <Table
-        head={["Subnet Mask", "CIDR"]}
+        head={["CIDR", "Subnet Mask"]}
         rows={[
-          ["255.255.255.0", "/24"],
-          ["255.255.255.128", "/25"],
-          ["255.255.255.192", "/26"],
-          ["255.255.255.224", "/27"],
+          ["/24", "255.255.255.0"],
+          ["/25", "255.255.255.128"],
+          ["/26", "255.255.255.192"],
+          ["/27", "255.255.255.224"],
         ]}
       />
       <P>
-        You'll often see CIDR notation in modern networking because it's shorter
-        and easier to read.
+        CIDR is shorter, easier to read, and is the standard format used in networking today.
       </P>
 
-      <H2>How Does It Work?</H2>
-      <P>Suppose two computers have these addresses, both using 255.255.255.0:</P>
+      <H2>Think of CIDR Like a Pizza 🍕</H2>
+      <P>
+        Imagine you order one whole pizza.
+      </P>
+      <Callout tone="info" title="/24 — THE WHOLE PIZZA">
+        You keep the whole pizza for one group. <Code>🍕 = 254 usable IP addresses</Code>.
+      </Callout>
+      <Callout tone="info" title="/25 — 2 SLICES">
+        You cut the pizza into 2 equal slices. Each slice gets <Code>🍕 = 126 usable IP addresses</Code>.
+      </Callout>
+      <Callout tone="info" title="/26 — 4 SLICES">
+        Cut each slice in half. Now you have 4 smaller slices. Each network has <Code>🍕 = 62 usable IP addresses</Code>.
+      </Callout>
+      <Callout tone="info" title="/27 — 8 SLICES">
+        Cut again. Now you have 8 slices. Each network contains <Code>🍕 = 30 usable IP addresses</Code>.
+      </Callout>
+      <P>
+        As the CIDR number gets larger, the network becomes smaller, with fewer available IP addresses.
+      </P>
+
+      <H2>CIDR Sizes at a Glance</H2>
       <Table
-        head={["Device", "IP Address"]}
+        head={["CIDR", "Subnet Mask", "Usable IP Addresses", "Typical Use"]}
         rows={[
-          ["PC 1", "192.168.1.10"],
-          ["PC 2", "192.168.1.50"],
+          ["/24", "255.255.255.0", "254", "Office floor"],
+          ["/25", "255.255.255.128", "126", "Large department"],
+          ["/26", "255.255.255.192", "62", "Small office"],
+          ["/27", "255.255.255.224", "30", "Meeting room, lab, branch office"],
+          ["/28", "255.255.255.240", "14", "Small network"],
+          ["/29", "255.255.255.248", "6", "Point-to-point or network equipment"],
         ]}
       />
-      <P>
-        Both devices belong to the same network — <Code>192.168.1.0</Code>.
-        Since they're on the same network, they can communicate directly through
-        a switch.
-      </P>
-
-      <H2>Different Network Example</H2>
-      <P>
-        Now imagine another computer at <Code>192.168.2.25</Code>. Even though
-        the addresses look similar, this device belongs to a different network:{" "}
-        <Code>192.168.2.0</Code>. Communication between these two networks
-        requires a router.
-      </P>
-
-      <H2>Common Subnet Masks</H2>
-      <Table
-        head={["CIDR", "Subnet Mask", "Usable IP Addresses"]}
-        rows={[
-          ["/24", "255.255.255.0", "254"],
-          ["/25", "255.255.255.128", "126"],
-          ["/26", "255.255.255.192", "62"],
-          ["/27", "255.255.255.224", "30"],
-          ["/28", "255.255.255.240", "14"],
-        ]}
-      />
-      <P>
-        Don't worry about memorising these yet — the Subnet Calculator can help,
-        and you'll learn how these numbers are calculated in later lessons.
-      </P>
 
       <H2>Real-World Example</H2>
-      <P>Imagine a company with two departments:</P>
+      <P>
+        Imagine a company has one network: <Code>192.168.1.0/24</Code>. This network supports up to 254 usable devices.
+      </P>
+      <P>
+        Now the company grows and creates four departments:
+      </P>
+      <ul style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.8, paddingLeft: 22 }}>
+        <li>Finance</li>
+        <li>HR</li>
+        <li>IT</li>
+        <li>Sales</li>
+      </ul>
+      <P>
+        Instead of one large network, the administrator divides it into four /26 subnets.
+      </P>
       <Table
         head={["Department", "Network"]}
         rows={[
-          ["Finance", "192.168.10.0/24"],
-          ["HR", "192.168.20.0/24"],
+          ["Finance", "192.168.1.0/26"],
+          ["HR", "192.168.1.64/26"],
+          ["IT", "192.168.1.128/26"],
+          ["Sales", "192.168.1.192/26"],
         ]}
       />
       <P>
-        Although both departments use the same subnet mask, they belong to
-        different networks. If Finance needs to communicate with HR, the traffic
-        passes through a router or Layer 3 switch.
+        Each department now has its own subnet with 62 usable IP addresses.
       </P>
 
-      <H2>Why Is This Important?</H2>
-      <P>Subnet masks help devices answer a simple question:</P>
-      <Callout tone="info" title="❓ THE DECISION EVERY PACKET TRIGGERS">
-        "Is the destination on my local network, or do I need to send the
-        traffic to a router?" If the destination is local, send directly. If
-        it's on another network, send it to the default gateway (router). This
-        happens every time you browse the Internet or access another device.
-      </Callout>
+      <H2>Why Use Smaller Networks?</H2>
+      <P>Smaller networks provide several advantages:</P>
+      <ul style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.8, paddingLeft: 22 }}>
+        <li>✅ Less broadcast traffic</li>
+        <li>✅ Better security</li>
+        <li>✅ Easier troubleshooting</li>
+        <li>✅ Better performance</li>
+      </ul>
+      <P>
+        That's why enterprises rarely place hundreds of devices into a single /24 network.
+      </P>
+
+      <H2>Easy Rule to Remember</H2>
+      <Table
+        head={["CIDR", "Usable Devices"]}
+        rows={[
+          ["/24", "254"],
+          ["/25", "126"],
+          ["/26", "62"],
+          ["/27", "30"],
+          ["/28", "14"],
+          ["/29", "6"],
+          ["/30", "2"],
+        ]}
+      />
+      <P>
+        <strong style={{ color: "#fff" }}>Simple memory trick:</strong> every time the CIDR number increases by 1, the number of networks doubles and the number of usable IP addresses roughly halves.
+      </P>
 
       <H2>Common Mistakes</H2>
-      <Callout tone="warn" title="❌ THINKING THE SUBNET MASK IS ANOTHER IP ADDRESS">
-        It isn't. A subnet mask only defines the network boundary.
+      <Callout tone="warn" title="❌ BIGGER CIDR MEANS A BIGGER NETWORK">
+        It's actually the opposite. /27 is smaller than /24.
       </Callout>
-      <Callout tone="warn" title="❌ ASSUMING EVERY NETWORK USES 255.255.255.0">
-        Many businesses use different subnet masks depending on the number of
-        devices they need.
+      <Callout tone="warn" title="❌ CIDR REPLACES THE IP ADDRESS">
+        CIDR doesn't replace the IP address — it simply describes the size of the network.
       </Callout>
-      <Callout tone="warn" title="❌ BELIEVING SIMILAR IPS ARE ALWAYS ON THE SAME NETWORK">
-        The subnet mask determines the network — not just the IP address.
+      <Callout tone="warn" title="❌ EVERY COMPANY USES /24">
+        Many organisations use /25, /26, /27, or even smaller subnets depending on the number of devices they need.
       </Callout>
 
       <H2>Quick Quiz</H2>
@@ -308,18 +298,18 @@ Subnet Mask:    255.255.255.0
 
       <H2>Key Takeaways</H2>
       <ul style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.8, paddingLeft: 22 }}>
-        <li>✔ A subnet mask divides an IP address into a network portion and a host portion.</li>
-        <li>✔ The most common subnet mask is 255.255.255.0 (/24).</li>
-        <li>✔ Devices on the same subnet can usually communicate directly.</li>
-        <li>✔ Devices on different subnets require a router or Layer 3 switch.</li>
-        <li>✔ Understanding subnet masks is the foundation for learning subnetting.</li>
+        <li>✔ CIDR is a shorter way of writing a subnet mask.</li>
+        <li>✔ /24 is the same as 255.255.255.0.</li>
+        <li>✔ A larger CIDR number means a smaller network.</li>
+        <li>✔ Smaller subnets improve performance, security, and network management.</li>
+        <li>✔ Modern networks use CIDR instead of class-based addressing.</li>
       </ul>
 
       <H2>Practice What You've Learned</H2>
       <TryItCard
-        to="/subnet"
+        to="/subnet-calculator"
         title="🧮 Subnet Calculator"
-        body="Enter 192.168.1.0/24 and experiment with /25, /26 and /27."
+        body="Try 192.168.1.0/24, /25, /26 and /27 and watch the usable hosts change."
       />
       <TryItCard
         to="/global"
@@ -333,10 +323,8 @@ Subnet Mask:    255.255.255.0
       />
 
       <H2>Did You Know?</H2>
-      <Callout tone="info" title="💡 YOUR HOME ROUTER">
-        Your home router usually uses 192.168.1.1/24 or 192.168.0.1/24 as its
-        default network. That means it can support up to 254 usable devices —
-        more than enough for most homes.
+      <Callout tone="info" title="💡 CLOUD PROVIDERS USE CIDR">
+        Cloud providers such as AWS, Microsoft Azure, and Google Cloud all use CIDR notation when creating Virtual Private Clouds (VPCs) and subnets. Understanding CIDR is therefore an essential skill for both network engineers and cloud engineers.
       </Callout>
 
       <div
@@ -357,23 +345,18 @@ Subnet Mask:    255.255.255.0
           <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>
             PREVIOUS LESSON
           </div>
-          <Link to="/academy/lesson-6" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
-            ← Lesson 6: What is Subnetting?
+          <Link to="/academy/subnet-masks" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            ← Lesson 7: Understanding Subnet Masks
           </Link>
         </div>
-        <Link
-          to="/academy"
-          style={{
-            background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
-            color: "#04150f",
-            padding: "10px 16px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          Back to Academy →
-        </Link>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>
+            NEXT LESSON
+          </div>
+          <Link to="/academy/network-broadcast-usable-ip" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 9: Network, Broadcast & Usable IP Range →
+          </Link>
+        </div>
       </div>
     </article>
   );
@@ -382,24 +365,19 @@ Subnet Mask:    255.255.255.0
 function Quiz() {
   const questions = [
     {
-      q: "What does a subnet mask do?",
-      options: [
-        "Connects to the Internet",
-        "Identifies the network and host portions of an IP address",
-        "Assigns IP addresses",
-        "Encrypts traffic",
-      ],
+      q: "Which CIDR provides the most usable IP addresses?",
+      options: ["/24", "/25", "/26", "/27"],
+      answer: 0,
+    },
+    {
+      q: "What does CIDR replace?",
+      options: ["IP Address", "Subnet Mask", "MAC Address", "DNS"],
       answer: 1,
     },
     {
-      q: "Which subnet mask is equivalent to /24?",
-      options: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.128"],
-      answer: 2,
-    },
-    {
-      q: "If two devices have IPs 192.168.1.10 and 192.168.2.20 with a /24 subnet mask, can they communicate directly?",
-      options: ["Yes", "No, they need a router"],
-      answer: 1,
+      q: "Which subnet is the smallest?",
+      options: ["/24", "/25", "/26", "/27"],
+      answer: 3,
     },
   ];
   return (

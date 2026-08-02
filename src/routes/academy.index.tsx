@@ -36,63 +36,63 @@ type Lesson = {
 const LESSONS: Lesson[] = [
   {
     n: 1,
-    slug: "/academy/lesson-1",
+    slug: "/academy/what-is-a-computer-network",
     title: "What is a Computer Network?",
     desc: "Devices, switches, routers, LAN vs WAN and how data travels across the internet.",
     status: "live",
   },
   {
     n: 2,
-    slug: "/academy/lesson-2",
+    slug: "/academy/lan-wan-man-pan",
     title: "LAN vs WAN vs MAN vs PAN Explained",
     desc: "Compare the four network scopes with real-world examples.",
     status: "live",
   },
   {
     n: 3,
-    slug: "/academy/lesson-3",
+    slug: "/academy/ip-addressing",
     title: "What is an IP Address?",
     desc: "Public vs private, static vs dynamic, and how IPs identify devices.",
     status: "live",
   },
   {
     n: 4,
-    slug: "/academy/lesson-4",
+    slug: "/academy/ipv4-address-classes",
     title: "IPv4 Classes (A, B, C, D & E) Explained",
     desc: "First octet ranges, default subnet masks, private ranges and real-world examples.",
     status: "live",
   },
   {
     n: 5,
-    slug: "/academy/lesson-5",
+    slug: "/academy/public-vs-private-ip",
     title: "Public vs Private IP Addresses",
     desc: "Understand the difference between public and private IPs, private ranges, and how NAT lets many devices share one connection.",
     status: "live",
   },
   {
     n: 6,
-    slug: "/academy/lesson-6",
+    slug: "/academy/subnetting",
     title: "What is Subnetting? A Beginner's Guide",
     desc: "Divide large networks into smaller, more efficient subnets. Real-world examples, benefits, and hands-on subnet calculator practice.",
     status: "live",
   },
   {
     n: 7,
-    slug: "/academy/lesson-7",
+    slug: "/academy/subnet-masks",
     title: "Understanding Subnet Masks (255.255.255.0) Made Simple",
     desc: "How a subnet mask splits network and host, CIDR equivalents, usable host counts and when a router is needed.",
     status: "live",
   },
   {
     n: 8,
-    slug: "/academy/lesson-8",
+    slug: "/academy/cidr-notation",
     title: "CIDR Notation Explained (/24, /25, /26, /27)",
     desc: "What the slash means, how CIDR replaces subnet masks, and why larger CIDR numbers mean smaller networks.",
     status: "live",
   },
   {
     n: 9,
-    slug: "/academy/lesson-9",
+    slug: "/academy/network-broadcast-usable-ip",
     title: "Network, Broadcast & Usable IP Range",
     desc: "How to calculate the four key addresses for any subnet: network, broadcast, first and last usable IP.",
     status: "live",
@@ -151,7 +151,7 @@ function AcademyIndex() {
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 20, flexWrap: "wrap" }}>
             <Link
-              to="/academy/lesson-1"
+              to="/academy/what-is-a-computer-network"
               style={{
                 background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
                 color: "#04150f",

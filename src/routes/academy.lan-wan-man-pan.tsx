@@ -4,10 +4,10 @@ import { toolHead } from "@/lib/seo";
 import networkTypesImg from "@/assets/academy-lesson2-network-types.jpg";
 import realWorldImg from "@/assets/academy-lesson2-realworld.jpg";
 
-export const Route = createFileRoute("/academy/lesson-2")({
+export const Route = createFileRoute("/academy/lan-wan-man-pan")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-2",
+      path: "/academy/lan-wan-man-pan",
       title: "Lesson 2: LAN vs WAN vs MAN vs PAN Explained – Pulse Speed Academy",
       description:
         "Learn the differences between PAN, LAN, MAN and WAN network types with real-world examples, comparison tables and a quick quiz — plus hands-on practice tools.",
@@ -369,7 +369,7 @@ function Lesson2() {
       </div>
 
       <TryItCard
-        to="/pingip"
+        to="/ping-ip"
         title="Measure latency across a WAN"
         body="Use the Ping tool to see how long packets take to reach remote servers over the Internet."
       />
@@ -444,7 +444,7 @@ function Lesson2() {
       </P>
 
       <TryItCard
-        to="/whoisip"
+        to="/whose-ip"
         title="Find the public IP your ISP gives you"
         body="Use the Whose IP tool to see the IP address your WAN connection uses on the Internet."
       />
@@ -464,11 +464,11 @@ function Lesson2() {
       >
         {[
           { to: "/", label: "⚡ Speed Test" },
-          { to: "/pingip", label: "📶 Ping IP" },
-          { to: "/dnslookup", label: "📡 DNS Lookup" },
-          { to: "/whoisip", label: "🌍 What's My IP" },
-          { to: "/subnet", label: "🧮 Subnet Calculator" },
-          { to: "/monitoring", label: "📊 App Monitoring" },
+          { to: "/ping-ip", label: "📶 Ping IP" },
+          { to: "/dns-lookup", label: "📡 DNS Lookup" },
+          { to: "/whose-ip", label: "🌍 What's My IP" },
+          { to: "/subnet-calculator", label: "🧮 Subnet Calculator" },
+          { to: "/app-monitoring", label: "📊 App Monitoring" },
         ].map((t) => (
           <Link
             key={t.to}
@@ -491,12 +491,12 @@ function Lesson2() {
       <P>Continue your networking journey with upcoming lessons:</P>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
         <li>
-          <Link to="/academy/lesson-1" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/what-is-a-computer-network" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 1: What is a Computer Network?
           </Link>
         </li>
         <li>
-          <Link to="/academy/lesson-3" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/ip-addressing" style={{ color: "#00D4AA", textDecoration: "none" }}>
             Lesson 3: What is an IP Address? →
           </Link>
         </li>

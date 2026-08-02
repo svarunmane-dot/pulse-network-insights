@@ -4,10 +4,10 @@ import { toolHead } from "@/lib/seo";
 import heroImg from "@/assets/academy-lesson4-hero.jpg";
 import classesImg from "@/assets/academy-lesson4-classes.jpg";
 
-export const Route = createFileRoute("/academy/lesson-4")({
+export const Route = createFileRoute("/academy/ipv4-address-classes")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-4",
+      path: "/academy/ipv4-address-classes",
       title: "Lesson 4: IPv4 Classes (A, B, C, D & E) Explained – Pulse Speed Academy",
       description:
         "Learn the five IPv4 address classes, their ranges, default subnet masks, private ranges and real-world examples. Includes a quick quiz and hands-on practice tools.",
@@ -280,7 +280,7 @@ function Lesson4() {
       </ul>
 
       <TryItCard
-        to="/subnet"
+        to="/subnet-calculator"
         title="Explore subnet masks in action"
         body="Enter 192.168.1.0/24 in the Subnet Calculator to see the network, broadcast and usable range."
       />
@@ -369,7 +369,7 @@ function Lesson4() {
       />
 
       <TryItCard
-        to="/whoisip"
+        to="/whose-ip"
         title="Check your public IP range"
         body="Use the What's My IP tool to see whether your public IP is in a known range."
       />
@@ -428,11 +428,11 @@ function Lesson4() {
         }}
       >
         {[
-          { to: "/subnet", label: "🧮 Subnet Calculator" },
-          { to: "/whoisip", label: "🌍 What's My IP" },
-          { to: "/pingip", label: "📡 Ping Tool" },
-          { to: "/whoisip", label: "🔍 WHOIS Lookup" },
-          { to: "/dnslookup", label: "🌐 DNS Lookup" },
+          { to: "/subnet-calculator", label: "🧮 Subnet Calculator" },
+          { to: "/whose-ip", label: "🌍 What's My IP" },
+          { to: "/ping-ip", label: "📡 Ping Tool" },
+          { to: "/whose-ip", label: "🔍 WHOIS Lookup" },
+          { to: "/dns-lookup", label: "🌐 DNS Lookup" },
         ].map((t) => (
           <Link
             key={t.to + t.label}
@@ -455,22 +455,22 @@ function Lesson4() {
       <P>Continue your networking journey with upcoming lessons:</P>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
         <li>
-          <Link to="/academy/lesson-3" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/ip-addressing" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 3: What is an IP Address?
           </Link>
         </li>
         <li>
-          <Link to="/academy/lesson-2" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/lan-wan-man-pan" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 2: LAN vs WAN vs MAN vs PAN Explained
           </Link>
         </li>
         <li>
-          <Link to="/academy/lesson-1" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/what-is-a-computer-network" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 1: What is a Computer Network?
           </Link>
         </li>
         <li>
-          <Link to="/academy/lesson-5" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/public-vs-private-ip" style={{ color: "#00D4AA", textDecoration: "none" }}>
             → Lesson 5: Public vs Private IP Addresses
           </Link>
         </li>

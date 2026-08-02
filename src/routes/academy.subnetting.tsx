@@ -3,10 +3,10 @@ import { useState } from "react";
 import { toolHead } from "@/lib/seo";
 import heroImg from "@/assets/academy-lesson6-hero.jpg";
 
-export const Route = createFileRoute("/academy/lesson-6")({
+export const Route = createFileRoute("/academy/subnetting")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-6",
+      path: "/academy/subnetting",
       title: "Lesson 6: What is Subnetting? A Beginner's Guide – Pulse Speed Academy",
       description:
         "Learn subnetting basics: how dividing a large network into smaller subnets improves performance, security and scalability. Real-world examples, quiz and hands-on subnet calculator.",
@@ -295,7 +295,7 @@ can be divided into:
 
       <H2>Practice What You've Learned</H2>
       <TryItCard
-        to="/subnet"
+        to="/subnet-calculator"
         title="🧮 Subnet Calculator"
         body="Enter 192.168.1.0/24 and explore the network address, broadcast, host range and more."
       />
@@ -310,7 +310,7 @@ can be divided into:
         body="Test connectivity between devices and measure round-trip latency."
       />
       <TryItCard
-        to="/dnslookup"
+        to="/dns-lookup"
         title="🔍 DNS Lookup"
         body="See how devices translate friendly names into IP addresses."
       />
@@ -333,7 +333,7 @@ can be divided into:
           <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>
             PREVIOUS LESSON
           </div>
-          <Link to="/academy/lesson-5" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+          <Link to="/academy/public-vs-private-ip" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
             ← Lesson 5: Public vs Private IP Addresses
           </Link>
         </div>

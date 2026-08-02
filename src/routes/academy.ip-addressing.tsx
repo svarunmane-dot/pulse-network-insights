@@ -4,10 +4,10 @@ import { toolHead } from "@/lib/seo";
 import heroImg from "@/assets/academy-lesson3-hero.jpg";
 import howItWorksImg from "@/assets/academy-lesson3-howitworks.jpg";
 
-export const Route = createFileRoute("/academy/lesson-3")({
+export const Route = createFileRoute("/academy/ip-addressing")({
   head: () =>
     toolHead({
-      path: "/academy/lesson-3",
+      path: "/academy/ip-addressing",
       title: "Lesson 3: What is an IP Address? IPv4 Explained – Pulse",
       description:
         "Learn what an IP address is, how IPv4 works, the difference between public and private IPs, static vs dynamic addresses, and test your knowledge with a quick quiz.",
@@ -272,7 +272,7 @@ function Lesson3() {
         ]}
       />
       <TryItCard
-        to="/whoisip"
+        to="/whose-ip"
         title="Discover your public IP address"
         body="Use the What's My IP tool to see the public IP your ISP has assigned to your connection."
       />
@@ -303,7 +303,7 @@ function Lesson3() {
         }}
       />
       <TryItCard
-        to="/dnslookup"
+        to="/dns-lookup"
         title="Resolve a domain to its IP address"
         body="Use the DNS Lookup tool to see the IP addresses behind any domain name."
       />
@@ -403,11 +403,11 @@ function Lesson3() {
         }}
       >
         {[
-          { to: "/whoisip", label: "🌍 What's My IP" },
-          { to: "/subnet", label: "🧮 Subnet Calculator" },
-          { to: "/pingip", label: "📡 Ping Tool" },
-          { to: "/whoisip", label: "🔍 WHOIS Lookup" },
-          { to: "/dnslookup", label: "🌐 DNS Lookup" },
+          { to: "/whose-ip", label: "🌍 What's My IP" },
+          { to: "/subnet-calculator", label: "🧮 Subnet Calculator" },
+          { to: "/ping-ip", label: "📡 Ping Tool" },
+          { to: "/whose-ip", label: "🔍 WHOIS Lookup" },
+          { to: "/dns-lookup", label: "🌐 DNS Lookup" },
         ].map((t) => (
           <Link
             key={t.to + t.label}
@@ -430,17 +430,17 @@ function Lesson3() {
       <P>Continue your networking journey with upcoming lessons:</P>
       <ul style={{ color: "#c8d0e0", lineHeight: 1.9, paddingLeft: 20 }}>
         <li>
-          <Link to="/academy/lesson-4" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/ipv4-address-classes" style={{ color: "#00D4AA", textDecoration: "none" }}>
             Lesson 4: IPv4 Classes (A, B, C, D & E) Explained →
           </Link>
         </li>
         <li>
-          <Link to="/academy/lesson-2" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/lan-wan-man-pan" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 2: LAN vs WAN vs MAN vs PAN Explained
           </Link>
         </li>
         <li>
-          <Link to="/academy/lesson-1" style={{ color: "#00D4AA", textDecoration: "none" }}>
+          <Link to="/academy/what-is-a-computer-network" style={{ color: "#00D4AA", textDecoration: "none" }}>
             ← Lesson 1: What is a Computer Network?
           </Link>
         </li>

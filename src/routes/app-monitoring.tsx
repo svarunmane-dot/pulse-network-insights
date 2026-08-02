@@ -3,11 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { probeTcp } from "@/lib/monitor-public.functions";
 import { toolHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/monitoring")({
+export const Route = createFileRoute("/app-monitoring")({
   ssr: false,
   head: () =>
     toolHead({
-      path: "/monitoring",
+      path: "/app-monitoring",
       name: "Application Monitoring",
       title: "App Monitoring — Free TCP Port Uptime Checker Online",
       description:

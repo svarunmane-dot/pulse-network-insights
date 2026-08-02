@@ -225,15 +225,15 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
-  '/academy/lesson-1': typeof AcademyLesson1Route
-  '/academy/lesson-2': typeof AcademyLesson2Route
-  '/academy/lesson-3': typeof AcademyLesson3Route
-  '/academy/lesson-4': typeof AcademyLesson4Route
-  '/academy/lesson-5': typeof AcademyLesson5Route
-  '/academy/lesson-6': typeof AcademyLesson6Route
-  '/academy/lesson-7': typeof AcademyLesson7Route
-  '/academy/lesson-8': typeof AcademyLesson8Route
-  '/academy/lesson-9': typeof AcademyLesson9Route
+  '/academy/what-is-a-computer-network': typeof AcademyLesson1Route
+  '/academy/lan-wan-man-pan': typeof AcademyLesson2Route
+  '/academy/ip-addressing': typeof AcademyLesson3Route
+  '/academy/ipv4-address-classes': typeof AcademyLesson4Route
+  '/academy/public-vs-private-ip': typeof AcademyLesson5Route
+  '/academy/subnetting': typeof AcademyLesson6Route
+  '/academy/subnet-masks': typeof AcademyLesson7Route
+  '/academy/cidr-notation': typeof AcademyLesson8Route
+  '/academy/network-broadcast-usable-ip': typeof AcademyLesson9Route
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -258,15 +258,15 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
-  '/academy/lesson-1': typeof AcademyLesson1Route
-  '/academy/lesson-2': typeof AcademyLesson2Route
-  '/academy/lesson-3': typeof AcademyLesson3Route
-  '/academy/lesson-4': typeof AcademyLesson4Route
-  '/academy/lesson-5': typeof AcademyLesson5Route
-  '/academy/lesson-6': typeof AcademyLesson6Route
-  '/academy/lesson-7': typeof AcademyLesson7Route
-  '/academy/lesson-8': typeof AcademyLesson8Route
-  '/academy/lesson-9': typeof AcademyLesson9Route
+  '/academy/what-is-a-computer-network': typeof AcademyLesson1Route
+  '/academy/lan-wan-man-pan': typeof AcademyLesson2Route
+  '/academy/ip-addressing': typeof AcademyLesson3Route
+  '/academy/ipv4-address-classes': typeof AcademyLesson4Route
+  '/academy/public-vs-private-ip': typeof AcademyLesson5Route
+  '/academy/subnetting': typeof AcademyLesson6Route
+  '/academy/subnet-masks': typeof AcademyLesson7Route
+  '/academy/cidr-notation': typeof AcademyLesson8Route
+  '/academy/network-broadcast-usable-ip': typeof AcademyLesson9Route
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -293,15 +293,15 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
   '/whoisip': typeof WhoisipRoute
-  '/academy/lesson-1': typeof AcademyLesson1Route
-  '/academy/lesson-2': typeof AcademyLesson2Route
-  '/academy/lesson-3': typeof AcademyLesson3Route
-  '/academy/lesson-4': typeof AcademyLesson4Route
-  '/academy/lesson-5': typeof AcademyLesson5Route
-  '/academy/lesson-6': typeof AcademyLesson6Route
-  '/academy/lesson-7': typeof AcademyLesson7Route
-  '/academy/lesson-8': typeof AcademyLesson8Route
-  '/academy/lesson-9': typeof AcademyLesson9Route
+  '/academy/what-is-a-computer-network': typeof AcademyLesson1Route
+  '/academy/lan-wan-man-pan': typeof AcademyLesson2Route
+  '/academy/ip-addressing': typeof AcademyLesson3Route
+  '/academy/ipv4-address-classes': typeof AcademyLesson4Route
+  '/academy/public-vs-private-ip': typeof AcademyLesson5Route
+  '/academy/subnetting': typeof AcademyLesson6Route
+  '/academy/subnet-masks': typeof AcademyLesson7Route
+  '/academy/cidr-notation': typeof AcademyLesson8Route
+  '/academy/network-broadcast-usable-ip': typeof AcademyLesson9Route
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -329,15 +329,15 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
-    | '/academy/lesson-1'
-    | '/academy/lesson-2'
-    | '/academy/lesson-3'
-    | '/academy/lesson-4'
-    | '/academy/lesson-5'
-    | '/academy/lesson-6'
-    | '/academy/lesson-7'
-    | '/academy/lesson-8'
-    | '/academy/lesson-9'
+    | '/academy/what-is-a-computer-network'
+    | '/academy/lan-wan-man-pan'
+    | '/academy/ip-addressing'
+    | '/academy/ipv4-address-classes'
+    | '/academy/public-vs-private-ip'
+    | '/academy/subnetting'
+    | '/academy/subnet-masks'
+    | '/academy/cidr-notation'
+    | '/academy/network-broadcast-usable-ip'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -362,15 +362,15 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
-    | '/academy/lesson-1'
-    | '/academy/lesson-2'
-    | '/academy/lesson-3'
-    | '/academy/lesson-4'
-    | '/academy/lesson-5'
-    | '/academy/lesson-6'
-    | '/academy/lesson-7'
-    | '/academy/lesson-8'
-    | '/academy/lesson-9'
+    | '/academy/what-is-a-computer-network'
+    | '/academy/lan-wan-man-pan'
+    | '/academy/ip-addressing'
+    | '/academy/ipv4-address-classes'
+    | '/academy/public-vs-private-ip'
+    | '/academy/subnetting'
+    | '/academy/subnet-masks'
+    | '/academy/cidr-notation'
+    | '/academy/network-broadcast-usable-ip'
     | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -396,15 +396,15 @@ export interface FileRouteTypes {
     | '/terms'
     | '/traceroute'
     | '/whoisip'
-    | '/academy/lesson-1'
-    | '/academy/lesson-2'
-    | '/academy/lesson-3'
-    | '/academy/lesson-4'
-    | '/academy/lesson-5'
-    | '/academy/lesson-6'
-    | '/academy/lesson-7'
-    | '/academy/lesson-8'
-    | '/academy/lesson-9'
+    | '/academy/what-is-a-computer-network'
+    | '/academy/lan-wan-man-pan'
+    | '/academy/ip-addressing'
+    | '/academy/ipv4-address-classes'
+    | '/academy/public-vs-private-ip'
+    | '/academy/subnetting'
+    | '/academy/subnet-masks'
+    | '/academy/cidr-notation'
+    | '/academy/network-broadcast-usable-ip'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -584,66 +584,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyIndexRouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-9': {
-      id: '/academy/lesson-9'
+    '/academy/network-broadcast-usable-ip': {
+      id: '/academy/network-broadcast-usable-ip'
       path: '/lesson-9'
-      fullPath: '/academy/lesson-9'
+      fullPath: '/academy/network-broadcast-usable-ip'
       preLoaderRoute: typeof AcademyLesson9RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-8': {
-      id: '/academy/lesson-8'
+    '/academy/cidr-notation': {
+      id: '/academy/cidr-notation'
       path: '/lesson-8'
-      fullPath: '/academy/lesson-8'
+      fullPath: '/academy/cidr-notation'
       preLoaderRoute: typeof AcademyLesson8RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-7': {
-      id: '/academy/lesson-7'
+    '/academy/subnet-masks': {
+      id: '/academy/subnet-masks'
       path: '/lesson-7'
-      fullPath: '/academy/lesson-7'
+      fullPath: '/academy/subnet-masks'
       preLoaderRoute: typeof AcademyLesson7RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-6': {
-      id: '/academy/lesson-6'
+    '/academy/subnetting': {
+      id: '/academy/subnetting'
       path: '/lesson-6'
-      fullPath: '/academy/lesson-6'
+      fullPath: '/academy/subnetting'
       preLoaderRoute: typeof AcademyLesson6RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-5': {
-      id: '/academy/lesson-5'
+    '/academy/public-vs-private-ip': {
+      id: '/academy/public-vs-private-ip'
       path: '/lesson-5'
-      fullPath: '/academy/lesson-5'
+      fullPath: '/academy/public-vs-private-ip'
       preLoaderRoute: typeof AcademyLesson5RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-4': {
-      id: '/academy/lesson-4'
+    '/academy/ipv4-address-classes': {
+      id: '/academy/ipv4-address-classes'
       path: '/lesson-4'
-      fullPath: '/academy/lesson-4'
+      fullPath: '/academy/ipv4-address-classes'
       preLoaderRoute: typeof AcademyLesson4RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-3': {
-      id: '/academy/lesson-3'
+    '/academy/ip-addressing': {
+      id: '/academy/ip-addressing'
       path: '/lesson-3'
-      fullPath: '/academy/lesson-3'
+      fullPath: '/academy/ip-addressing'
       preLoaderRoute: typeof AcademyLesson3RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-2': {
-      id: '/academy/lesson-2'
+    '/academy/lan-wan-man-pan': {
+      id: '/academy/lan-wan-man-pan'
       path: '/lesson-2'
-      fullPath: '/academy/lesson-2'
+      fullPath: '/academy/lan-wan-man-pan'
       preLoaderRoute: typeof AcademyLesson2RouteImport
       parentRoute: typeof AcademyRoute
     }
-    '/academy/lesson-1': {
-      id: '/academy/lesson-1'
+    '/academy/what-is-a-computer-network': {
+      id: '/academy/what-is-a-computer-network'
       path: '/lesson-1'
-      fullPath: '/academy/lesson-1'
+      fullPath: '/academy/what-is-a-computer-network'
       preLoaderRoute: typeof AcademyLesson1RouteImport
       parentRoute: typeof AcademyRoute
     }

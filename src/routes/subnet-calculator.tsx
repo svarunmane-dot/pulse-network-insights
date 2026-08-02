@@ -156,11 +156,11 @@ function calculateSubnet(ipStr: string, maskStr: string): SubnetResult | { error
 /* ============================================================
    COMPONENT
    ============================================================ */
-export const Route = createFileRoute("/subnet")({
+export const Route = createFileRoute("/subnet-calculator")({
   component: SubnetPage,
   head: () =>
     toolHead({
-      path: "/subnet",
+      path: "/subnet-calculator",
       name: "IP Subnet Calculator",
       title: "IP Subnet Calculator — CIDR, Mask & Host Range Tool",
       description:

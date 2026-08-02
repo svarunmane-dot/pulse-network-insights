@@ -170,11 +170,11 @@ function isHexHash(s: string): "md5" | "sha1" | "sha256" | null {
 
 type HashResult = Awaited<ReturnType<typeof hashLookup>>;
 
-export const Route = createFileRoute("/blacklist")({
+export const Route = createFileRoute("/blacklist-check")({
   component: BlacklistPage,
   head: () =>
     toolHead({
-      path: "/blacklist",
+      path: "/blacklist-check",
       name: "Blacklist Check",
       title: "Blacklist Check — DNSBL & IP Reputation Lookup Tool",
       description:
