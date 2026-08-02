@@ -30,9 +30,9 @@ export const Route = createFileRoute("/port-check")({
     toolHead({
       path: "/port-check",
       name: "Open Port Checker",
-      title: "Open Port Checker — Test TCP Ports on Any Public IP",
+      title: "Open Port Checker & TCP Tester | Pulse Speed",
       description:
-        "Free online TCP port checker. Test whether ports like 22, 80, 443, 3389 or any custom port are open and listening on any public IP or hostname.",
+        "Check whether a specific TCP port on a public IP address or host is open and reachable through your firewall.",
       faqs: [
         {
           q: "What is an open port checker?",
@@ -205,11 +205,41 @@ function PortCheckPage() {
       )}
 
       <div style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.7, marginTop: 24 }}>
-        <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>About port checking</h2>
+        <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>
+          Understanding TCP Ports
+        </h2>
         <p>
           A port is "open" when a service on the target host accepts TCP connections on it. A "closed/filtered" result
           means either nothing is listening on that port or a firewall is dropping the connection. This is a common
           first step when troubleshooting why a website, game server or database is unreachable.
+        </p>
+        <p style={{ marginTop: 12 }}>
+          Every TCP service listens on a numbered port between 1 and 65535. Ports 0–1023 are the "well-known"
+          range reserved for standard services, which is why the same numbers show up everywhere:
+        </p>
+        <ul style={{ marginTop: 10, paddingLeft: 18, display: "grid", gap: 6 }}>
+          <li>
+            <strong style={{ color: "#fff" }}>Port 80 (HTTP)</strong> — unencrypted web traffic. If this is closed
+            but 443 is open, the site is simply HTTPS-only.
+          </li>
+          <li>
+            <strong style={{ color: "#fff" }}>Port 443 (HTTPS)</strong> — TLS-encrypted web traffic. This is the
+            port almost every modern website and API depends on.
+          </li>
+          <li>
+            <strong style={{ color: "#fff" }}>Port 22 (SSH)</strong> — remote shell and SFTP access to Linux
+            servers and network gear. It should normally be restricted to trusted source addresses.
+          </li>
+        </ul>
+        <p style={{ marginTop: 12 }}>
+          Testing from outside your own network tells you what the public Internet can reach: a port can be
+          listening locally yet still appear filtered because a firewall, security group or NAT rule blocks it
+          before the connection arrives.
+        </p>
+        <p style={{ marginTop: 14 }}>
+          <Link to="/academy" style={{ color: TEAL, fontWeight: 600, textDecoration: "none" }}>
+            New to ports and firewalls? Start with our Network Engineer Academy →
+          </Link>
         </p>
       </div>
     </div>
