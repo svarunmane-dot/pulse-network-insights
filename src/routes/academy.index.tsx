@@ -99,10 +99,10 @@ const LESSONS: Lesson[] = [
   },
   {
     n: 10,
-    title: "Understanding the OSI Model",
-    slug: "#",
-    desc: "The 7 layers, what runs at each, and how to troubleshoot with them.",
-    status: "soon",
+    slug: "/academy/subnetting-made-easy",
+    title: "Subnetting Made Easy – Learn to Divide Networks Step by Step",
+    desc: "A six-step method to divide networks into subnets, calculate block sizes, and find usable IP ranges.",
+    status: "live",
   },
 ];
 
