@@ -38,6 +38,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as AcademyWhatIsAComputerNetworkRouteImport } from './routes/academy.what-is-a-computer-network'
+import { Route as AcademySubnettingMadeEasyRouteImport } from './routes/academy.subnetting-made-easy'
 import { Route as AcademySubnettingRouteImport } from './routes/academy.subnetting'
 import { Route as AcademySubnetMasksRouteImport } from './routes/academy.subnet-masks'
 import { Route as AcademyPublicVsPrivateIpRouteImport } from './routes/academy.public-vs-private-ip'
@@ -50,6 +51,7 @@ import { Route as AcademyLesson5RouteImport } from './routes/academy.lesson-5'
 import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
+import { Route as AcademyLesson10RouteImport } from './routes/academy.lesson-10'
 import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
 import { Route as AcademyLanWanManPanRouteImport } from './routes/academy.lan-wan-man-pan'
 import { Route as AcademyIpv4AddressClassesRouteImport } from './routes/academy.ipv4-address-classes'
@@ -204,6 +206,12 @@ const AcademyWhatIsAComputerNetworkRoute =
     path: '/what-is-a-computer-network',
     getParentRoute: () => AcademyRoute,
   } as any)
+const AcademySubnettingMadeEasyRoute =
+  AcademySubnettingMadeEasyRouteImport.update({
+    id: '/subnetting-made-easy',
+    path: '/subnetting-made-easy',
+    getParentRoute: () => AcademyRoute,
+  } as any)
 const AcademySubnettingRoute = AcademySubnettingRouteImport.update({
   id: '/subnetting',
   path: '/subnetting',
@@ -264,6 +272,11 @@ const AcademyLesson3Route = AcademyLesson3RouteImport.update({
 const AcademyLesson2Route = AcademyLesson2RouteImport.update({
   id: '/lesson-2',
   path: '/lesson-2',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson10Route = AcademyLesson10RouteImport.update({
+  id: '/lesson-10',
+  path: '/lesson-10',
   getParentRoute: () => AcademyRoute,
 } as any)
 const AcademyLesson1Route = AcademyLesson1RouteImport.update({
@@ -337,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
   '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/lesson-10': typeof AcademyLesson10Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -349,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
   '/academy/subnetting': typeof AcademySubnettingRoute
+  '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
@@ -386,6 +401,7 @@ export interface FileRoutesByTo {
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
   '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/lesson-10': typeof AcademyLesson10Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -398,6 +414,7 @@ export interface FileRoutesByTo {
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
   '/academy/subnetting': typeof AcademySubnettingRoute
+  '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
@@ -437,6 +454,7 @@ export interface FileRoutesById {
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
   '/academy/lesson-1': typeof AcademyLesson1Route
+  '/academy/lesson-10': typeof AcademyLesson10Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -449,6 +467,7 @@ export interface FileRoutesById {
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
   '/academy/subnetting': typeof AcademySubnettingRoute
+  '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
@@ -489,6 +508,7 @@ export interface FileRouteTypes {
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
     | '/academy/lesson-1'
+    | '/academy/lesson-10'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -501,6 +521,7 @@ export interface FileRouteTypes {
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
     | '/academy/subnetting'
+    | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
     | '/academy/'
     | '/api/public/upload'
@@ -538,6 +559,7 @@ export interface FileRouteTypes {
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
     | '/academy/lesson-1'
+    | '/academy/lesson-10'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -550,6 +572,7 @@ export interface FileRouteTypes {
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
     | '/academy/subnetting'
+    | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
     | '/academy'
     | '/api/public/upload'
@@ -588,6 +611,7 @@ export interface FileRouteTypes {
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
     | '/academy/lesson-1'
+    | '/academy/lesson-10'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -600,6 +624,7 @@ export interface FileRouteTypes {
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
     | '/academy/subnetting'
+    | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
     | '/academy/'
     | '/api/public/upload'
@@ -843,6 +868,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyWhatIsAComputerNetworkRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/subnetting-made-easy': {
+      id: '/academy/subnetting-made-easy'
+      path: '/subnetting-made-easy'
+      fullPath: '/academy/subnetting-made-easy'
+      preLoaderRoute: typeof AcademySubnettingMadeEasyRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/subnetting': {
       id: '/academy/subnetting'
       path: '/subnetting'
@@ -927,6 +959,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyLesson2RouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-10': {
+      id: '/academy/lesson-10'
+      path: '/lesson-10'
+      fullPath: '/academy/lesson-10'
+      preLoaderRoute: typeof AcademyLesson10RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lesson-1': {
       id: '/academy/lesson-1'
       path: '/lesson-1'
@@ -985,6 +1024,7 @@ interface AcademyRouteChildren {
   AcademyIpv4AddressClassesRoute: typeof AcademyIpv4AddressClassesRoute
   AcademyLanWanManPanRoute: typeof AcademyLanWanManPanRoute
   AcademyLesson1Route: typeof AcademyLesson1Route
+  AcademyLesson10Route: typeof AcademyLesson10Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
   AcademyLesson4Route: typeof AcademyLesson4Route
@@ -997,6 +1037,7 @@ interface AcademyRouteChildren {
   AcademyPublicVsPrivateIpRoute: typeof AcademyPublicVsPrivateIpRoute
   AcademySubnetMasksRoute: typeof AcademySubnetMasksRoute
   AcademySubnettingRoute: typeof AcademySubnettingRoute
+  AcademySubnettingMadeEasyRoute: typeof AcademySubnettingMadeEasyRoute
   AcademyWhatIsAComputerNetworkRoute: typeof AcademyWhatIsAComputerNetworkRoute
   AcademyIndexRoute: typeof AcademyIndexRoute
 }
@@ -1007,6 +1048,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyIpv4AddressClassesRoute: AcademyIpv4AddressClassesRoute,
   AcademyLanWanManPanRoute: AcademyLanWanManPanRoute,
   AcademyLesson1Route: AcademyLesson1Route,
+  AcademyLesson10Route: AcademyLesson10Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
   AcademyLesson4Route: AcademyLesson4Route,
@@ -1019,6 +1061,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyPublicVsPrivateIpRoute: AcademyPublicVsPrivateIpRoute,
   AcademySubnetMasksRoute: AcademySubnetMasksRoute,
   AcademySubnettingRoute: AcademySubnettingRoute,
+  AcademySubnettingMadeEasyRoute: AcademySubnettingMadeEasyRoute,
   AcademyWhatIsAComputerNetworkRoute: AcademyWhatIsAComputerNetworkRoute,
   AcademyIndexRoute: AcademyIndexRoute,
 }
