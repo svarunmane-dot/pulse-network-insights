@@ -35,8 +35,8 @@ const H2 = ({ children, style }: { children: React.ReactNode; style?: React.CSSP
     {children}
   </h2>
 );
-const P = ({ children }: { children: React.ReactNode }) => (
-  <p style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.75, margin: "10px 0" }}>
+const P = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+  <p style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.75, margin: "10px 0", ...style }}>
     {children}
   </p>
 );
