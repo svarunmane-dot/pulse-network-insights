@@ -105,6 +105,39 @@ export type Database = {
         }
         Relationships: []
       }
+      site_hit_days: {
+        Row: {
+          day: string
+          hits: number
+        }
+        Insert: {
+          day: string
+          hits?: number
+        }
+        Update: {
+          day?: string
+          hits?: number
+        }
+        Relationships: []
+      }
+      site_visitor_days: {
+        Row: {
+          created_at: string
+          day: string
+          visitor_hash: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          visitor_hash: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
       user_limits: {
         Row: {
           created_at: string
@@ -235,6 +268,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_site_hit: { Args: { _visitor_hash: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"

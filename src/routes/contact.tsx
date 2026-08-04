@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { SiteUsageStats } from "@/components/SiteUsageStats";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
@@ -92,6 +93,8 @@ function ContactPage() {
           </div>
         )}
       </form>
+
+      <SiteUsageStats />
     </section>
   );
 }

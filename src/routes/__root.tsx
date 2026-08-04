@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
+import { PageViewTracker } from "@/components/PageViewTracker";
 
 function NotFoundComponent() {
   return (
@@ -156,6 +157,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <PageViewTracker />
       <SiteHeader />
       <main id="main">
         <Outlet />
