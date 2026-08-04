@@ -1,0 +1,11 @@
+REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.touch_updated_at() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.enforce_monitor_limit() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.set_monitor_expiry() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.get_user_limits(uuid) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.admin_list_users() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.admin_list_users() TO authenticated, service_role;
+DROP EXTENSION IF EXISTS pg_net;
+CREATE EXTENSION pg_net WITH SCHEMA extensions;
