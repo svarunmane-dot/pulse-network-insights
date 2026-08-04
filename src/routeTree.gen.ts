@@ -37,6 +37,7 @@ import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
+import { Route as AcademyWhatIsADefaultGatewayRouteImport } from './routes/academy.what-is-a-default-gateway'
 import { Route as AcademyWhatIsAComputerNetworkRouteImport } from './routes/academy.what-is-a-computer-network'
 import { Route as AcademySubnettingMadeEasyRouteImport } from './routes/academy.subnetting-made-easy'
 import { Route as AcademySubnettingRouteImport } from './routes/academy.subnetting'
@@ -51,6 +52,7 @@ import { Route as AcademyLesson5RouteImport } from './routes/academy.lesson-5'
 import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
+import { Route as AcademyLesson11RouteImport } from './routes/academy.lesson-11'
 import { Route as AcademyLesson10RouteImport } from './routes/academy.lesson-10'
 import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
 import { Route as AcademyLanWanManPanRouteImport } from './routes/academy.lan-wan-man-pan'
@@ -200,6 +202,12 @@ const AcademyIndexRoute = AcademyIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyWhatIsADefaultGatewayRoute =
+  AcademyWhatIsADefaultGatewayRouteImport.update({
+    id: '/what-is-a-default-gateway',
+    path: '/what-is-a-default-gateway',
+    getParentRoute: () => AcademyRoute,
+  } as any)
 const AcademyWhatIsAComputerNetworkRoute =
   AcademyWhatIsAComputerNetworkRouteImport.update({
     id: '/what-is-a-computer-network',
@@ -272,6 +280,11 @@ const AcademyLesson3Route = AcademyLesson3RouteImport.update({
 const AcademyLesson2Route = AcademyLesson2RouteImport.update({
   id: '/lesson-2',
   path: '/lesson-2',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson11Route = AcademyLesson11RouteImport.update({
+  id: '/lesson-11',
+  path: '/lesson-11',
   getParentRoute: () => AcademyRoute,
 } as any)
 const AcademyLesson10Route = AcademyLesson10RouteImport.update({
@@ -351,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
   '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/lesson-10': typeof AcademyLesson10Route
+  '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -365,6 +379,7 @@ export interface FileRoutesByFullPath {
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
+  '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -402,6 +417,7 @@ export interface FileRoutesByTo {
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
   '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/lesson-10': typeof AcademyLesson10Route
+  '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -416,6 +432,7 @@ export interface FileRoutesByTo {
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
+  '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -455,6 +472,7 @@ export interface FileRoutesById {
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
   '/academy/lesson-1': typeof AcademyLesson1Route
   '/academy/lesson-10': typeof AcademyLesson10Route
+  '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -469,6 +487,7 @@ export interface FileRoutesById {
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
+  '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -509,6 +528,7 @@ export interface FileRouteTypes {
     | '/academy/lan-wan-man-pan'
     | '/academy/lesson-1'
     | '/academy/lesson-10'
+    | '/academy/lesson-11'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -523,6 +543,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
+    | '/academy/what-is-a-default-gateway'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -560,6 +581,7 @@ export interface FileRouteTypes {
     | '/academy/lan-wan-man-pan'
     | '/academy/lesson-1'
     | '/academy/lesson-10'
+    | '/academy/lesson-11'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -574,6 +596,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
+    | '/academy/what-is-a-default-gateway'
     | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -612,6 +635,7 @@ export interface FileRouteTypes {
     | '/academy/lan-wan-man-pan'
     | '/academy/lesson-1'
     | '/academy/lesson-10'
+    | '/academy/lesson-11'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -626,6 +650,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
+    | '/academy/what-is-a-default-gateway'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -861,6 +886,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyIndexRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/what-is-a-default-gateway': {
+      id: '/academy/what-is-a-default-gateway'
+      path: '/what-is-a-default-gateway'
+      fullPath: '/academy/what-is-a-default-gateway'
+      preLoaderRoute: typeof AcademyWhatIsADefaultGatewayRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/what-is-a-computer-network': {
       id: '/academy/what-is-a-computer-network'
       path: '/what-is-a-computer-network'
@@ -959,6 +991,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyLesson2RouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-11': {
+      id: '/academy/lesson-11'
+      path: '/lesson-11'
+      fullPath: '/academy/lesson-11'
+      preLoaderRoute: typeof AcademyLesson11RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lesson-10': {
       id: '/academy/lesson-10'
       path: '/lesson-10'
@@ -1025,6 +1064,7 @@ interface AcademyRouteChildren {
   AcademyLanWanManPanRoute: typeof AcademyLanWanManPanRoute
   AcademyLesson1Route: typeof AcademyLesson1Route
   AcademyLesson10Route: typeof AcademyLesson10Route
+  AcademyLesson11Route: typeof AcademyLesson11Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
   AcademyLesson4Route: typeof AcademyLesson4Route
@@ -1039,6 +1079,7 @@ interface AcademyRouteChildren {
   AcademySubnettingRoute: typeof AcademySubnettingRoute
   AcademySubnettingMadeEasyRoute: typeof AcademySubnettingMadeEasyRoute
   AcademyWhatIsAComputerNetworkRoute: typeof AcademyWhatIsAComputerNetworkRoute
+  AcademyWhatIsADefaultGatewayRoute: typeof AcademyWhatIsADefaultGatewayRoute
   AcademyIndexRoute: typeof AcademyIndexRoute
 }
 
@@ -1049,6 +1090,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLanWanManPanRoute: AcademyLanWanManPanRoute,
   AcademyLesson1Route: AcademyLesson1Route,
   AcademyLesson10Route: AcademyLesson10Route,
+  AcademyLesson11Route: AcademyLesson11Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
   AcademyLesson4Route: AcademyLesson4Route,
@@ -1063,6 +1105,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademySubnettingRoute: AcademySubnettingRoute,
   AcademySubnettingMadeEasyRoute: AcademySubnettingMadeEasyRoute,
   AcademyWhatIsAComputerNetworkRoute: AcademyWhatIsAComputerNetworkRoute,
+  AcademyWhatIsADefaultGatewayRoute: AcademyWhatIsADefaultGatewayRoute,
   AcademyIndexRoute: AcademyIndexRoute,
 }
 
@@ -1103,13 +1146,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

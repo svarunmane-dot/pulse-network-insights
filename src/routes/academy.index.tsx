@@ -104,6 +104,13 @@ const LESSONS: Lesson[] = [
     desc: "A six-step method to divide networks into subnets, calculate block sizes, and find usable IP ranges.",
     status: "live",
   },
+  {
+    n: 11,
+    slug: "/academy/what-is-a-default-gateway",
+    title: "What is a Default Gateway?",
+    desc: "How your computer reaches the Internet through a router, and how to find your gateway on any OS.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
