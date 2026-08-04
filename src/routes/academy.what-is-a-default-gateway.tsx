@@ -30,8 +30,8 @@ export const Route = createFileRoute("/academy/what-is-a-default-gateway")({
   component: Lesson11,
 });
 
-const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ color: "#fff", fontSize: 24, marginTop: 40, letterSpacing: "-0.3px" }}>
+const H2 = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+  <h2 style={{ color: "#fff", fontSize: 24, marginTop: 40, letterSpacing: "-0.3px", ...style }}>
     {children}
   </h2>
 );

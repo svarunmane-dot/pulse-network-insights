@@ -37,6 +37,7 @@ import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
+import { Route as AcademyWhatIsADefaultGatewayRouteImport } from './routes/academy.what-is-a-default-gateway'
 import { Route as AcademyWhatIsAComputerNetworkRouteImport } from './routes/academy.what-is-a-computer-network'
 import { Route as AcademySubnettingMadeEasyRouteImport } from './routes/academy.subnetting-made-easy'
 import { Route as AcademySubnettingRouteImport } from './routes/academy.subnetting'
@@ -200,6 +201,12 @@ const AcademyIndexRoute = AcademyIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyWhatIsADefaultGatewayRoute =
+  AcademyWhatIsADefaultGatewayRouteImport.update({
+    id: '/what-is-a-default-gateway',
+    path: '/what-is-a-default-gateway',
+    getParentRoute: () => AcademyRoute,
+  } as any)
 const AcademyWhatIsAComputerNetworkRoute =
   AcademyWhatIsAComputerNetworkRouteImport.update({
     id: '/what-is-a-computer-network',
@@ -365,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
+  '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -416,6 +424,7 @@ export interface FileRoutesByTo {
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
+  '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -469,6 +478,7 @@ export interface FileRoutesById {
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
+  '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
@@ -523,6 +533,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
+    | '/academy/what-is-a-default-gateway'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -574,6 +585,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
+    | '/academy/what-is-a-default-gateway'
     | '/academy'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -626,6 +638,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
+    | '/academy/what-is-a-default-gateway'
     | '/academy/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
@@ -861,6 +874,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyIndexRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/what-is-a-default-gateway': {
+      id: '/academy/what-is-a-default-gateway'
+      path: '/what-is-a-default-gateway'
+      fullPath: '/academy/what-is-a-default-gateway'
+      preLoaderRoute: typeof AcademyWhatIsADefaultGatewayRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/what-is-a-computer-network': {
       id: '/academy/what-is-a-computer-network'
       path: '/what-is-a-computer-network'
@@ -1039,6 +1059,7 @@ interface AcademyRouteChildren {
   AcademySubnettingRoute: typeof AcademySubnettingRoute
   AcademySubnettingMadeEasyRoute: typeof AcademySubnettingMadeEasyRoute
   AcademyWhatIsAComputerNetworkRoute: typeof AcademyWhatIsAComputerNetworkRoute
+  AcademyWhatIsADefaultGatewayRoute: typeof AcademyWhatIsADefaultGatewayRoute
   AcademyIndexRoute: typeof AcademyIndexRoute
 }
 
@@ -1063,6 +1084,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademySubnettingRoute: AcademySubnettingRoute,
   AcademySubnettingMadeEasyRoute: AcademySubnettingMadeEasyRoute,
   AcademyWhatIsAComputerNetworkRoute: AcademyWhatIsAComputerNetworkRoute,
+  AcademyWhatIsADefaultGatewayRoute: AcademyWhatIsADefaultGatewayRoute,
   AcademyIndexRoute: AcademyIndexRoute,
 }
 
@@ -1103,13 +1125,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
