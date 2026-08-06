@@ -7,6 +7,7 @@ export type SiteStats = {
   todayVisitors: number;
   last7dHits: number;
   since: string | null;
+  daily: { day: string; hits: number; visitors: number }[];
 };
 
 async function sha256Hex(input: string): Promise<string> {
@@ -42,10 +43,13 @@ export const getSiteStats = createServerFn({ method: "GET" }).handler(
     const today = new Date().toISOString().slice(0, 10);
     const weekAgo = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
 
-    const [daysRes, totalVisitorsRes, todayVisitorsRes] = await Promise.all([
+    const [daysRes, visitorDaysRes, totalVisitorsRes, todayVisitorsRes] = await Promise.all([
       (supabaseAdmin.from("site_hit_days" as never) as never as {
         select: (c: string) => Promise<{ data: { day: string; hits: number }[] | null }>;
       }).select("day, hits"),
+      (supabaseAdmin.from("site_visitor_days" as never) as never as {
+        select: (c: string) => Promise<{ data: { day: string }[] | null }>;
+      }).select("day"),
       (supabaseAdmin.from("site_visitor_days" as never) as never as {
         select: (c: string, o: unknown) => Promise<{ count: number | null }>;
       }).select("visitor_hash", { count: "exact", head: true }),
@@ -63,6 +67,18 @@ export const getSiteStats = createServerFn({ method: "GET" }).handler(
     const sum = (f: (r: { day: string; hits: number }) => boolean) =>
       rows.filter(f).reduce((a, r) => a + Number(r.hits ?? 0), 0);
 
+    const visitorsByDay = new Map<string, number>();
+    for (const v of visitorDaysRes.data ?? []) {
+      visitorsByDay.set(v.day, (visitorsByDay.get(v.day) ?? 0) + 1);
+    }
+    const hitsByDay = new Map(rows.map((r) => [r.day, Number(r.hits ?? 0)]));
+
+    const daily: { day: string; hits: number; visitors: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+      daily.push({ day: d, hits: hitsByDay.get(d) ?? 0, visitors: visitorsByDay.get(d) ?? 0 });
+    }
+
     return {
       totalHits: sum(() => true),
       totalVisitors: totalVisitorsRes.count ?? 0,
@@ -70,6 +86,7 @@ export const getSiteStats = createServerFn({ method: "GET" }).handler(
       todayVisitors: todayVisitorsRes.count ?? 0,
       last7dHits: sum((r) => r.day >= weekAgo),
       since: rows[0]?.day ?? null,
+      daily,
     };
   },
 );

@@ -6,6 +6,51 @@ function fmt(n: number) {
   return n.toLocaleString();
 }
 
+type Point = { day: string; hits: number; visitors: number };
+
+function Chart({ data }: { data: Point[] }) {
+  const W = 720;
+  const H = 180;
+  const pad = { l: 34, r: 8, t: 10, b: 22 };
+  const max = Math.max(4, ...data.map((d) => Math.max(d.hits, d.visitors)));
+  const x = (i: number) =>
+    pad.l + (i * (W - pad.l - pad.r)) / Math.max(1, data.length - 1);
+  const y = (v: number) => pad.t + (H - pad.t - pad.b) * (1 - v / max);
+  const line = (key: "hits" | "visitors") =>
+    data.map((d, i) => `${i === 0 ? "M" : "L"}${x(i)},${y(d[key])}`).join(" ");
+  const area = `${line("hits")} L${x(data.length - 1)},${y(0)} L${x(0)},${y(0)} Z`;
+  const ticks = [0, Math.round(max / 2), max];
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      width="100%"
+      height={H}
+      role="img"
+      aria-label="Daily page views and unique visitors over the last 30 days"
+    >
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="#1f2740" />
+          <text x={0} y={y(t) + 4} fill="#5f6b85" fontSize="10">
+            {t}
+          </text>
+        </g>
+      ))}
+      <path d={area} fill="rgba(0,212,170,0.14)" />
+      <path d={line("hits")} fill="none" stroke="#00D4AA" strokeWidth="2" />
+      <path d={line("visitors")} fill="none" stroke="#6aa9ff" strokeWidth="2" strokeDasharray="4 3" />
+      {data.map((d, i) =>
+        i % 6 === 0 || i === data.length - 1 ? (
+          <text key={d.day} x={x(i)} y={H - 6} fill="#5f6b85" fontSize="10" textAnchor="middle">
+            {d.day.slice(5)}
+          </text>
+        ) : null,
+      )}
+    </svg>
+  );
+}
+
 export function SiteUsageStats() {
   const fetchStats = useServerFn(getSiteStats);
   const { data, isLoading, isError } = useQuery({
@@ -78,6 +123,25 @@ export function SiteUsageStats() {
           </div>
         ))}
       </div>
+
+      {data?.daily?.length ? (
+        <div style={{ marginTop: 20 }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 16,
+              fontSize: 12,
+              color: "#8b95ad",
+              marginBottom: 6,
+            }}
+          >
+            <span style={{ color: "#00D4AA" }}>— Page views</span>
+            <span style={{ color: "#6aa9ff" }}>-- Unique visitors</span>
+            <span style={{ marginLeft: "auto" }}>Last 30 days</span>
+          </div>
+          <Chart data={data.daily} />
+        </div>
+      ) : null}
     </section>
   );
 }
