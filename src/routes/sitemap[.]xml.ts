@@ -39,6 +39,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/academy/network-broadcast-usable-ip", changefreq: "monthly", priority: "0.7" },
           { path: "/academy/subnetting-made-easy", changefreq: "monthly", priority: "0.7" },
           { path: "/academy/what-is-a-default-gateway", changefreq: "monthly", priority: "0.7" },
+          { path: "/academy/what-is-dns", changefreq: "monthly", priority: "0.7" },
           { path: "/about", changefreq: "yearly", priority: "0.6" },
           { path: "/contact", changefreq: "yearly", priority: "0.5" },
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },
