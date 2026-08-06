@@ -111,6 +111,13 @@ const LESSONS: Lesson[] = [
     desc: "How your computer reaches the Internet through a router, and how to find your gateway on any OS.",
     status: "live",
   },
+  {
+    n: 12,
+    slug: "/academy/what-is-dns",
+    title: "DNS Explained – How the Internet Finds Websites",
+    desc: "How the Domain Name System turns website names into IP addresses, plus public DNS servers and common DNS errors.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
