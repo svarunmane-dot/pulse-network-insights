@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 
 export type SiteStats = {
   totalHits: number;
@@ -17,6 +18,14 @@ async function sha256Hex(input: string): Promise<string> {
     .join("");
 }
 
+function publicClient() {
+  return createClient(
+    process.env["SUPABASE_URL"]!,
+    process.env["SUPABASE_PUBLISHABLE_KEY"]!,
+    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+  );
+}
+
 /** Records one page view (and, when a visitor id is supplied, one unique visitor for today). */
 export const recordSiteHit = createServerFn({ method: "POST" })
   .inputValidator((input: { visitorId?: string } | undefined) => ({
@@ -26,67 +35,42 @@ export const recordSiteHit = createServerFn({ method: "POST" })
         : undefined,
   }))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const hash = data.visitorId ? await sha256Hex(`pulse-speed:${data.visitorId}`) : null;
-    const { error } = await supabaseAdmin.rpc("record_site_hit" as never, {
+    const { error } = await publicClient().rpc("record_site_hit" as never, {
       _visitor_hash: hash,
     } as never);
     if (error) return { ok: false as const };
     return { ok: true as const };
   });
 
+const EMPTY: SiteStats = {
+  totalHits: 0,
+  totalVisitors: 0,
+  todayHits: 0,
+  todayVisitors: 0,
+  last7dHits: 0,
+  since: null,
+  daily: [],
+};
+
 /** Aggregated, non-personal usage numbers for the public stats widget. */
 export const getSiteStats = createServerFn({ method: "GET" }).handler(
   async (): Promise<SiteStats> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const today = new Date().toISOString().slice(0, 10);
-    const weekAgo = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
-
-    const [daysRes, visitorDaysRes, totalVisitorsRes, todayVisitorsRes] = await Promise.all([
-      (supabaseAdmin.from("site_hit_days" as never) as never as {
-        select: (c: string) => Promise<{ data: { day: string; hits: number }[] | null }>;
-      }).select("day, hits"),
-      (supabaseAdmin.from("site_visitor_days" as never) as never as {
-        select: (c: string) => Promise<{ data: { day: string }[] | null }>;
-      }).select("day"),
-      (supabaseAdmin.from("site_visitor_days" as never) as never as {
-        select: (c: string, o: unknown) => Promise<{ count: number | null }>;
-      }).select("visitor_hash", { count: "exact", head: true }),
-      (supabaseAdmin.from("site_visitor_days" as never) as never as {
-        select: (
-          c: string,
-          o: unknown,
-        ) => { eq: (c: string, v: string) => Promise<{ count: number | null }> };
-      })
-        .select("visitor_hash", { count: "exact", head: true })
-        .eq("day", today),
-    ]);
-
-    const rows = (daysRes.data ?? []).slice().sort((a, b) => (a.day < b.day ? -1 : 1));
-    const sum = (f: (r: { day: string; hits: number }) => boolean) =>
-      rows.filter(f).reduce((a, r) => a + Number(r.hits ?? 0), 0);
-
-    const visitorsByDay = new Map<string, number>();
-    for (const v of visitorDaysRes.data ?? []) {
-      visitorsByDay.set(v.day, (visitorsByDay.get(v.day) ?? 0) + 1);
-    }
-    const hitsByDay = new Map(rows.map((r) => [r.day, Number(r.hits ?? 0)]));
-
-    const daily: { day: string; hits: number; visitors: number }[] = [];
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
-      daily.push({ day: d, hits: hitsByDay.get(d) ?? 0, visitors: visitorsByDay.get(d) ?? 0 });
-    }
-
+    const { data, error } = await publicClient().rpc("get_site_stats" as never);
+    if (error || !data) return EMPTY;
+    const s = data as unknown as SiteStats;
     return {
-      totalHits: sum(() => true),
-      totalVisitors: totalVisitorsRes.count ?? 0,
-      todayHits: sum((r) => r.day === today),
-      todayVisitors: todayVisitorsRes.count ?? 0,
-      last7dHits: sum((r) => r.day >= weekAgo),
-      since: rows[0]?.day ?? null,
-      daily,
+      totalHits: Number(s.totalHits ?? 0),
+      totalVisitors: Number(s.totalVisitors ?? 0),
+      todayHits: Number(s.todayHits ?? 0),
+      todayVisitors: Number(s.todayVisitors ?? 0),
+      last7dHits: Number(s.last7dHits ?? 0),
+      since: s.since ?? null,
+      daily: (s.daily ?? []).map((d) => ({
+        day: d.day,
+        hits: Number(d.hits ?? 0),
+        visitors: Number(d.visitors ?? 0),
+      })),
     };
   },
 );
