@@ -254,6 +254,7 @@ export type Database = {
           retention_days: number
         }[]
       }
+      get_site_stats: { Args: never; Returns: Json }
       get_user_limits: {
         Args: { _user_id: string }
         Returns: {
