@@ -118,6 +118,13 @@ const LESSONS: Lesson[] = [
     desc: "How the Domain Name System turns website names into IP addresses, plus public DNS servers and common DNS errors.",
     status: "live",
   },
+  {
+    n: 13,
+    slug: "/academy/what-is-dhcp",
+    title: "DHCP Explained – How Devices Automatically Get an IP Address",
+    desc: "The DORA process, leases, pools, reservations and DHCP relay — with an interactive DORA simulator.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
