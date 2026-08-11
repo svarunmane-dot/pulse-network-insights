@@ -358,6 +358,14 @@ function Lesson12() {
             ← Lesson 11: What is a Default Gateway?
           </Link>
         </div>
+        <div>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>
+            NEXT LESSON
+          </div>
+          <Link to="/academy/what-is-dhcp" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 13: DHCP Explained →
+          </Link>
+        </div>
         <Link
           to="/academy"
           style={{

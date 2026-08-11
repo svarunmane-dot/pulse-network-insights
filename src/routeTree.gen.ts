@@ -45,6 +45,7 @@ import { Route as AcademyLesson1RouteImport } from './routes/academy.lesson-1'
 import { Route as AcademyLesson10RouteImport } from './routes/academy.lesson-10'
 import { Route as AcademyLesson11RouteImport } from './routes/academy.lesson-11'
 import { Route as AcademyLesson12RouteImport } from './routes/academy.lesson-12'
+import { Route as AcademyLesson13RouteImport } from './routes/academy.lesson-13'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
@@ -60,6 +61,7 @@ import { Route as AcademySubnettingRouteImport } from './routes/academy.subnetti
 import { Route as AcademySubnettingMadeEasyRouteImport } from './routes/academy.subnetting-made-easy'
 import { Route as AcademyWhatIsAComputerNetworkRouteImport } from './routes/academy.what-is-a-computer-network'
 import { Route as AcademyWhatIsADefaultGatewayRouteImport } from './routes/academy.what-is-a-default-gateway'
+import { Route as AcademyWhatIsDhcpRouteImport } from './routes/academy.what-is-dhcp'
 import { Route as AcademyWhatIsDnsRouteImport } from './routes/academy.what-is-dns'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
@@ -245,6 +247,11 @@ const AcademyLesson12Route = AcademyLesson12RouteImport.update({
   path: '/lesson-12',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyLesson13Route = AcademyLesson13RouteImport.update({
+  id: '/lesson-13',
+  path: '/lesson-13',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyLesson2Route = AcademyLesson2RouteImport.update({
   id: '/lesson-2',
   path: '/lesson-2',
@@ -325,6 +332,11 @@ const AcademyWhatIsADefaultGatewayRoute =
     path: '/what-is-a-default-gateway',
     getParentRoute: () => AcademyRoute,
   } as any)
+const AcademyWhatIsDhcpRoute = AcademyWhatIsDhcpRouteImport.update({
+  id: '/what-is-dhcp',
+  path: '/what-is-dhcp',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyWhatIsDnsRoute = AcademyWhatIsDnsRouteImport.update({
   id: '/what-is-dns',
   path: '/what-is-dns',
@@ -378,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/academy/lesson-10': typeof AcademyLesson10Route
   '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-12': typeof AcademyLesson12Route
+  '/academy/lesson-13': typeof AcademyLesson13Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -393,6 +406,7 @@ export interface FileRoutesByFullPath {
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
+  '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
   '/academy/what-is-dns': typeof AcademyWhatIsDnsRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
@@ -433,6 +447,7 @@ export interface FileRoutesByTo {
   '/academy/lesson-10': typeof AcademyLesson10Route
   '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-12': typeof AcademyLesson12Route
+  '/academy/lesson-13': typeof AcademyLesson13Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -448,6 +463,7 @@ export interface FileRoutesByTo {
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
+  '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
   '/academy/what-is-dns': typeof AcademyWhatIsDnsRoute
   '/academy': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
@@ -490,6 +506,7 @@ export interface FileRoutesById {
   '/academy/lesson-10': typeof AcademyLesson10Route
   '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-12': typeof AcademyLesson12Route
+  '/academy/lesson-13': typeof AcademyLesson13Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -505,6 +522,7 @@ export interface FileRoutesById {
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
+  '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
   '/academy/what-is-dns': typeof AcademyWhatIsDnsRoute
   '/academy/': typeof AcademyIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
@@ -548,6 +566,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-10'
     | '/academy/lesson-11'
     | '/academy/lesson-12'
+    | '/academy/lesson-13'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -563,6 +582,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
     | '/academy/what-is-a-default-gateway'
+    | '/academy/what-is-dhcp'
     | '/academy/what-is-dns'
     | '/academy/'
     | '/api/public/upload'
@@ -603,6 +623,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-10'
     | '/academy/lesson-11'
     | '/academy/lesson-12'
+    | '/academy/lesson-13'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -618,6 +639,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
     | '/academy/what-is-a-default-gateway'
+    | '/academy/what-is-dhcp'
     | '/academy/what-is-dns'
     | '/academy'
     | '/api/public/upload'
@@ -659,6 +681,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-10'
     | '/academy/lesson-11'
     | '/academy/lesson-12'
+    | '/academy/lesson-13'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -674,6 +697,7 @@ export interface FileRouteTypes {
     | '/academy/subnetting-made-easy'
     | '/academy/what-is-a-computer-network'
     | '/academy/what-is-a-default-gateway'
+    | '/academy/what-is-dhcp'
     | '/academy/what-is-dns'
     | '/academy/'
     | '/api/public/upload'
@@ -966,6 +990,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyLesson12RouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-13': {
+      id: '/academy/lesson-13'
+      path: '/lesson-13'
+      fullPath: '/academy/lesson-13'
+      preLoaderRoute: typeof AcademyLesson13RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lesson-2': {
       id: '/academy/lesson-2'
       path: '/lesson-2'
@@ -1071,6 +1102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyWhatIsADefaultGatewayRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/what-is-dhcp': {
+      id: '/academy/what-is-dhcp'
+      path: '/what-is-dhcp'
+      fullPath: '/academy/what-is-dhcp'
+      preLoaderRoute: typeof AcademyWhatIsDhcpRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/what-is-dns': {
       id: '/academy/what-is-dns'
       path: '/what-is-dns'
@@ -1104,6 +1142,7 @@ interface AcademyRouteChildren {
   AcademyLesson10Route: typeof AcademyLesson10Route
   AcademyLesson11Route: typeof AcademyLesson11Route
   AcademyLesson12Route: typeof AcademyLesson12Route
+  AcademyLesson13Route: typeof AcademyLesson13Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
   AcademyLesson4Route: typeof AcademyLesson4Route
@@ -1119,6 +1158,7 @@ interface AcademyRouteChildren {
   AcademySubnettingMadeEasyRoute: typeof AcademySubnettingMadeEasyRoute
   AcademyWhatIsAComputerNetworkRoute: typeof AcademyWhatIsAComputerNetworkRoute
   AcademyWhatIsADefaultGatewayRoute: typeof AcademyWhatIsADefaultGatewayRoute
+  AcademyWhatIsDhcpRoute: typeof AcademyWhatIsDhcpRoute
   AcademyWhatIsDnsRoute: typeof AcademyWhatIsDnsRoute
   AcademyIndexRoute: typeof AcademyIndexRoute
 }
@@ -1132,6 +1172,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLesson10Route: AcademyLesson10Route,
   AcademyLesson11Route: AcademyLesson11Route,
   AcademyLesson12Route: AcademyLesson12Route,
+  AcademyLesson13Route: AcademyLesson13Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
   AcademyLesson4Route: AcademyLesson4Route,
@@ -1147,6 +1188,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademySubnettingMadeEasyRoute: AcademySubnettingMadeEasyRoute,
   AcademyWhatIsAComputerNetworkRoute: AcademyWhatIsAComputerNetworkRoute,
   AcademyWhatIsADefaultGatewayRoute: AcademyWhatIsADefaultGatewayRoute,
+  AcademyWhatIsDhcpRoute: AcademyWhatIsDhcpRoute,
   AcademyWhatIsDnsRoute: AcademyWhatIsDnsRoute,
   AcademyIndexRoute: AcademyIndexRoute,
 }
