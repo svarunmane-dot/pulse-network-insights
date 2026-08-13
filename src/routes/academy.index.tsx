@@ -125,6 +125,13 @@ const LESSONS: Lesson[] = [
     desc: "The DORA process, leases, pools, reservations and DHCP relay — with an interactive DORA simulator.",
     status: "live",
   },
+  {
+    n: 14,
+    slug: "/academy/mac-addresses",
+    title: "MAC Addresses Explained – How Devices Identify Each Other",
+    desc: "Layer 2 identifiers, ARP, the ARP cache, switch MAC tables and broadcast frames — with an interactive ARP simulator.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
