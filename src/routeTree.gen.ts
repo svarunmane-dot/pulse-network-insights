@@ -46,6 +46,7 @@ import { Route as AcademyLesson10RouteImport } from './routes/academy.lesson-10'
 import { Route as AcademyLesson11RouteImport } from './routes/academy.lesson-11'
 import { Route as AcademyLesson12RouteImport } from './routes/academy.lesson-12'
 import { Route as AcademyLesson13RouteImport } from './routes/academy.lesson-13'
+import { Route as AcademyLesson14RouteImport } from './routes/academy.lesson-14'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
@@ -54,6 +55,7 @@ import { Route as AcademyLesson6RouteImport } from './routes/academy.lesson-6'
 import { Route as AcademyLesson7RouteImport } from './routes/academy.lesson-7'
 import { Route as AcademyLesson8RouteImport } from './routes/academy.lesson-8'
 import { Route as AcademyLesson9RouteImport } from './routes/academy.lesson-9'
+import { Route as AcademyMacAddressesRouteImport } from './routes/academy.mac-addresses'
 import { Route as AcademyNetworkBroadcastUsableIpRouteImport } from './routes/academy.network-broadcast-usable-ip'
 import { Route as AcademyPublicVsPrivateIpRouteImport } from './routes/academy.public-vs-private-ip'
 import { Route as AcademySubnetMasksRouteImport } from './routes/academy.subnet-masks'
@@ -252,6 +254,11 @@ const AcademyLesson13Route = AcademyLesson13RouteImport.update({
   path: '/lesson-13',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyLesson14Route = AcademyLesson14RouteImport.update({
+  id: '/lesson-14',
+  path: '/lesson-14',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyLesson2Route = AcademyLesson2RouteImport.update({
   id: '/lesson-2',
   path: '/lesson-2',
@@ -290,6 +297,11 @@ const AcademyLesson8Route = AcademyLesson8RouteImport.update({
 const AcademyLesson9Route = AcademyLesson9RouteImport.update({
   id: '/lesson-9',
   path: '/lesson-9',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyMacAddressesRoute = AcademyMacAddressesRouteImport.update({
+  id: '/mac-addresses',
+  path: '/mac-addresses',
   getParentRoute: () => AcademyRoute,
 } as any)
 const AcademyNetworkBroadcastUsableIpRoute =
@@ -391,6 +403,7 @@ export interface FileRoutesByFullPath {
   '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-12': typeof AcademyLesson12Route
   '/academy/lesson-13': typeof AcademyLesson13Route
+  '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -399,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/academy/lesson-7': typeof AcademyLesson7Route
   '/academy/lesson-8': typeof AcademyLesson8Route
   '/academy/lesson-9': typeof AcademyLesson9Route
+  '/academy/mac-addresses': typeof AcademyMacAddressesRoute
   '/academy/network-broadcast-usable-ip': typeof AcademyNetworkBroadcastUsableIpRoute
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
@@ -448,6 +462,7 @@ export interface FileRoutesByTo {
   '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-12': typeof AcademyLesson12Route
   '/academy/lesson-13': typeof AcademyLesson13Route
+  '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -456,6 +471,7 @@ export interface FileRoutesByTo {
   '/academy/lesson-7': typeof AcademyLesson7Route
   '/academy/lesson-8': typeof AcademyLesson8Route
   '/academy/lesson-9': typeof AcademyLesson9Route
+  '/academy/mac-addresses': typeof AcademyMacAddressesRoute
   '/academy/network-broadcast-usable-ip': typeof AcademyNetworkBroadcastUsableIpRoute
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
@@ -507,6 +523,7 @@ export interface FileRoutesById {
   '/academy/lesson-11': typeof AcademyLesson11Route
   '/academy/lesson-12': typeof AcademyLesson12Route
   '/academy/lesson-13': typeof AcademyLesson13Route
+  '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -515,6 +532,7 @@ export interface FileRoutesById {
   '/academy/lesson-7': typeof AcademyLesson7Route
   '/academy/lesson-8': typeof AcademyLesson8Route
   '/academy/lesson-9': typeof AcademyLesson9Route
+  '/academy/mac-addresses': typeof AcademyMacAddressesRoute
   '/academy/network-broadcast-usable-ip': typeof AcademyNetworkBroadcastUsableIpRoute
   '/academy/public-vs-private-ip': typeof AcademyPublicVsPrivateIpRoute
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
@@ -567,6 +585,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-11'
     | '/academy/lesson-12'
     | '/academy/lesson-13'
+    | '/academy/lesson-14'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -575,6 +594,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-7'
     | '/academy/lesson-8'
     | '/academy/lesson-9'
+    | '/academy/mac-addresses'
     | '/academy/network-broadcast-usable-ip'
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
@@ -624,6 +644,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-11'
     | '/academy/lesson-12'
     | '/academy/lesson-13'
+    | '/academy/lesson-14'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -632,6 +653,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-7'
     | '/academy/lesson-8'
     | '/academy/lesson-9'
+    | '/academy/mac-addresses'
     | '/academy/network-broadcast-usable-ip'
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
@@ -682,6 +704,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-11'
     | '/academy/lesson-12'
     | '/academy/lesson-13'
+    | '/academy/lesson-14'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -690,6 +713,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-7'
     | '/academy/lesson-8'
     | '/academy/lesson-9'
+    | '/academy/mac-addresses'
     | '/academy/network-broadcast-usable-ip'
     | '/academy/public-vs-private-ip'
     | '/academy/subnet-masks'
@@ -997,6 +1021,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyLesson13RouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-14': {
+      id: '/academy/lesson-14'
+      path: '/lesson-14'
+      fullPath: '/academy/lesson-14'
+      preLoaderRoute: typeof AcademyLesson14RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lesson-2': {
       id: '/academy/lesson-2'
       path: '/lesson-2'
@@ -1051,6 +1082,13 @@ declare module '@tanstack/react-router' {
       path: '/lesson-9'
       fullPath: '/academy/lesson-9'
       preLoaderRoute: typeof AcademyLesson9RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/mac-addresses': {
+      id: '/academy/mac-addresses'
+      path: '/mac-addresses'
+      fullPath: '/academy/mac-addresses'
+      preLoaderRoute: typeof AcademyMacAddressesRouteImport
       parentRoute: typeof AcademyRoute
     }
     '/academy/network-broadcast-usable-ip': {
@@ -1143,6 +1181,7 @@ interface AcademyRouteChildren {
   AcademyLesson11Route: typeof AcademyLesson11Route
   AcademyLesson12Route: typeof AcademyLesson12Route
   AcademyLesson13Route: typeof AcademyLesson13Route
+  AcademyLesson14Route: typeof AcademyLesson14Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
   AcademyLesson4Route: typeof AcademyLesson4Route
@@ -1151,6 +1190,7 @@ interface AcademyRouteChildren {
   AcademyLesson7Route: typeof AcademyLesson7Route
   AcademyLesson8Route: typeof AcademyLesson8Route
   AcademyLesson9Route: typeof AcademyLesson9Route
+  AcademyMacAddressesRoute: typeof AcademyMacAddressesRoute
   AcademyNetworkBroadcastUsableIpRoute: typeof AcademyNetworkBroadcastUsableIpRoute
   AcademyPublicVsPrivateIpRoute: typeof AcademyPublicVsPrivateIpRoute
   AcademySubnetMasksRoute: typeof AcademySubnetMasksRoute
@@ -1173,6 +1213,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLesson11Route: AcademyLesson11Route,
   AcademyLesson12Route: AcademyLesson12Route,
   AcademyLesson13Route: AcademyLesson13Route,
+  AcademyLesson14Route: AcademyLesson14Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
   AcademyLesson4Route: AcademyLesson4Route,
@@ -1181,6 +1222,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLesson7Route: AcademyLesson7Route,
   AcademyLesson8Route: AcademyLesson8Route,
   AcademyLesson9Route: AcademyLesson9Route,
+  AcademyMacAddressesRoute: AcademyMacAddressesRoute,
   AcademyNetworkBroadcastUsableIpRoute: AcademyNetworkBroadcastUsableIpRoute,
   AcademyPublicVsPrivateIpRoute: AcademyPublicVsPrivateIpRoute,
   AcademySubnetMasksRoute: AcademySubnetMasksRoute,

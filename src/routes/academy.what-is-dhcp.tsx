@@ -641,6 +641,12 @@ DHCP Server
             ← Lesson 12: DNS Explained
           </Link>
         </div>
+        <div>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>NEXT LESSON</div>
+          <Link to="/academy/mac-addresses" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 14: MAC Addresses Explained →
+          </Link>
+        </div>
         <Link
           to="/academy"
           style={{
