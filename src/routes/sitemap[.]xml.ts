@@ -26,6 +26,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/blacklist-check", changefreq: "monthly", priority: "0.8" },
           { path: "/app-monitoring", changefreq: "weekly", priority: "0.8" },
           { path: "/ap-planning", changefreq: "monthly", priority: "0.8" },
+          { path: "/network-diagram", changefreq: "monthly", priority: "0.8" },
           { path: "/cyber-news", changefreq: "hourly", priority: "0.9" },
           { path: "/academy", changefreq: "daily", priority: "0.9" },
           { path: "/academy/what-is-a-computer-network", changefreq: "monthly", priority: "0.7" },

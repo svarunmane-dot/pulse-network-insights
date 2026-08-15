@@ -235,6 +235,7 @@ function SiteHeader() {
             { to: "/blacklist-check", label: "Blacklist Check" },
             { to: "/app-monitoring", label: "App Monitoring" },
             { to: "/ap-planning", label: "AP Planning" },
+            { to: "/network-diagram", label: "Diagram Builder" },
             { to: "/cyber-news", label: "📰 Cyber News" },
             { to: "/academy", label: "Academy" },
             { to: "/about", label: "About" },
@@ -347,6 +348,7 @@ function SiteFooter() {
             { to: "/blacklist-check", label: "Blacklist Check" },
             { to: "/app-monitoring", label: "App Monitoring" },
             { to: "/ap-planning", label: "AP Planning" },
+            { to: "/network-diagram", label: "Diagram Builder" },
             { to: "/academy", label: "Network Engineer Academy" },
           ]}
         />
