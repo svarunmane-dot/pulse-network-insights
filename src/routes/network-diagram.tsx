@@ -84,7 +84,7 @@ type ZoneData = { label: string; color: string };
 
 type LinkState = "active" | "congested" | "down";
 
-const edgeStyleFor = (state: LinkState, simulation: boolean) => {
+const edgeStyleFor = (state: LinkState, simulation: boolean): Partial<Edge> => {
   if (state === "congested")
     return { style: { stroke: AMBER, strokeWidth: 2, strokeDasharray: "8 5" }, animated: simulation };
   if (state === "down")
