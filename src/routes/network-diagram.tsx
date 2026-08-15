@@ -419,7 +419,7 @@ function Builder() {
           (parsed.edges ?? []).map((e: Edge) => ({
             ...e,
             ...edgeStyleFor(((e.data?.state as LinkState) ?? "active"), simulation),
-          })),
+          })) as Edge[],
         );
       } catch {
         window.alert("That file isn't a valid Pulse Speed topology JSON export.");
