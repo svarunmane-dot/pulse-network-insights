@@ -618,20 +618,28 @@ arp -a             → compare IP addresses to MAC addresses`}</Pre>
             ← Lesson 13: DHCP Explained
           </Link>
         </div>
-        <Link
-          to="/academy"
-          style={{
-            background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
-            color: "#04150f",
-            padding: "10px 16px",
-            borderRadius: 10,
-            fontWeight: 700,
-            textDecoration: "none",
-          }}
-        >
-          Back to Academy →
-        </Link>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>NEXT LESSON</div>
+          <Link to="/academy/network-switches" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 15: How Network Switches Work →
+          </Link>
+        </div>
       </div>
+      <Link
+        to="/academy"
+        style={{
+          marginTop: 14,
+          display: "inline-block",
+          background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
+          color: "#04150f",
+          padding: "10px 16px",
+          borderRadius: 10,
+          fontWeight: 700,
+          textDecoration: "none",
+        }}
+      >
+        Back to Academy →
+      </Link>
     </article>
   );
 }

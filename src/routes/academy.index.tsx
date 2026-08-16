@@ -132,6 +132,13 @@ const LESSONS: Lesson[] = [
     desc: "Layer 2 identifiers, ARP, the ARP cache, switch MAC tables and broadcast frames — with an interactive ARP simulator.",
     status: "live",
   },
+  {
+    n: 15,
+    slug: "/academy/network-switches",
+    title: "How Network Switches Work – MAC Tables, Ports & Ethernet Frames",
+    desc: "How switches learn MAC addresses, forward known unicast, flood unknown unicast and broadcast — with an interactive switch MAC learning simulator.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
