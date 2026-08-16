@@ -43,7 +43,7 @@ export const Route = createFileRoute("/network-diagram")({
       name: "Network Diagram Builder",
       title: "Network Diagram Builder — Draw Network Topology Online",
       description:
-        "Free drag-and-drop network topology builder for engineers. Add routers, switches, firewalls, servers and cloud nodes, set link states, group VLAN zones, export JSON or PNG.",
+        "Free drag-and-drop network topology builder for engineers. Add routers, switches, firewalls, access points, servers and cloud nodes, label uplink interfaces and IPs, set link states, group VLAN zones and export a PNG.",
       category: "DesignApplication",
       faqs: [
         {
@@ -52,19 +52,35 @@ export const Route = createFileRoute("/network-diagram")({
         },
         {
           q: "Can I export the topology?",
-          a: "You can export the full schema (nodes, positions, links, metadata and zones) as JSON, re-import it later, or download the canvas as a PNG image.",
+          a: "You can download the canvas as a PNG image at any time, and the topology stays saved in your browser between visits.",
         },
       ],
     }),
 });
 
 // ---------------------------------------------------------------- device kinds
-type Kind = "router" | "switch" | "firewall" | "server" | "database" | "cloud";
+type Kind = "router" | "switch" | "firewall" | "accesspoint" | "server" | "database" | "cloud";
 
-const KINDS: { kind: Kind; label: string; icon: string; color: string; hint: string }[] = [
+const ApIcon = ({ size = 16, color = "#38BDF8" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <ellipse cx="12" cy="16" rx="8" ry="3.2" fill={color} opacity="0.85" />
+    <path d="M12 13.2V8.5" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M8.6 7.2a4.8 4.8 0 0 1 6.8 0" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M6.3 4.9a8 8 0 0 1 11.4 0" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+const KINDS: { kind: Kind; label: string; icon: React.ReactNode; color: string; hint: string }[] = [
   { kind: "router", label: "Router", icon: "🛰️", color: TEAL, hint: "L3 gateway / WAN edge" },
   { kind: "switch", label: "Switch", icon: "🔀", color: "#9B8FE8", hint: "L2 access / distribution" },
   { kind: "firewall", label: "Firewall", icon: "🛡️", color: RED, hint: "Perimeter / DMZ policy" },
+  {
+    kind: "accesspoint",
+    label: "Access Point",
+    icon: <ApIcon />,
+    color: "#38BDF8",
+    hint: "Wi-Fi AP / wireless edge",
+  },
   { kind: "server", label: "Server", icon: "🖥️", color: "#38BDF8", hint: "Application / host" },
   { kind: "database", label: "Database", icon: "🗄️", color: AMBER, hint: "SQL / NoSQL store" },
   { kind: "cloud", label: "Cloud", icon: "☁️", color: "#c8d0e0", hint: "Internet / SaaS / VPC" },
