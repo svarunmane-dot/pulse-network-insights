@@ -725,16 +725,28 @@ function ActionBar(props: {
 function LinkPopup(props: {
   x: number;
   y: number;
-  current: LinkState;
+  data: Partial<LinkData>;
   onSelect: (s: LinkState) => void;
+  onMeta: (patch: Partial<LinkData>) => void;
   onDelete: () => void;
   onClose: () => void;
 }) {
+  const current = props.data.state ?? "active";
   const items: { state: LinkState; label: string; color: string }[] = [
     { state: "active", label: "Active", color: GREEN },
     { state: "congested", label: "Congested / High latency", color: AMBER },
     { state: "down", label: "Down / Failed", color: RED },
   ];
+  const input: React.CSSProperties = {
+    width: "100%",
+    padding: "6px 8px",
+    borderRadius: 7,
+    border: `1px solid ${BORDER}`,
+    background: SURFACE_DEEP,
+    color: TEXT,
+    fontSize: 11.5,
+    outline: "none",
+  };
   return (
     <div
       style={{
@@ -746,7 +758,9 @@ function LinkPopup(props: {
         border: `1px solid ${BORDER}`,
         borderRadius: 12,
         padding: 8,
-        width: 220,
+        width: 244,
+        maxHeight: 420,
+        overflowY: "auto",
         boxShadow: "0 12px 30px rgba(0,0,0,0.5)",
       }}
     >
@@ -764,7 +778,7 @@ function LinkPopup(props: {
             padding: "7px 8px",
             borderRadius: 8,
             border: "none",
-            background: props.current === i.state ? `${i.color}1f` : "transparent",
+            background: current === i.state ? `${i.color}1f` : "transparent",
             color: TEXT_SEC,
             fontSize: 12.5,
             cursor: "pointer",
@@ -775,6 +789,37 @@ function LinkPopup(props: {
           {i.label}
         </button>
       ))}
+      <div style={{ fontSize: 11, color: TEXT_MUTED, padding: "10px 6px 6px" }}>Uplink interfaces</div>
+      <div style={{ display: "grid", gap: 6, padding: "0 4px" }}>
+        <input
+          style={input}
+          placeholder="A-side interface (e.g. Gi0/0/1)"
+          aria-label="A-side interface name"
+          value={props.data.aIf ?? ""}
+          onChange={(e) => props.onMeta({ aIf: e.target.value })}
+        />
+        <input
+          style={input}
+          placeholder="A-side IP (e.g. 10.0.0.1/30)"
+          aria-label="A-side interface IP"
+          value={props.data.aIp ?? ""}
+          onChange={(e) => props.onMeta({ aIp: e.target.value })}
+        />
+        <input
+          style={input}
+          placeholder="B-side interface (e.g. Gi1/0/24)"
+          aria-label="B-side interface name"
+          value={props.data.bIf ?? ""}
+          onChange={(e) => props.onMeta({ bIf: e.target.value })}
+        />
+        <input
+          style={input}
+          placeholder="B-side IP (e.g. 10.0.0.2/30)"
+          aria-label="B-side interface IP"
+          value={props.data.bIp ?? ""}
+          onChange={(e) => props.onMeta({ bIp: e.target.value })}
+        />
+      </div>
       <button
         type="button"
         onClick={props.onDelete}
