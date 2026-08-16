@@ -100,6 +100,30 @@ type ZoneData = { label: string; color: string };
 
 type LinkState = "active" | "congested" | "down";
 
+type LinkData = {
+  state: LinkState;
+  aIf?: string;
+  aIp?: string;
+  bIf?: string;
+  bIp?: string;
+};
+
+const linkLabel = (d: Partial<LinkData> | undefined) => {
+  const a = [d?.aIf, d?.aIp].filter(Boolean).join(" ");
+  const b = [d?.bIf, d?.bIp].filter(Boolean).join(" ");
+  if (!a && !b) return undefined;
+  return a && b ? `${a}  ↔  ${b}` : a || b;
+};
+
+const linkLabelProps = (d: Partial<LinkData> | undefined): Partial<Edge> => ({
+  label: linkLabel(d),
+  labelShowBg: true,
+  labelBgPadding: [6, 3],
+  labelBgBorderRadius: 6,
+  labelBgStyle: { fill: SURFACE, stroke: BORDER },
+  labelStyle: { fill: TEXT_SEC, fontSize: 10, fontFamily: "ui-monospace, monospace" },
+});
+
 const edgeStyleFor = (state: LinkState, simulation: boolean): Partial<Edge> => {
   if (state === "congested")
     return { style: { stroke: AMBER, strokeWidth: 2, strokeDasharray: "8 5" }, animated: simulation };
