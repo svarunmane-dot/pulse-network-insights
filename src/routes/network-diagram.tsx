@@ -964,7 +964,10 @@ function Explainer() {
         <li>Hover a node and drag from one of its four anchor points to another node to draw a link.</li>
         <li>Double-click a node to set its device name, management IP, subnet mask and notes.</li>
         <li>Click any link to mark it Active, Congested or Down; enable Simulation Mode to animate traffic.</li>
-        <li>Add Subnet Zones to group devices into VLANs or a DMZ, then export JSON or a PNG.</li>
+        <li>
+          Click a link to set its state and label the uplink interface names and IPs on both ends, then
+          download the canvas as a PNG.
+        </li>
       </ol>
       <p style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.8, margin: 0 }}>
         Planning the addressing behind your topology? Use the{" "}
