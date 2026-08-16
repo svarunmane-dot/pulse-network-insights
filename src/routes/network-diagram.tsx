@@ -287,7 +287,8 @@ function NetworkDiagramPage() {
         <p style={{ color: TEXT_SEC, fontSize: 14, maxWidth: 780, marginTop: 8 }}>
           Drag routers, switches, firewalls, servers, databases and cloud nodes onto an infinite grid
           canvas, cable them together, mark link states, group devices into VLAN or DMZ zones, and export
-          the whole topology as JSON or PNG. Everything is saved in your browser automatically.
+          the canvas as a PNG. Label each uplink with its interface name and IP. Everything is saved in
+          your browser automatically.
         </p>
       </header>
       {mounted ? (
@@ -327,7 +328,6 @@ function Builder() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [linkMenu, setLinkMenu] = useState<{ id: string; x: number; y: number } | null>(null);
   const wrapper = useRef<HTMLDivElement | null>(null);
-  const fileInput = useRef<HTMLInputElement | null>(null);
   const { screenToFlowPosition } = useReactFlow();
   const [loaded, setLoaded] = useState(false);
 
@@ -358,6 +358,7 @@ function Builder() {
       eds.map((e) => ({
         ...e,
         ...edgeStyleFor(((e.data?.state as LinkState) ?? "active"), simulation),
+        ...linkLabelProps(e.data as Partial<LinkData>),
       })),
     );
   }, [simulation, setEdges]);
@@ -431,41 +432,20 @@ function Builder() {
     setLinkMenu(null);
   };
 
+  const setLinkMeta = (edgeId: string, patch: Partial<LinkData>) => {
+    setEdges((eds) =>
+      eds.map((e) => {
+        if (e.id !== edgeId) return e;
+        const data = { ...(e.data as Partial<LinkData>), ...patch };
+        return { ...e, data, ...linkLabelProps(data) };
+      }),
+    );
+  };
+
   const clearCanvas = () => {
     if (!window.confirm("Clear the entire canvas?")) return;
     setNodes([]);
     setEdges([]);
-  };
-
-  const exportJson = () => {
-    const blob = new Blob([JSON.stringify({ version: 1, nodes, edges }, null, 2)], {
-      type: "application/json",
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "pulse-speed-topology.json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
-
-  const importJson = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(String(reader.result));
-        if (!Array.isArray(parsed.nodes)) throw new Error("bad schema");
-        setNodes(parsed.nodes);
-        setEdges(
-          (parsed.edges ?? []).map((e: Edge) => ({
-            ...e,
-            ...edgeStyleFor(((e.data?.state as LinkState) ?? "active"), simulation),
-          })) as Edge[],
-        );
-      } catch {
-        window.alert("That file isn't a valid Pulse Speed topology JSON export.");
-      }
-    };
-    reader.readAsText(file);
   };
 
   const downloadPng = async () => {
@@ -494,21 +474,8 @@ function Builder() {
         simulation={simulation}
         onToggleSim={() => setSimulation((s) => !s)}
         onClear={clearCanvas}
-        onExport={exportJson}
-        onImport={() => fileInput.current?.click()}
         onPng={downloadPng}
         onZone={addZone}
-      />
-      <input
-        ref={fileInput}
-        type="file"
-        accept="application/json"
-        style={{ display: "none" }}
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) importJson(f);
-          e.target.value = "";
-        }}
       />
 
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 14, marginTop: 14 }}>
@@ -646,8 +613,9 @@ function Builder() {
             <LinkPopup
               x={linkMenu.x}
               y={linkMenu.y}
-              current={(edges.find((e) => e.id === linkMenu.id)?.data?.state as LinkState) ?? "active"}
+              data={(edges.find((e) => e.id === linkMenu.id)?.data as Partial<LinkData>) ?? {}}
               onSelect={(s) => setLinkState(linkMenu.id, s)}
+              onMeta={(patch) => setLinkMeta(linkMenu.id, patch)}
               onDelete={() => {
                 setEdges((eds) => eds.filter((e) => e.id !== linkMenu.id));
                 setLinkMenu(null);
@@ -684,8 +652,6 @@ function ActionBar(props: {
   simulation: boolean;
   onToggleSim: () => void;
   onClear: () => void;
-  onExport: () => void;
-  onImport: () => void;
   onPng: () => void;
   onZone: () => void;
 }) {
@@ -716,12 +682,6 @@ function ActionBar(props: {
       </button>
       <button type="button" style={btn} onClick={props.onClear}>
         🗑️ Clear Canvas
-      </button>
-      <button type="button" style={btn} onClick={props.onExport}>
-        ⬇️ Export JSON
-      </button>
-      <button type="button" style={btn} onClick={props.onImport}>
-        ⬆️ Import JSON
       </button>
       <button type="button" style={btn} onClick={props.onPng}>
         🖼️ Download PNG
