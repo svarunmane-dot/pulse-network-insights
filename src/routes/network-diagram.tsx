@@ -43,7 +43,7 @@ export const Route = createFileRoute("/network-diagram")({
       name: "Network Diagram Builder",
       title: "Network Diagram Builder — Draw Network Topology Online",
       description:
-        "Free drag-and-drop network topology builder for engineers. Add routers, switches, firewalls, servers and cloud nodes, set link states, group VLAN zones, export JSON or PNG.",
+        "Free drag-and-drop network topology builder for engineers. Add routers, switches, firewalls, access points, servers and cloud nodes, label uplink interfaces and IPs, set link states, group VLAN zones and export a PNG.",
       category: "DesignApplication",
       faqs: [
         {
@@ -52,19 +52,35 @@ export const Route = createFileRoute("/network-diagram")({
         },
         {
           q: "Can I export the topology?",
-          a: "You can export the full schema (nodes, positions, links, metadata and zones) as JSON, re-import it later, or download the canvas as a PNG image.",
+          a: "You can download the canvas as a PNG image at any time, and the topology stays saved in your browser between visits.",
         },
       ],
     }),
 });
 
 // ---------------------------------------------------------------- device kinds
-type Kind = "router" | "switch" | "firewall" | "server" | "database" | "cloud";
+type Kind = "router" | "switch" | "firewall" | "accesspoint" | "server" | "database" | "cloud";
 
-const KINDS: { kind: Kind; label: string; icon: string; color: string; hint: string }[] = [
+const ApIcon = ({ size = 16, color = "#38BDF8" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <ellipse cx="12" cy="16" rx="8" ry="3.2" fill={color} opacity="0.85" />
+    <path d="M12 13.2V8.5" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M8.6 7.2a4.8 4.8 0 0 1 6.8 0" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M6.3 4.9a8 8 0 0 1 11.4 0" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+const KINDS: { kind: Kind; label: string; icon: React.ReactNode; color: string; hint: string }[] = [
   { kind: "router", label: "Router", icon: "🛰️", color: TEAL, hint: "L3 gateway / WAN edge" },
   { kind: "switch", label: "Switch", icon: "🔀", color: "#9B8FE8", hint: "L2 access / distribution" },
   { kind: "firewall", label: "Firewall", icon: "🛡️", color: RED, hint: "Perimeter / DMZ policy" },
+  {
+    kind: "accesspoint",
+    label: "Access Point",
+    icon: <ApIcon />,
+    color: "#38BDF8",
+    hint: "Wi-Fi AP / wireless edge",
+  },
   { kind: "server", label: "Server", icon: "🖥️", color: "#38BDF8", hint: "Application / host" },
   { kind: "database", label: "Database", icon: "🗄️", color: AMBER, hint: "SQL / NoSQL store" },
   { kind: "cloud", label: "Cloud", icon: "☁️", color: "#c8d0e0", hint: "Internet / SaaS / VPC" },
@@ -83,6 +99,30 @@ type DeviceData = {
 type ZoneData = { label: string; color: string };
 
 type LinkState = "active" | "congested" | "down";
+
+type LinkData = {
+  state: LinkState;
+  aIf?: string;
+  aIp?: string;
+  bIf?: string;
+  bIp?: string;
+};
+
+const linkLabel = (d: Partial<LinkData> | undefined) => {
+  const a = [d?.aIf, d?.aIp].filter(Boolean).join(" ");
+  const b = [d?.bIf, d?.bIp].filter(Boolean).join(" ");
+  if (!a && !b) return undefined;
+  return a && b ? `${a}  ↔  ${b}` : a || b;
+};
+
+const linkLabelProps = (d: Partial<LinkData> | undefined): Partial<Edge> => ({
+  label: linkLabel(d),
+  labelShowBg: true,
+  labelBgPadding: [6, 3],
+  labelBgBorderRadius: 6,
+  labelBgStyle: { fill: SURFACE, stroke: BORDER },
+  labelStyle: { fill: TEXT_SEC, fontSize: 10, fontFamily: "ui-monospace, monospace" },
+});
 
 const edgeStyleFor = (state: LinkState, simulation: boolean): Partial<Edge> => {
   if (state === "congested")
@@ -247,7 +287,8 @@ function NetworkDiagramPage() {
         <p style={{ color: TEXT_SEC, fontSize: 14, maxWidth: 780, marginTop: 8 }}>
           Drag routers, switches, firewalls, servers, databases and cloud nodes onto an infinite grid
           canvas, cable them together, mark link states, group devices into VLAN or DMZ zones, and export
-          the whole topology as JSON or PNG. Everything is saved in your browser automatically.
+          the canvas as a PNG. Label each uplink with its interface name and IP. Everything is saved in
+          your browser automatically.
         </p>
       </header>
       {mounted ? (
@@ -287,7 +328,6 @@ function Builder() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [linkMenu, setLinkMenu] = useState<{ id: string; x: number; y: number } | null>(null);
   const wrapper = useRef<HTMLDivElement | null>(null);
-  const fileInput = useRef<HTMLInputElement | null>(null);
   const { screenToFlowPosition } = useReactFlow();
   const [loaded, setLoaded] = useState(false);
 
@@ -318,6 +358,7 @@ function Builder() {
       eds.map((e) => ({
         ...e,
         ...edgeStyleFor(((e.data?.state as LinkState) ?? "active"), simulation),
+        ...linkLabelProps(e.data as Partial<LinkData>),
       })),
     );
   }, [simulation, setEdges]);
@@ -391,41 +432,20 @@ function Builder() {
     setLinkMenu(null);
   };
 
+  const setLinkMeta = (edgeId: string, patch: Partial<LinkData>) => {
+    setEdges((eds) =>
+      eds.map((e) => {
+        if (e.id !== edgeId) return e;
+        const data = { ...(e.data as Partial<LinkData>), ...patch };
+        return { ...e, data, ...linkLabelProps(data) };
+      }),
+    );
+  };
+
   const clearCanvas = () => {
     if (!window.confirm("Clear the entire canvas?")) return;
     setNodes([]);
     setEdges([]);
-  };
-
-  const exportJson = () => {
-    const blob = new Blob([JSON.stringify({ version: 1, nodes, edges }, null, 2)], {
-      type: "application/json",
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "pulse-speed-topology.json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
-
-  const importJson = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(String(reader.result));
-        if (!Array.isArray(parsed.nodes)) throw new Error("bad schema");
-        setNodes(parsed.nodes);
-        setEdges(
-          (parsed.edges ?? []).map((e: Edge) => ({
-            ...e,
-            ...edgeStyleFor(((e.data?.state as LinkState) ?? "active"), simulation),
-          })) as Edge[],
-        );
-      } catch {
-        window.alert("That file isn't a valid Pulse Speed topology JSON export.");
-      }
-    };
-    reader.readAsText(file);
   };
 
   const downloadPng = async () => {
@@ -454,21 +474,8 @@ function Builder() {
         simulation={simulation}
         onToggleSim={() => setSimulation((s) => !s)}
         onClear={clearCanvas}
-        onExport={exportJson}
-        onImport={() => fileInput.current?.click()}
         onPng={downloadPng}
         onZone={addZone}
-      />
-      <input
-        ref={fileInput}
-        type="file"
-        accept="application/json"
-        style={{ display: "none" }}
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) importJson(f);
-          e.target.value = "";
-        }}
       />
 
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 14, marginTop: 14 }}>
@@ -606,8 +613,9 @@ function Builder() {
             <LinkPopup
               x={linkMenu.x}
               y={linkMenu.y}
-              current={(edges.find((e) => e.id === linkMenu.id)?.data?.state as LinkState) ?? "active"}
+              data={(edges.find((e) => e.id === linkMenu.id)?.data as Partial<LinkData>) ?? {}}
               onSelect={(s) => setLinkState(linkMenu.id, s)}
+              onMeta={(patch) => setLinkMeta(linkMenu.id, patch)}
               onDelete={() => {
                 setEdges((eds) => eds.filter((e) => e.id !== linkMenu.id));
                 setLinkMenu(null);
@@ -644,8 +652,6 @@ function ActionBar(props: {
   simulation: boolean;
   onToggleSim: () => void;
   onClear: () => void;
-  onExport: () => void;
-  onImport: () => void;
   onPng: () => void;
   onZone: () => void;
 }) {
@@ -676,12 +682,6 @@ function ActionBar(props: {
       </button>
       <button type="button" style={btn} onClick={props.onClear}>
         🗑️ Clear Canvas
-      </button>
-      <button type="button" style={btn} onClick={props.onExport}>
-        ⬇️ Export JSON
-      </button>
-      <button type="button" style={btn} onClick={props.onImport}>
-        ⬆️ Import JSON
       </button>
       <button type="button" style={btn} onClick={props.onPng}>
         🖼️ Download PNG
@@ -725,16 +725,28 @@ function ActionBar(props: {
 function LinkPopup(props: {
   x: number;
   y: number;
-  current: LinkState;
+  data: Partial<LinkData>;
   onSelect: (s: LinkState) => void;
+  onMeta: (patch: Partial<LinkData>) => void;
   onDelete: () => void;
   onClose: () => void;
 }) {
+  const current = props.data.state ?? "active";
   const items: { state: LinkState; label: string; color: string }[] = [
     { state: "active", label: "Active", color: GREEN },
     { state: "congested", label: "Congested / High latency", color: AMBER },
     { state: "down", label: "Down / Failed", color: RED },
   ];
+  const input: React.CSSProperties = {
+    width: "100%",
+    padding: "6px 8px",
+    borderRadius: 7,
+    border: `1px solid ${BORDER}`,
+    background: SURFACE_DEEP,
+    color: TEXT,
+    fontSize: 11.5,
+    outline: "none",
+  };
   return (
     <div
       style={{
@@ -746,7 +758,9 @@ function LinkPopup(props: {
         border: `1px solid ${BORDER}`,
         borderRadius: 12,
         padding: 8,
-        width: 220,
+        width: 244,
+        maxHeight: 420,
+        overflowY: "auto",
         boxShadow: "0 12px 30px rgba(0,0,0,0.5)",
       }}
     >
@@ -764,7 +778,7 @@ function LinkPopup(props: {
             padding: "7px 8px",
             borderRadius: 8,
             border: "none",
-            background: props.current === i.state ? `${i.color}1f` : "transparent",
+            background: current === i.state ? `${i.color}1f` : "transparent",
             color: TEXT_SEC,
             fontSize: 12.5,
             cursor: "pointer",
@@ -775,6 +789,37 @@ function LinkPopup(props: {
           {i.label}
         </button>
       ))}
+      <div style={{ fontSize: 11, color: TEXT_MUTED, padding: "10px 6px 6px" }}>Uplink interfaces</div>
+      <div style={{ display: "grid", gap: 6, padding: "0 4px" }}>
+        <input
+          style={input}
+          placeholder="A-side interface (e.g. Gi0/0/1)"
+          aria-label="A-side interface name"
+          value={props.data.aIf ?? ""}
+          onChange={(e) => props.onMeta({ aIf: e.target.value })}
+        />
+        <input
+          style={input}
+          placeholder="A-side IP (e.g. 10.0.0.1/30)"
+          aria-label="A-side interface IP"
+          value={props.data.aIp ?? ""}
+          onChange={(e) => props.onMeta({ aIp: e.target.value })}
+        />
+        <input
+          style={input}
+          placeholder="B-side interface (e.g. Gi1/0/24)"
+          aria-label="B-side interface name"
+          value={props.data.bIf ?? ""}
+          onChange={(e) => props.onMeta({ bIf: e.target.value })}
+        />
+        <input
+          style={input}
+          placeholder="B-side IP (e.g. 10.0.0.2/30)"
+          aria-label="B-side interface IP"
+          value={props.data.bIp ?? ""}
+          onChange={(e) => props.onMeta({ bIp: e.target.value })}
+        />
+      </div>
       <button
         type="button"
         onClick={props.onDelete}
@@ -919,7 +964,10 @@ function Explainer() {
         <li>Hover a node and drag from one of its four anchor points to another node to draw a link.</li>
         <li>Double-click a node to set its device name, management IP, subnet mask and notes.</li>
         <li>Click any link to mark it Active, Congested or Down; enable Simulation Mode to animate traffic.</li>
-        <li>Add Subnet Zones to group devices into VLANs or a DMZ, then export JSON or a PNG.</li>
+        <li>
+          Click a link to set its state and label the uplink interface names and IPs on both ends, then
+          download the canvas as a PNG.
+        </li>
       </ol>
       <p style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.8, margin: 0 }}>
         Planning the addressing behind your topology? Use the{" "}
