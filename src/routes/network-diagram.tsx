@@ -965,21 +965,75 @@ function InspectorPanel(props: {
     outline: "none",
   };
   const label: React.CSSProperties = { fontSize: 11, color: TEXT_MUTED, display: "block", marginBottom: 4 };
+  const panel: React.CSSProperties = {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 300,
+    background: SURFACE,
+    borderLeft: `1px solid ${BORDER}`,
+    padding: 16,
+    zIndex: 30,
+    overflowY: "auto",
+  };
+  if (props.node.type === "zone") {
+    const z = props.node.data as unknown as ZoneData;
+    return (
+      <div style={panel}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <strong style={{ fontSize: 14 }}>Subnet zone</strong>
+          <button
+            type="button"
+            onClick={props.onClose}
+            aria-label="Close inspector"
+            style={{ background: "none", border: "none", color: TEXT_MUTED, cursor: "pointer", fontSize: 16 }}
+          >
+            ✕
+          </button>
+        </div>
+        <div style={{ display: "grid", gap: 12, marginTop: 14 }}>
+          <div>
+            <label style={label}>Zone label</label>
+            <input
+              style={field}
+              value={z.label ?? ""}
+              onChange={(e) => props.onChange({ label: e.target.value })}
+            />
+          </div>
+          <div>
+            <label style={label}>Zone colour</label>
+            <input
+              type="color"
+              style={{ ...field, padding: 4, height: 38 }}
+              value={z.color ?? TEAL}
+              onChange={(e) => props.onChange({ color: e.target.value })}
+            />
+          </div>
+          <p style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6, margin: 0 }}>
+            Select the zone on the canvas and drag any corner or edge handle to resize it.
+          </p>
+          <button
+            type="button"
+            onClick={props.onDelete}
+            style={{
+              padding: "8px 10px",
+              borderRadius: 9,
+              border: `1px solid ${BORDER}`,
+              background: SURFACE_DEEP,
+              color: RED,
+              fontSize: 13,
+              cursor: "pointer",
+            }}
+          >
+            Delete zone
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-        bottom: 0,
-        width: 300,
-        background: SURFACE,
-        borderLeft: `1px solid ${BORDER}`,
-        padding: 16,
-        zIndex: 30,
-        overflowY: "auto",
-      }}
-    >
+    <div style={panel}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <strong style={{ fontSize: 14 }}>{kindMeta(d.kind).label} details</strong>
         <button
