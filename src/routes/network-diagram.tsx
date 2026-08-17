@@ -629,7 +629,8 @@ function Builder() {
           <p style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6, marginTop: 14 }}>
             Drag onto the canvas (or double-click a palette item). Hover a node to reveal the four anchor
             points, then drag from an anchor to another node to cable them. Double-click a node to edit its
-            details, click a link to change its state.
+            details, click a link to change its state. Use “Draw Zone” then drag on the canvas to box a
+            VLAN/DMZ area — select a zone and drag its handles to resize it.
           </p>
         </aside>
 
