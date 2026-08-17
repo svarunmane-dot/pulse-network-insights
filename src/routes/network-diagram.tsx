@@ -11,6 +11,7 @@ import {
   Handle,
   Position,
   addEdge,
+  NodeResizer,
   useEdgesState,
   useNodesState,
   useReactFlow,
@@ -199,6 +200,15 @@ function DeviceNode({ data, selected }: NodeProps) {
 function ZoneNode({ data, selected }: NodeProps) {
   const z = data as unknown as ZoneData;
   return (
+    <>
+      <NodeResizer
+        color={z.color}
+        isVisible={selected}
+        minWidth={120}
+        minHeight={90}
+        handleStyle={{ width: 10, height: 10, borderRadius: 3, background: z.color, border: "none" }}
+        lineStyle={{ borderColor: z.color }}
+      />
     <div
       style={{
         width: "100%",
@@ -223,6 +233,7 @@ function ZoneNode({ data, selected }: NodeProps) {
         {z.label}
       </div>
     </div>
+    </>
   );
 }
 
