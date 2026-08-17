@@ -11,6 +11,7 @@ import {
   Handle,
   Position,
   addEdge,
+  NodeResizer,
   useEdgesState,
   useNodesState,
   useReactFlow,
@@ -199,6 +200,15 @@ function DeviceNode({ data, selected }: NodeProps) {
 function ZoneNode({ data, selected }: NodeProps) {
   const z = data as unknown as ZoneData;
   return (
+    <>
+      <NodeResizer
+        color={z.color}
+        isVisible={selected}
+        minWidth={120}
+        minHeight={90}
+        handleStyle={{ width: 10, height: 10, borderRadius: 3, background: z.color, border: "none" }}
+        lineStyle={{ borderColor: z.color }}
+      />
     <div
       style={{
         width: "100%",
@@ -223,6 +233,7 @@ function ZoneNode({ data, selected }: NodeProps) {
         {z.label}
       </div>
     </div>
+    </>
   );
 }
 
@@ -330,6 +341,9 @@ function Builder() {
   const wrapper = useRef<HTMLDivElement | null>(null);
   const { screenToFlowPosition } = useReactFlow();
   const [loaded, setLoaded] = useState(false);
+  const [drawMode, setDrawMode] = useState(false);
+  const [draft, setDraft] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const drawStart = useRef<{ x: number; y: number } | null>(null);
 
   // restore from local storage
   useEffect(() => {
@@ -425,6 +439,60 @@ function Builder() {
     });
   };
 
+  // ---- draw a zone by dragging on the canvas
+  const createZoneFromRect = (a: { x: number; y: number }, b: { x: number; y: number }) => {
+    const colors = [TEAL, "#9B8FE8", AMBER, RED, "#38BDF8"];
+    const p1 = screenToFlowPosition(a);
+    const p2 = screenToFlowPosition(b);
+    const width = Math.max(120, Math.abs(p2.x - p1.x));
+    const height = Math.max(90, Math.abs(p2.y - p1.y));
+    setNodes((nds) => {
+      const count = nds.filter((n) => n.type === "zone").length;
+      return [
+        {
+          id: nextId("z"),
+          type: "zone",
+          position: { x: Math.min(p1.x, p2.x), y: Math.min(p1.y, p2.y) },
+          style: { width, height },
+          data: { label: `VLAN ${10 + count * 10}`, color: colors[count % colors.length] },
+          zIndex: -1,
+        } as Node,
+        ...nds,
+      ];
+    });
+  };
+
+  const onCanvasMouseDown = (event: React.MouseEvent) => {
+    if (!drawMode || event.button !== 0) return;
+    const rect = wrapper.current?.getBoundingClientRect();
+    if (!rect) return;
+    event.preventDefault();
+    drawStart.current = { x: event.clientX, y: event.clientY };
+    setDraft({ x: event.clientX - rect.left, y: event.clientY - rect.top, w: 0, h: 0 });
+  };
+
+  const onCanvasMouseMove = (event: React.MouseEvent) => {
+    if (!drawMode || !drawStart.current) return;
+    const rect = wrapper.current?.getBoundingClientRect();
+    if (!rect) return;
+    const s = drawStart.current;
+    setDraft({
+      x: Math.min(s.x, event.clientX) - rect.left,
+      y: Math.min(s.y, event.clientY) - rect.top,
+      w: Math.abs(event.clientX - s.x),
+      h: Math.abs(event.clientY - s.y),
+    });
+  };
+
+  const onCanvasMouseUp = (event: React.MouseEvent) => {
+    if (!drawMode || !drawStart.current) return;
+    const s = drawStart.current;
+    drawStart.current = null;
+    setDraft(null);
+    setDrawMode(false);
+    createZoneFromRect(s, { x: event.clientX, y: event.clientY });
+  };
+
   const setLinkState = (edgeId: string, state: LinkState) => {
     setEdges((eds) =>
       eds.map((e) => (e.id === edgeId ? { ...e, data: { ...e.data, state }, ...edgeStyleFor(state, simulation) } : e)),
@@ -476,6 +544,8 @@ function Builder() {
         onClear={clearCanvas}
         onPng={downloadPng}
         onZone={addZone}
+        drawMode={drawMode}
+        onDrawZone={() => setDrawMode((d) => !d)}
       />
 
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 14, marginTop: 14 }}>
@@ -559,7 +629,8 @@ function Builder() {
           <p style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6, marginTop: 14 }}>
             Drag onto the canvas (or double-click a palette item). Hover a node to reveal the four anchor
             points, then drag from an anchor to another node to cable them. Double-click a node to edit its
-            details, click a link to change its state.
+            details, click a link to change its state. Use “Draw Zone” then drag on the canvas to box a
+            VLAN/DMZ area — select a zone and drag its handles to resize it.
           </p>
         </aside>
 
@@ -572,8 +643,12 @@ function Builder() {
             border: `1px solid ${BORDER}`,
             background: SURFACE_DEEP,
             position: "relative",
+            cursor: drawMode ? "crosshair" : undefined,
           }}
           onDrop={onDrop}
+          onMouseDown={onCanvasMouseDown}
+          onMouseMove={onCanvasMouseMove}
+          onMouseUp={onCanvasMouseUp}
           onDragOver={(e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = "move";
@@ -588,11 +663,14 @@ function Builder() {
             nodeTypes={nodeTypes}
             snapToGrid
             snapGrid={[16, 16]}
+            panOnDrag={!drawMode}
+            nodesDraggable={!drawMode}
+            selectionOnDrag={false}
             fitView
             minZoom={0.2}
             maxZoom={2.5}
             proOptions={{ hideAttribution: true }}
-            onNodeDoubleClick={(_, node) => node.type === "device" && setEditingId(node.id)}
+            onNodeDoubleClick={(_, node) => setEditingId(node.id)}
             onEdgeClick={(event, edge) => {
               const rect = wrapper.current?.getBoundingClientRect();
               setLinkMenu({
@@ -608,6 +686,22 @@ function Builder() {
             <Controls showInteractive={false} />
             <MiniMap pannable zoomable maskColor="rgba(10,14,26,0.7)" style={{ background: SURFACE }} />
           </ReactFlow>
+
+          {draft && (
+            <div
+              style={{
+                position: "absolute",
+                left: draft.x,
+                top: draft.y,
+                width: draft.w,
+                height: draft.h,
+                border: `1.5px dashed ${TEAL}`,
+                background: `${TEAL}14`,
+                borderRadius: 12,
+                pointerEvents: "none",
+              }}
+            />
+          )}
 
           {linkMenu && (
             <LinkPopup
@@ -654,6 +748,8 @@ function ActionBar(props: {
   onClear: () => void;
   onPng: () => void;
   onZone: () => void;
+  drawMode: boolean;
+  onDrawZone: () => void;
 }) {
   const btn: React.CSSProperties = {
     padding: "8px 12px",
@@ -679,6 +775,17 @@ function ActionBar(props: {
     >
       <button type="button" style={btn} onClick={props.onZone}>
         ➕ Subnet Zone
+      </button>
+      <button
+        type="button"
+        style={{
+          ...btn,
+          borderColor: props.drawMode ? TEAL : BORDER,
+          color: props.drawMode ? TEAL : TEXT_SEC,
+        }}
+        onClick={props.onDrawZone}
+      >
+        ✏️ {props.drawMode ? "Drawing… drag on canvas" : "Draw Zone"}
       </button>
       <button type="button" style={btn} onClick={props.onClear}>
         🗑️ Clear Canvas
@@ -859,21 +966,75 @@ function InspectorPanel(props: {
     outline: "none",
   };
   const label: React.CSSProperties = { fontSize: 11, color: TEXT_MUTED, display: "block", marginBottom: 4 };
+  const panel: React.CSSProperties = {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 300,
+    background: SURFACE,
+    borderLeft: `1px solid ${BORDER}`,
+    padding: 16,
+    zIndex: 30,
+    overflowY: "auto",
+  };
+  if (props.node.type === "zone") {
+    const z = props.node.data as unknown as ZoneData;
+    return (
+      <div style={panel}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <strong style={{ fontSize: 14 }}>Subnet zone</strong>
+          <button
+            type="button"
+            onClick={props.onClose}
+            aria-label="Close inspector"
+            style={{ background: "none", border: "none", color: TEXT_MUTED, cursor: "pointer", fontSize: 16 }}
+          >
+            ✕
+          </button>
+        </div>
+        <div style={{ display: "grid", gap: 12, marginTop: 14 }}>
+          <div>
+            <label style={label}>Zone label</label>
+            <input
+              style={field}
+              value={z.label ?? ""}
+              onChange={(e) => props.onChange({ label: e.target.value })}
+            />
+          </div>
+          <div>
+            <label style={label}>Zone colour</label>
+            <input
+              type="color"
+              style={{ ...field, padding: 4, height: 38 }}
+              value={z.color ?? TEAL}
+              onChange={(e) => props.onChange({ color: e.target.value })}
+            />
+          </div>
+          <p style={{ fontSize: 11, color: TEXT_MUTED, lineHeight: 1.6, margin: 0 }}>
+            Select the zone on the canvas and drag any corner or edge handle to resize it.
+          </p>
+          <button
+            type="button"
+            onClick={props.onDelete}
+            style={{
+              padding: "8px 10px",
+              borderRadius: 9,
+              border: `1px solid ${BORDER}`,
+              background: SURFACE_DEEP,
+              color: RED,
+              fontSize: 13,
+              cursor: "pointer",
+            }}
+          >
+            Delete zone
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-        bottom: 0,
-        width: 300,
-        background: SURFACE,
-        borderLeft: `1px solid ${BORDER}`,
-        padding: 16,
-        zIndex: 30,
-        overflowY: "auto",
-      }}
-    >
+    <div style={panel}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <strong style={{ fontSize: 14 }}>{kindMeta(d.kind).label} details</strong>
         <button
