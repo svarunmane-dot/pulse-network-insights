@@ -544,6 +544,8 @@ function Builder() {
         onClear={clearCanvas}
         onPng={downloadPng}
         onZone={addZone}
+        drawMode={drawMode}
+        onDrawZone={() => setDrawMode((d) => !d)}
       />
 
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 14, marginTop: 14 }}>
@@ -640,8 +642,12 @@ function Builder() {
             border: `1px solid ${BORDER}`,
             background: SURFACE_DEEP,
             position: "relative",
+            cursor: drawMode ? "crosshair" : undefined,
           }}
           onDrop={onDrop}
+          onMouseDown={onCanvasMouseDown}
+          onMouseMove={onCanvasMouseMove}
+          onMouseUp={onCanvasMouseUp}
           onDragOver={(e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = "move";
@@ -656,11 +662,14 @@ function Builder() {
             nodeTypes={nodeTypes}
             snapToGrid
             snapGrid={[16, 16]}
+            panOnDrag={!drawMode}
+            nodesDraggable={!drawMode}
+            selectionOnDrag={false}
             fitView
             minZoom={0.2}
             maxZoom={2.5}
             proOptions={{ hideAttribution: true }}
-            onNodeDoubleClick={(_, node) => node.type === "device" && setEditingId(node.id)}
+            onNodeDoubleClick={(_, node) => setEditingId(node.id)}
             onEdgeClick={(event, edge) => {
               const rect = wrapper.current?.getBoundingClientRect();
               setLinkMenu({
