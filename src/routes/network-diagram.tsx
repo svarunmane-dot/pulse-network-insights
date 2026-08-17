@@ -788,7 +788,7 @@ function ActionBar(props: {
   drawMode: boolean;
   onDrawZone: () => void;
 }) {
-  const fileRef = React.useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const btn: React.CSSProperties = {
     padding: "8px 12px",
     borderRadius: 10,
