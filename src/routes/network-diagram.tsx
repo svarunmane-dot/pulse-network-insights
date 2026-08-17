@@ -341,6 +341,9 @@ function Builder() {
   const wrapper = useRef<HTMLDivElement | null>(null);
   const { screenToFlowPosition } = useReactFlow();
   const [loaded, setLoaded] = useState(false);
+  const [drawMode, setDrawMode] = useState(false);
+  const [draft, setDraft] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const drawStart = useRef<{ x: number; y: number } | null>(null);
 
   // restore from local storage
   useEffect(() => {
