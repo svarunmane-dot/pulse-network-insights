@@ -531,6 +531,39 @@ function Builder() {
     a.click();
   };
 
+  const exportJson = () => {
+    const payload = JSON.stringify({ version: 1, nodes, edges }, null, 2);
+    const url = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "pulse-speed-topology.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importJson = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result));
+        if (!Array.isArray(parsed?.nodes) || !Array.isArray(parsed?.edges)) {
+          window.alert("That file does not look like a Pulse Speed topology export.");
+          return;
+        }
+        setNodes(parsed.nodes as Node[]);
+        setEdges(
+          (parsed.edges as Edge[]).map((e) => ({
+            ...e,
+            ...linkLabelProps((e.data ?? {}) as Partial<LinkData>),
+          })),
+        );
+      } catch {
+        window.alert("Could not read that JSON file.");
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const editing = nodes.find((n) => n.id === editingId) ?? null;
   const filtered = KINDS.filter((k) =>
     (k.label + k.hint).toLowerCase().includes(search.trim().toLowerCase()),
@@ -543,6 +576,8 @@ function Builder() {
         onToggleSim={() => setSimulation((s) => !s)}
         onClear={clearCanvas}
         onPng={downloadPng}
+        onExport={exportJson}
+        onImport={importJson}
         onZone={addZone}
         drawMode={drawMode}
         onDrawZone={() => setDrawMode((d) => !d)}
@@ -747,10 +782,13 @@ function ActionBar(props: {
   onToggleSim: () => void;
   onClear: () => void;
   onPng: () => void;
+  onExport: () => void;
+  onImport: (file: File) => void;
   onZone: () => void;
   drawMode: boolean;
   onDrawZone: () => void;
 }) {
+  const fileRef = useRef<HTMLInputElement>(null);
   const btn: React.CSSProperties = {
     padding: "8px 12px",
     borderRadius: 10,
@@ -793,6 +831,23 @@ function ActionBar(props: {
       <button type="button" style={btn} onClick={props.onPng}>
         🖼️ Download PNG
       </button>
+      <button type="button" style={btn} onClick={props.onExport}>
+        ⬇️ Export JSON
+      </button>
+      <button type="button" style={btn} onClick={() => fileRef.current?.click()}>
+        ⬆️ Import JSON
+      </button>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="application/json,.json"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) props.onImport(f);
+          e.target.value = "";
+        }}
+      />
       <div style={{ flex: 1 }} />
       <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: TEXT_SEC }}>
         Simulation Mode
