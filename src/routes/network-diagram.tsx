@@ -686,6 +686,22 @@ function Builder() {
             <MiniMap pannable zoomable maskColor="rgba(10,14,26,0.7)" style={{ background: SURFACE }} />
           </ReactFlow>
 
+          {draft && (
+            <div
+              style={{
+                position: "absolute",
+                left: draft.x,
+                top: draft.y,
+                width: draft.w,
+                height: draft.h,
+                border: `1.5px dashed ${TEAL}`,
+                background: `${TEAL}14`,
+                borderRadius: 12,
+                pointerEvents: "none",
+              }}
+            />
+          )}
+
           {linkMenu && (
             <LinkPopup
               x={linkMenu.x}
