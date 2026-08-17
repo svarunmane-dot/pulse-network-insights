@@ -436,6 +436,60 @@ function Builder() {
     });
   };
 
+  // ---- draw a zone by dragging on the canvas
+  const createZoneFromRect = (a: { x: number; y: number }, b: { x: number; y: number }) => {
+    const colors = [TEAL, "#9B8FE8", AMBER, RED, "#38BDF8"];
+    const p1 = screenToFlowPosition(a);
+    const p2 = screenToFlowPosition(b);
+    const width = Math.max(120, Math.abs(p2.x - p1.x));
+    const height = Math.max(90, Math.abs(p2.y - p1.y));
+    setNodes((nds) => {
+      const count = nds.filter((n) => n.type === "zone").length;
+      return [
+        {
+          id: nextId("z"),
+          type: "zone",
+          position: { x: Math.min(p1.x, p2.x), y: Math.min(p1.y, p2.y) },
+          style: { width, height },
+          data: { label: `VLAN ${10 + count * 10}`, color: colors[count % colors.length] },
+          zIndex: -1,
+        } as Node,
+        ...nds,
+      ];
+    });
+  };
+
+  const onCanvasMouseDown = (event: React.MouseEvent) => {
+    if (!drawMode || event.button !== 0) return;
+    const rect = wrapper.current?.getBoundingClientRect();
+    if (!rect) return;
+    event.preventDefault();
+    drawStart.current = { x: event.clientX, y: event.clientY };
+    setDraft({ x: event.clientX - rect.left, y: event.clientY - rect.top, w: 0, h: 0 });
+  };
+
+  const onCanvasMouseMove = (event: React.MouseEvent) => {
+    if (!drawMode || !drawStart.current) return;
+    const rect = wrapper.current?.getBoundingClientRect();
+    if (!rect) return;
+    const s = drawStart.current;
+    setDraft({
+      x: Math.min(s.x, event.clientX) - rect.left,
+      y: Math.min(s.y, event.clientY) - rect.top,
+      w: Math.abs(event.clientX - s.x),
+      h: Math.abs(event.clientY - s.y),
+    });
+  };
+
+  const onCanvasMouseUp = (event: React.MouseEvent) => {
+    if (!drawMode || !drawStart.current) return;
+    const s = drawStart.current;
+    drawStart.current = null;
+    setDraft(null);
+    setDrawMode(false);
+    createZoneFromRect(s, { x: event.clientX, y: event.clientY });
+  };
+
   const setLinkState = (edgeId: string, state: LinkState) => {
     setEdges((eds) =>
       eds.map((e) => (e.id === edgeId ? { ...e, data: { ...e.data, state }, ...edgeStyleFor(state, simulation) } : e)),
