@@ -782,10 +782,13 @@ function ActionBar(props: {
   onToggleSim: () => void;
   onClear: () => void;
   onPng: () => void;
+  onExport: () => void;
+  onImport: (file: File) => void;
   onZone: () => void;
   drawMode: boolean;
   onDrawZone: () => void;
 }) {
+  const fileRef = React.useRef<HTMLInputElement>(null);
   const btn: React.CSSProperties = {
     padding: "8px 12px",
     borderRadius: 10,
@@ -828,6 +831,23 @@ function ActionBar(props: {
       <button type="button" style={btn} onClick={props.onPng}>
         🖼️ Download PNG
       </button>
+      <button type="button" style={btn} onClick={props.onExport}>
+        ⬇️ Export JSON
+      </button>
+      <button type="button" style={btn} onClick={() => fileRef.current?.click()}>
+        ⬆️ Import JSON
+      </button>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="application/json,.json"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) props.onImport(f);
+          e.target.value = "";
+        }}
+      />
       <div style={{ flex: 1 }} />
       <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: TEXT_SEC }}>
         Simulation Mode
