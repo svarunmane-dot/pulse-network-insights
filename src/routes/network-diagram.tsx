@@ -731,6 +731,8 @@ function ActionBar(props: {
   onClear: () => void;
   onPng: () => void;
   onZone: () => void;
+  drawMode: boolean;
+  onDrawZone: () => void;
 }) {
   const btn: React.CSSProperties = {
     padding: "8px 12px",
@@ -756,6 +758,17 @@ function ActionBar(props: {
     >
       <button type="button" style={btn} onClick={props.onZone}>
         ➕ Subnet Zone
+      </button>
+      <button
+        type="button"
+        style={{
+          ...btn,
+          borderColor: props.drawMode ? TEAL : BORDER,
+          color: props.drawMode ? TEAL : TEXT_SEC,
+        }}
+        onClick={props.onDrawZone}
+      >
+        ✏️ {props.drawMode ? "Drawing… drag on canvas" : "Draw Zone"}
       </button>
       <button type="button" style={btn} onClick={props.onClear}>
         🗑️ Clear Canvas
