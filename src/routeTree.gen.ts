@@ -64,6 +64,7 @@ import { Route as AcademyPublicVsPrivateIpRouteImport } from './routes/academy.p
 import { Route as AcademySubnetMasksRouteImport } from './routes/academy.subnet-masks'
 import { Route as AcademySubnettingRouteImport } from './routes/academy.subnetting'
 import { Route as AcademySubnettingMadeEasyRouteImport } from './routes/academy.subnetting-made-easy'
+import { Route as AcademyVlansRouteImport } from './routes/academy.vlans'
 import { Route as AcademyWhatIsAComputerNetworkRouteImport } from './routes/academy.what-is-a-computer-network'
 import { Route as AcademyWhatIsADefaultGatewayRouteImport } from './routes/academy.what-is-a-default-gateway'
 import { Route as AcademyWhatIsDhcpRouteImport } from './routes/academy.what-is-dhcp'
@@ -350,6 +351,11 @@ const AcademySubnettingMadeEasyRoute =
     path: '/subnetting-made-easy',
     getParentRoute: () => AcademyRoute,
   } as any)
+const AcademyVlansRoute = AcademyVlansRouteImport.update({
+  id: '/vlans',
+  path: '/vlans',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyWhatIsAComputerNetworkRoute =
   AcademyWhatIsAComputerNetworkRouteImport.update({
     id: '/what-is-a-computer-network',
@@ -439,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
+  '/academy/vlans': typeof AcademyVlansRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
@@ -501,6 +508,7 @@ export interface FileRoutesByTo {
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
+  '/academy/vlans': typeof AcademyVlansRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
@@ -565,6 +573,7 @@ export interface FileRoutesById {
   '/academy/subnet-masks': typeof AcademySubnetMasksRoute
   '/academy/subnetting': typeof AcademySubnettingRoute
   '/academy/subnetting-made-easy': typeof AcademySubnettingMadeEasyRoute
+  '/academy/vlans': typeof AcademyVlansRoute
   '/academy/what-is-a-computer-network': typeof AcademyWhatIsAComputerNetworkRoute
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
@@ -630,6 +639,7 @@ export interface FileRouteTypes {
     | '/academy/subnet-masks'
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
+    | '/academy/vlans'
     | '/academy/what-is-a-computer-network'
     | '/academy/what-is-a-default-gateway'
     | '/academy/what-is-dhcp'
@@ -692,6 +702,7 @@ export interface FileRouteTypes {
     | '/academy/subnet-masks'
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
+    | '/academy/vlans'
     | '/academy/what-is-a-computer-network'
     | '/academy/what-is-a-default-gateway'
     | '/academy/what-is-dhcp'
@@ -755,6 +766,7 @@ export interface FileRouteTypes {
     | '/academy/subnet-masks'
     | '/academy/subnetting'
     | '/academy/subnetting-made-easy'
+    | '/academy/vlans'
     | '/academy/what-is-a-computer-network'
     | '/academy/what-is-a-default-gateway'
     | '/academy/what-is-dhcp'
@@ -1184,6 +1196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademySubnettingMadeEasyRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/vlans': {
+      id: '/academy/vlans'
+      path: '/vlans'
+      fullPath: '/academy/vlans'
+      preLoaderRoute: typeof AcademyVlansRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/what-is-a-computer-network': {
       id: '/academy/what-is-a-computer-network'
       path: '/what-is-a-computer-network'
@@ -1256,6 +1275,7 @@ interface AcademyRouteChildren {
   AcademySubnetMasksRoute: typeof AcademySubnetMasksRoute
   AcademySubnettingRoute: typeof AcademySubnettingRoute
   AcademySubnettingMadeEasyRoute: typeof AcademySubnettingMadeEasyRoute
+  AcademyVlansRoute: typeof AcademyVlansRoute
   AcademyWhatIsAComputerNetworkRoute: typeof AcademyWhatIsAComputerNetworkRoute
   AcademyWhatIsADefaultGatewayRoute: typeof AcademyWhatIsADefaultGatewayRoute
   AcademyWhatIsDhcpRoute: typeof AcademyWhatIsDhcpRoute
@@ -1290,6 +1310,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademySubnetMasksRoute: AcademySubnetMasksRoute,
   AcademySubnettingRoute: AcademySubnettingRoute,
   AcademySubnettingMadeEasyRoute: AcademySubnettingMadeEasyRoute,
+  AcademyVlansRoute: AcademyVlansRoute,
   AcademyWhatIsAComputerNetworkRoute: AcademyWhatIsAComputerNetworkRoute,
   AcademyWhatIsADefaultGatewayRoute: AcademyWhatIsADefaultGatewayRoute,
   AcademyWhatIsDhcpRoute: AcademyWhatIsDhcpRoute,
