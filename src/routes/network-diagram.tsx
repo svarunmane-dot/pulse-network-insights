@@ -1233,7 +1233,7 @@ function Explainer() {
     <section style={{ marginTop: 34, display: "grid", gap: 16 }}>
       <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>How to use the Network Diagram Builder</h2>
       <ol style={{ color: TEXT_SEC, fontSize: 14, lineHeight: 1.8, paddingLeft: 20, margin: 0 }}>
-        <li>Drag a Router, Switch, Firewall, Server, Database or Cloud node from the palette onto the grid.</li>
+        <li>Drag a Router, Cisco, Switch, Firewall, Fortigate, Access Point, Server, VM, Database, Azure, AWS or Cloud node from the palette onto the grid.</li>
         <li>Hover a node and drag from one of its four anchor points to another node to draw a link.</li>
         <li>Double-click a node to set its device name, management IP, subnet mask and notes.</li>
         <li>Click any link to mark it Active, Congested or Down; enable Simulation Mode to animate traffic.</li>
