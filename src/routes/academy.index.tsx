@@ -139,6 +139,13 @@ const LESSONS: Lesson[] = [
     desc: "How switches learn MAC addresses, forward known unicast, flood unknown unicast and broadcast — with an interactive switch MAC learning simulator.",
     status: "live",
   },
+  {
+    n: 16,
+    slug: "/academy/vlans",
+    title: "VLANs Explained – How to Create Multiple Networks on One Switch",
+    desc: "What a VLAN is, 802.1Q tagging, access vs trunk ports, inter-VLAN routing — with an interactive 8-port VLAN and inter-VLAN routing simulator.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
