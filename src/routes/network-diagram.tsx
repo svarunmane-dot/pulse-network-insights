@@ -60,7 +60,19 @@ export const Route = createFileRoute("/network-diagram")({
 });
 
 // ---------------------------------------------------------------- device kinds
-type Kind = "router" | "switch" | "firewall" | "accesspoint" | "server" | "database" | "cloud";
+type Kind =
+  | "router"
+  | "switch"
+  | "firewall"
+  | "accesspoint"
+  | "server"
+  | "database"
+  | "cloud"
+  | "cisco"
+  | "fortigate"
+  | "vm"
+  | "azure"
+  | "aws";
 
 const ApIcon = ({ size = 16, color = "#38BDF8" }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -71,10 +83,52 @@ const ApIcon = ({ size = 16, color = "#38BDF8" }: { size?: number; color?: strin
   </svg>
 );
 
+const CiscoIcon = ({ size = 16, color = "#049FD9" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="3" y="9" width="18" height="7" rx="2" stroke={color} strokeWidth="1.6" />
+    <path d="M6 7.5V5.5M10 7.5V4M14 7.5V4M18 7.5V5.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M6.5 12.5h4l1.2-1.4 1.6 2.8 1.2-1.4h3" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const FortigateIcon = ({ size = 16, color = "#EE3124" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="3" y="8" width="18" height="9" rx="1.8" stroke={color} strokeWidth="1.6" />
+    <path d="M3 11h18M3 14h18M9 8v3M15 8v3M6 11v3M12 11v3M18 11v3M9 14v3M15 14v3" stroke={color} strokeWidth="1.1" />
+    <path d="M7 8V6.4L12 4l5 2.4V8" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const VmIcon = ({ size = 16, color = "#60A5FA" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="3" y="4.5" width="18" height="13" rx="2" stroke={color} strokeWidth="1.6" />
+    <rect x="6" y="7.5" width="8" height="6" rx="1" stroke={color} strokeWidth="1.3" />
+    <path d="M16.5 8.2v4.6M18.8 9v3" stroke={color} strokeWidth="1.3" strokeLinecap="round" />
+    <path d="M9 20.5h6M12 17.5v3" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
+  </svg>
+);
+
+const AzureIcon = ({ size = 16, color = "#0078D4" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path d="M13.2 4 6.5 18h4.4l1.3-2.2 4.6 2.2h3.7L13.2 4z" fill={color} opacity="0.9" />
+    <path d="M13.2 4 6.5 18h4.4l1.3-2.2 4.6 2.2h3.7L13.2 4z" stroke={color} strokeWidth="0.8" strokeLinejoin="round" />
+  </svg>
+);
+
+const AwsIcon = ({ size = 16, color = "#FF9900" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path d="M12 3.5 4.5 7.8v8.4L12 20.5l7.5-4.3V7.8L12 3.5z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M12 3.5v8.3m0 0L4.5 7.8m7.5 4L19.5 7.8M12 11.8v8.7" stroke={color} strokeWidth="1.1" />
+    <path d="M6 15.6c1.6 1.5 3.8 2.3 6 2.3s4.4-.8 6-2.3" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
+  </svg>
+);
+
 const KINDS: { kind: Kind; label: string; icon: React.ReactNode; color: string; hint: string }[] = [
   { kind: "router", label: "Router", icon: "🛰️", color: TEAL, hint: "L3 gateway / WAN edge" },
+  { kind: "cisco", label: "Cisco", icon: <CiscoIcon />, color: "#049FD9", hint: "Cisco router / switch" },
   { kind: "switch", label: "Switch", icon: "🔀", color: "#9B8FE8", hint: "L2 access / distribution" },
   { kind: "firewall", label: "Firewall", icon: "🛡️", color: RED, hint: "Perimeter / DMZ policy" },
+  { kind: "fortigate", label: "Fortigate", icon: <FortigateIcon />, color: "#EE3124", hint: "Fortinet NGFW appliance" },
   {
     kind: "accesspoint",
     label: "Access Point",
@@ -83,7 +137,10 @@ const KINDS: { kind: Kind; label: string; icon: React.ReactNode; color: string; 
     hint: "Wi-Fi AP / wireless edge",
   },
   { kind: "server", label: "Server", icon: "🖥️", color: "#38BDF8", hint: "Application / host" },
+  { kind: "vm", label: "VM", icon: <VmIcon />, color: "#60A5FA", hint: "Virtual machine / hypervisor guest" },
   { kind: "database", label: "Database", icon: "🗄️", color: AMBER, hint: "SQL / NoSQL store" },
+  { kind: "azure", label: "Azure", icon: <AzureIcon />, color: "#0078D4", hint: "Microsoft Azure vNet / resource" },
+  { kind: "aws", label: "AWS", icon: <AwsIcon />, color: "#FF9900", hint: "Amazon VPC / EC2 / S3" },
   { kind: "cloud", label: "Cloud", icon: "☁️", color: "#c8d0e0", hint: "Internet / SaaS / VPC" },
 ];
 
