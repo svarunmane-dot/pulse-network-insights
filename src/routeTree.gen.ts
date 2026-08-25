@@ -49,6 +49,7 @@ import { Route as AcademyLesson12RouteImport } from './routes/academy.lesson-12'
 import { Route as AcademyLesson13RouteImport } from './routes/academy.lesson-13'
 import { Route as AcademyLesson14RouteImport } from './routes/academy.lesson-14'
 import { Route as AcademyLesson15RouteImport } from './routes/academy.lesson-15'
+import { Route as AcademyLesson16RouteImport } from './routes/academy.lesson-16'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
@@ -273,6 +274,11 @@ const AcademyLesson15Route = AcademyLesson15RouteImport.update({
   path: '/lesson-15',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyLesson16Route = AcademyLesson16RouteImport.update({
+  id: '/lesson-16',
+  path: '/lesson-16',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyLesson2Route = AcademyLesson2RouteImport.update({
   id: '/lesson-2',
   path: '/lesson-2',
@@ -430,6 +436,7 @@ export interface FileRoutesByFullPath {
   '/academy/lesson-13': typeof AcademyLesson13Route
   '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-15': typeof AcademyLesson15Route
+  '/academy/lesson-16': typeof AcademyLesson16Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -493,6 +500,7 @@ export interface FileRoutesByTo {
   '/academy/lesson-13': typeof AcademyLesson13Route
   '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-15': typeof AcademyLesson15Route
+  '/academy/lesson-16': typeof AcademyLesson16Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -558,6 +566,7 @@ export interface FileRoutesById {
   '/academy/lesson-13': typeof AcademyLesson13Route
   '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-15': typeof AcademyLesson15Route
+  '/academy/lesson-16': typeof AcademyLesson16Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -624,6 +633,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-13'
     | '/academy/lesson-14'
     | '/academy/lesson-15'
+    | '/academy/lesson-16'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -687,6 +697,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-13'
     | '/academy/lesson-14'
     | '/academy/lesson-15'
+    | '/academy/lesson-16'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -751,6 +762,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-13'
     | '/academy/lesson-14'
     | '/academy/lesson-15'
+    | '/academy/lesson-16'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -1091,6 +1103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyLesson15RouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/lesson-16': {
+      id: '/academy/lesson-16'
+      path: '/lesson-16'
+      fullPath: '/academy/lesson-16'
+      preLoaderRoute: typeof AcademyLesson16RouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/lesson-2': {
       id: '/academy/lesson-2'
       path: '/lesson-2'
@@ -1260,6 +1279,7 @@ interface AcademyRouteChildren {
   AcademyLesson13Route: typeof AcademyLesson13Route
   AcademyLesson14Route: typeof AcademyLesson14Route
   AcademyLesson15Route: typeof AcademyLesson15Route
+  AcademyLesson16Route: typeof AcademyLesson16Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
   AcademyLesson4Route: typeof AcademyLesson4Route
@@ -1295,6 +1315,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLesson13Route: AcademyLesson13Route,
   AcademyLesson14Route: AcademyLesson14Route,
   AcademyLesson15Route: AcademyLesson15Route,
+  AcademyLesson16Route: AcademyLesson16Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
   AcademyLesson4Route: AcademyLesson4Route,
