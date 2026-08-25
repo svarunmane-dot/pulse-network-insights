@@ -1072,6 +1072,12 @@ Is the device getting an IP address?`}</Pre>
         >
           Back to Academy →
         </Link>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>NEXT LESSON</div>
+          <Link to="/academy/vlans" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 16: VLANs Explained →
+          </Link>
+        </div>
       </div>
     </article>
   );

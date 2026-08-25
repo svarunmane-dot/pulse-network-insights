@@ -44,6 +44,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/academy/what-is-dhcp", changefreq: "monthly", priority: "0.7" },
           { path: "/academy/mac-addresses", changefreq: "monthly", priority: "0.7" },
           { path: "/academy/network-switches", changefreq: "monthly", priority: "0.7" },
+          { path: "/academy/vlans", changefreq: "monthly", priority: "0.7" },
           { path: "/about", changefreq: "yearly", priority: "0.6" },
           { path: "/contact", changefreq: "yearly", priority: "0.5" },
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },
