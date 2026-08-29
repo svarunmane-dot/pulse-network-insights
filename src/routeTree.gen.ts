@@ -39,6 +39,7 @@ import { Route as WhoisipRouteImport } from './routes/whoisip'
 import { Route as WhoseIpRouteImport } from './routes/whose-ip'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
 import { Route as AcademyCidrNotationRouteImport } from './routes/academy.cidr-notation'
+import { Route as AcademyInterVlanRoutingRouteImport } from './routes/academy.inter-vlan-routing'
 import { Route as AcademyIpAddressingRouteImport } from './routes/academy.ip-addressing'
 import { Route as AcademyIpv4AddressClassesRouteImport } from './routes/academy.ipv4-address-classes'
 import { Route as AcademyLanWanManPanRouteImport } from './routes/academy.lan-wan-man-pan'
@@ -50,6 +51,7 @@ import { Route as AcademyLesson13RouteImport } from './routes/academy.lesson-13'
 import { Route as AcademyLesson14RouteImport } from './routes/academy.lesson-14'
 import { Route as AcademyLesson15RouteImport } from './routes/academy.lesson-15'
 import { Route as AcademyLesson16RouteImport } from './routes/academy.lesson-16'
+import { Route as AcademyLesson17RouteImport } from './routes/academy.lesson-17'
 import { Route as AcademyLesson2RouteImport } from './routes/academy.lesson-2'
 import { Route as AcademyLesson3RouteImport } from './routes/academy.lesson-3'
 import { Route as AcademyLesson4RouteImport } from './routes/academy.lesson-4'
@@ -223,6 +225,11 @@ const AcademyCidrNotationRoute = AcademyCidrNotationRouteImport.update({
   path: '/cidr-notation',
   getParentRoute: () => AcademyRoute,
 } as any)
+const AcademyInterVlanRoutingRoute = AcademyInterVlanRoutingRouteImport.update({
+  id: '/inter-vlan-routing',
+  path: '/inter-vlan-routing',
+  getParentRoute: () => AcademyRoute,
+} as any)
 const AcademyIpAddressingRoute = AcademyIpAddressingRouteImport.update({
   id: '/ip-addressing',
   path: '/ip-addressing',
@@ -277,6 +284,11 @@ const AcademyLesson15Route = AcademyLesson15RouteImport.update({
 const AcademyLesson16Route = AcademyLesson16RouteImport.update({
   id: '/lesson-16',
   path: '/lesson-16',
+  getParentRoute: () => AcademyRoute,
+} as any)
+const AcademyLesson17Route = AcademyLesson17RouteImport.update({
+  id: '/lesson-17',
+  path: '/lesson-17',
   getParentRoute: () => AcademyRoute,
 } as any)
 const AcademyLesson2Route = AcademyLesson2RouteImport.update({
@@ -426,6 +438,7 @@ export interface FileRoutesByFullPath {
   '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
+  '/academy/inter-vlan-routing': typeof AcademyInterVlanRoutingRoute
   '/academy/ip-addressing': typeof AcademyIpAddressingRoute
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
@@ -437,6 +450,7 @@ export interface FileRoutesByFullPath {
   '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-15': typeof AcademyLesson15Route
   '/academy/lesson-16': typeof AcademyLesson16Route
+  '/academy/lesson-17': typeof AcademyLesson17Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -490,6 +504,7 @@ export interface FileRoutesByTo {
   '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
+  '/academy/inter-vlan-routing': typeof AcademyInterVlanRoutingRoute
   '/academy/ip-addressing': typeof AcademyIpAddressingRoute
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
@@ -501,6 +516,7 @@ export interface FileRoutesByTo {
   '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-15': typeof AcademyLesson15Route
   '/academy/lesson-16': typeof AcademyLesson16Route
+  '/academy/lesson-17': typeof AcademyLesson17Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -556,6 +572,7 @@ export interface FileRoutesById {
   '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
+  '/academy/inter-vlan-routing': typeof AcademyInterVlanRoutingRoute
   '/academy/ip-addressing': typeof AcademyIpAddressingRoute
   '/academy/ipv4-address-classes': typeof AcademyIpv4AddressClassesRoute
   '/academy/lan-wan-man-pan': typeof AcademyLanWanManPanRoute
@@ -567,6 +584,7 @@ export interface FileRoutesById {
   '/academy/lesson-14': typeof AcademyLesson14Route
   '/academy/lesson-15': typeof AcademyLesson15Route
   '/academy/lesson-16': typeof AcademyLesson16Route
+  '/academy/lesson-17': typeof AcademyLesson17Route
   '/academy/lesson-2': typeof AcademyLesson2Route
   '/academy/lesson-3': typeof AcademyLesson3Route
   '/academy/lesson-4': typeof AcademyLesson4Route
@@ -623,6 +641,7 @@ export interface FileRouteTypes {
     | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
+    | '/academy/inter-vlan-routing'
     | '/academy/ip-addressing'
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
@@ -634,6 +653,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-14'
     | '/academy/lesson-15'
     | '/academy/lesson-16'
+    | '/academy/lesson-17'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -687,6 +707,7 @@ export interface FileRouteTypes {
     | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
+    | '/academy/inter-vlan-routing'
     | '/academy/ip-addressing'
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
@@ -698,6 +719,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-14'
     | '/academy/lesson-15'
     | '/academy/lesson-16'
+    | '/academy/lesson-17'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -752,6 +774,7 @@ export interface FileRouteTypes {
     | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
+    | '/academy/inter-vlan-routing'
     | '/academy/ip-addressing'
     | '/academy/ipv4-address-classes'
     | '/academy/lan-wan-man-pan'
@@ -763,6 +786,7 @@ export interface FileRouteTypes {
     | '/academy/lesson-14'
     | '/academy/lesson-15'
     | '/academy/lesson-16'
+    | '/academy/lesson-17'
     | '/academy/lesson-2'
     | '/academy/lesson-3'
     | '/academy/lesson-4'
@@ -1033,6 +1057,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyCidrNotationRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/academy/inter-vlan-routing': {
+      id: '/academy/inter-vlan-routing'
+      path: '/inter-vlan-routing'
+      fullPath: '/academy/inter-vlan-routing'
+      preLoaderRoute: typeof AcademyInterVlanRoutingRouteImport
+      parentRoute: typeof AcademyRoute
+    }
     '/academy/ip-addressing': {
       id: '/academy/ip-addressing'
       path: '/ip-addressing'
@@ -1108,6 +1139,13 @@ declare module '@tanstack/react-router' {
       path: '/lesson-16'
       fullPath: '/academy/lesson-16'
       preLoaderRoute: typeof AcademyLesson16RouteImport
+      parentRoute: typeof AcademyRoute
+    }
+    '/academy/lesson-17': {
+      id: '/academy/lesson-17'
+      path: '/lesson-17'
+      fullPath: '/academy/lesson-17'
+      preLoaderRoute: typeof AcademyLesson17RouteImport
       parentRoute: typeof AcademyRoute
     }
     '/academy/lesson-2': {
@@ -1269,6 +1307,7 @@ declare module '@tanstack/react-router' {
 
 interface AcademyRouteChildren {
   AcademyCidrNotationRoute: typeof AcademyCidrNotationRoute
+  AcademyInterVlanRoutingRoute: typeof AcademyInterVlanRoutingRoute
   AcademyIpAddressingRoute: typeof AcademyIpAddressingRoute
   AcademyIpv4AddressClassesRoute: typeof AcademyIpv4AddressClassesRoute
   AcademyLanWanManPanRoute: typeof AcademyLanWanManPanRoute
@@ -1280,6 +1319,7 @@ interface AcademyRouteChildren {
   AcademyLesson14Route: typeof AcademyLesson14Route
   AcademyLesson15Route: typeof AcademyLesson15Route
   AcademyLesson16Route: typeof AcademyLesson16Route
+  AcademyLesson17Route: typeof AcademyLesson17Route
   AcademyLesson2Route: typeof AcademyLesson2Route
   AcademyLesson3Route: typeof AcademyLesson3Route
   AcademyLesson4Route: typeof AcademyLesson4Route
@@ -1305,6 +1345,7 @@ interface AcademyRouteChildren {
 
 const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyCidrNotationRoute: AcademyCidrNotationRoute,
+  AcademyInterVlanRoutingRoute: AcademyInterVlanRoutingRoute,
   AcademyIpAddressingRoute: AcademyIpAddressingRoute,
   AcademyIpv4AddressClassesRoute: AcademyIpv4AddressClassesRoute,
   AcademyLanWanManPanRoute: AcademyLanWanManPanRoute,
@@ -1316,6 +1357,7 @@ const AcademyRouteChildren: AcademyRouteChildren = {
   AcademyLesson14Route: AcademyLesson14Route,
   AcademyLesson15Route: AcademyLesson15Route,
   AcademyLesson16Route: AcademyLesson16Route,
+  AcademyLesson17Route: AcademyLesson17Route,
   AcademyLesson2Route: AcademyLesson2Route,
   AcademyLesson3Route: AcademyLesson3Route,
   AcademyLesson4Route: AcademyLesson4Route,
