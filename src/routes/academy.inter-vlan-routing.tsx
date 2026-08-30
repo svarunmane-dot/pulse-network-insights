@@ -217,7 +217,7 @@ function InterVlanSimulator() {
       });
       return;
     }
-    const allowed = policy[`${src}->${dst}`];
+    const allowed = policy[`${src}->${dst}` as PolicyKey];
     const journey: SimResult["journey"] = [
       { label: `Source ${s.host} (VLAN ${src})` },
       { label: `Default gateway ${s.gw} (SVI VLAN ${src})` },
