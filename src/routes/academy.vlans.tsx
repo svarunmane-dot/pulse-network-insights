@@ -892,6 +892,12 @@ Port 24      → Trunk to another switch`}</Pre>
         >
           Back to Academy →
         </Link>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "#6b7794", fontSize: 12, fontWeight: 700, letterSpacing: 0.4 }}>NEXT LESSON</div>
+          <Link to="/academy/inter-vlan-routing" style={{ color: "#fff", fontWeight: 700, textDecoration: "none" }}>
+            Lesson 17: Inter-VLAN Routing Explained →
+          </Link>
+        </div>
       </div>
     </article>
   );
