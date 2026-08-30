@@ -34,8 +34,8 @@ export const Route = createFileRoute("/academy/inter-vlan-routing")({
   component: Lesson17,
 });
 
-const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2 style={{ color: "#fff", fontSize: 24, marginTop: 40, letterSpacing: "-0.3px" }}>{children}</h2>
+const H2 = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+  <h2 style={{ color: "#fff", fontSize: 24, marginTop: 40, letterSpacing: "-0.3px", ...style }}>{children}</h2>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
   <p style={{ color: "#c8d0e0", fontSize: 16, lineHeight: 1.75, margin: "10px 0" }}>{children}</p>
@@ -166,7 +166,7 @@ const VLANS: { id: VlanId; name: string; subnet: string; gw: string; host: strin
 
 const vlanMeta = (id: VlanId) => VLANS.find((v) => v.id === id)!;
 
-type PolicyKey = `${VlanId}->${VlanId}`;
+type PolicyKey = "10->20" | "10->30" | "20->10" | "20->30" | "30->10" | "30->20";
 const POLICY_KEYS: PolicyKey[] = ["10->20", "10->30", "20->10", "20->30", "30->10", "30->20"];
 const DEFAULT_POLICY: Record<PolicyKey, boolean> = {
   "10->20": true,
