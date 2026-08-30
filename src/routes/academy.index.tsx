@@ -146,6 +146,13 @@ const LESSONS: Lesson[] = [
     desc: "What a VLAN is, 802.1Q tagging, access vs trunk ports, inter-VLAN routing — with an interactive 8-port VLAN and inter-VLAN routing simulator.",
     status: "live",
   },
+  {
+    n: 17,
+    slug: "/academy/inter-vlan-routing",
+    title: "Inter-VLAN Routing Explained – How Different VLANs Communicate",
+    desc: "Router-on-a-stick, Layer 3 switch SVIs, firewall-based routing, default gateways and security policies — with an interactive Inter-VLAN routing simulator.",
+    status: "live",
+  },
 ];
 
 function AcademyIndex() {
