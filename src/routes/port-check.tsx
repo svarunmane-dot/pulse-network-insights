@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import ShareResult from "@/components/ShareResult";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useCallback } from "react";
 import { portCheck } from "@/lib/nettools.functions";
@@ -201,6 +202,17 @@ function PortCheckPage() {
           {!result.ok && result.error && (
             <div style={{ color: TEXT_MUTED, fontSize: 13 }}>{result.error}</div>
           )}
+          <ShareResult
+            title="TCP Port Check"
+            subtitle={`${result.target}:${result.port}`}
+            fileName={`pulse-speed-port-${result.target}-${result.port}`}
+            stats={[
+              { label: "Status", value: result.ok ? "OPEN" : "CLOSED / FILTERED" },
+              { label: "Port", value: String(result.port) },
+              { label: "Connect time", value: result.ok && result.ms != null ? `${result.ms} ms` : "—" },
+            ]}
+            note={!result.ok && result.error ? result.error : undefined}
+          />
         </div>
       )}
 

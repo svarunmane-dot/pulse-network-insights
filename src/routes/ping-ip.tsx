@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import ShareResult from "@/components/ShareResult";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useCallback } from "react";
 import { pingHost } from "@/lib/nettools.functions";
@@ -173,6 +174,19 @@ function PingIpPage() {
               </div>
             ))}
           </div>
+          <ShareResult
+            title="TCP Ping Test"
+            subtitle={`${result.target}:${result.port}`}
+            fileName={`pulse-speed-ping-${result.target}`}
+            stats={[
+              { label: "Sent", value: String(result.sent) },
+              { label: "Received", value: String(result.received) },
+              { label: "Loss", value: `${result.loss}%` },
+              { label: "Min", value: result.min != null ? `${result.min} ms` : "—" },
+              { label: "Avg", value: result.avg != null ? `${result.avg} ms` : "—" },
+              { label: "Max", value: result.max != null ? `${result.max} ms` : "—" },
+            ]}
+          />
         </div>
       )}
 

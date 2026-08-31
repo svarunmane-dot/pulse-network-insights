@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import ShareResult from "@/components/ShareResult";
 import { useState, useCallback } from "react";
 import { toolHead } from "@/lib/seo";
 
@@ -391,6 +392,23 @@ function SubnetPage() {
               </div>
             )}
           </div>
+          <ShareResult
+            title="IP Subnet Calculation"
+            subtitle={`${result.ip}/${result.cidr}`}
+            fileName={`pulse-speed-subnet-${result.network}-${result.cidr}`}
+            stats={[
+              { label: "Network", value: result.network },
+              { label: "Broadcast", value: result.broadcast },
+              { label: "Usable hosts", value: result.usableHosts.toLocaleString() },
+            ]}
+            rows={[
+              { label: "Subnet mask", value: result.mask },
+              { label: "Wildcard mask", value: result.wildcard },
+              { label: "Usable host range", value: `${result.firstUsable} – ${result.lastUsable}` },
+              { label: "Total hosts", value: result.totalHosts.toLocaleString() },
+              { label: "IP class", value: result.ipClass },
+            ]}
+          />
         </div>
       )}
 
