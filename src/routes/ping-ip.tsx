@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import ShareResult from "@/components/ShareResult";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useCallback } from "react";
 import { pingHost } from "@/lib/nettools.functions";

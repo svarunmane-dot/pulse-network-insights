@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import ShareResult from "@/components/ShareResult";
 import { useCallback, useState } from "react";
 import { toolHead } from "@/lib/seo";
 import { hashLookup } from "@/lib/hashlookup.functions";
