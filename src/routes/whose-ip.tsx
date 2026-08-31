@@ -171,6 +171,23 @@ function WhoisIpPage() {
               }
             />
           </div>
+          <ShareResult
+            title="IP Geolocation Lookup"
+            subtitle={result.query}
+            fileName={`pulse-speed-whois-${result.query}`}
+            stats={[
+              { label: "Country", value: result.country || "—" },
+              { label: "City", value: result.city || "—" },
+              { label: "ISP", value: result.isp || "—" },
+            ]}
+            rows={[
+              { label: "Region", value: result.regionName || "—" },
+              { label: "Timezone", value: result.timezone || "—" },
+              { label: "Organisation", value: result.org || "—" },
+              { label: "ASN", value: result.as || "—" },
+              { label: "Reverse DNS", value: result.reverse || "—" },
+            ]}
+          />
         </div>
       )}
 
