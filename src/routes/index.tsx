@@ -844,6 +844,22 @@ function Index() {
           progressBar={progressBar}
         />
       )}
+      {status === "done" && results && (
+        <div style={{ padding: viewMode === "web" ? "0 32px" : "0 24px" }}>
+          <ShareResult
+            title="Internet Speed Test"
+            subtitle="pulse-speed.com speed test result"
+            fileName="pulse-speed-speedtest"
+            stats={[
+              { label: "Download", value: `${results.download.toFixed(1)} Mbps` },
+              { label: "Upload", value: `${results.upload.toFixed(1)} Mbps` },
+              { label: "Ping", value: `${results.ping} ms` },
+              { label: "Jitter", value: `${results.jitter} ms` },
+            ]}
+            note={aiText || undefined}
+          />
+        </div>
+      )}
       <SeoContent />
     </div>
   );
