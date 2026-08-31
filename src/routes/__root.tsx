@@ -258,54 +258,87 @@ function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <ThemeToggle />
+        <BookmarkButton />
       </div>
     </header>
   );
 }
 
-function ThemeToggle() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+function BookmarkButton() {
+  const [saved, setSaved] = useState(false);
+  const [hint, setHint] = useState(false);
+
   useEffect(() => {
-    const stored = (typeof window !== "undefined" &&
-      (window.localStorage.getItem("pulse-speed:theme") as
-        | "dark"
-        | "light"
-        | null)) || "dark";
-    setTheme(stored);
-    document.documentElement.setAttribute("data-theme", stored);
-  }, []);
-  const toggle = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
     try {
-      window.localStorage.setItem("pulse-speed:theme", next);
+      const key = "pulse-speed:bookmarks";
+      const list: string[] = JSON.parse(window.localStorage.getItem(key) || "[]");
+      setSaved(list.includes(window.location.pathname));
     } catch {}
+  }, []);
+
+  const onClick = () => {
+    // Browsers block programmatic bookmarking; guide the user instead and
+    // remember their favourite pages locally.
+    try {
+      const key = "pulse-speed:bookmarks";
+      const list: string[] = JSON.parse(window.localStorage.getItem(key) || "[]");
+      const path = window.location.pathname;
+      const next = list.includes(path) ? list.filter((p) => p !== path) : [...list, path];
+      window.localStorage.setItem(key, JSON.stringify(next));
+      setSaved(next.includes(path));
+    } catch {}
+    setHint(true);
+    window.setTimeout(() => setHint(false), 4000);
   };
+
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-      title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-      style={{
-        marginLeft: 8,
-        width: 36,
-        height: 36,
-        borderRadius: 10,
-        border: "1px solid #1f2740",
-        background: "#0f1422",
-        color: "#c8d0e0",
-        cursor: "pointer",
-        fontSize: 16,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {theme === "dark" ? "☀️" : "🌙"}
-    </button>
+    <span style={{ position: "relative", display: "inline-flex" }}>
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={saved ? "Remove this page from your bookmarks" : "Bookmark this page"}
+        title={saved ? "Remove bookmark" : "Bookmark this page"}
+        style={{
+          marginLeft: 8,
+          width: 36,
+          height: 36,
+          borderRadius: 10,
+          border: "1px solid #1f2740",
+          background: "#0f1422",
+          color: saved ? "#00D4AA" : "#c8d0e0",
+          cursor: "pointer",
+          fontSize: 16,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {saved ? "★" : "☆"}
+      </button>
+      {hint && (
+        <span
+          role="status"
+          style={{
+            position: "absolute",
+            top: 44,
+            right: 0,
+            whiteSpace: "nowrap",
+            background: "#131829",
+            border: "1px solid #1f2740",
+            borderRadius: 8,
+            padding: "8px 12px",
+            fontSize: 12,
+            color: "#c8d0e0",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+            zIndex: 60,
+          }}
+        >
+          Press <strong style={{ color: "#00D4AA" }}>Ctrl+D</strong> (Windows) or{" "}
+          <strong style={{ color: "#00D4AA" }}>⌘+D</strong> (Mac) to save this page to your
+          browser bookmarks.
+        </span>
+      )}
+    </span>
   );
 }
 
