@@ -339,6 +339,29 @@ function DnsLookupPage() {
         </div>
       )}
 
+      {result && !result.error && result.records.length > 0 && (
+        <ShareResult
+          title="DNS Lookup"
+          subtitle={result.domain || result.ip}
+          stats={result.records.slice(0, 6).map((r) => ({
+            label: r.typeName,
+            value: r.data.replace(/\.$/, ""),
+          }))}
+          rows={result.records.slice(0, 6).map((r) => ({
+            label: `${r.typeName} TTL`,
+            value: `${r.ttl}s`,
+          }))}
+          note={
+            result.records.some((r) => r.typeName === "A" || r.typeName === "AAAA")
+              ? "Forward lookup resolved A/AAAA records successfully."
+              : result.records.some((r) => r.typeName === "PTR")
+                ? "Reverse lookup resolved a PTR hostname for this IP."
+                : undefined
+          }
+          fileName="dns-lookup"
+        />
+      )}
+
       {/* Explanation */}
       <div style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.7 }}>
         <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>How it works</h2>
