@@ -596,7 +596,6 @@ function buildAiText(r: {
    MAIN INDEX COMPONENT
    ============================================================ */
 function Index() {
-  const [viewMode, setViewMode] = useState<ViewMode>("web");
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"" | "ping" | "download" | "upload">("");
@@ -801,52 +800,26 @@ function Index() {
   return (
     <div
       style={{
-        maxWidth: viewMode === "web" ? 1180 : 480,
+        maxWidth: 1180,
         margin: "0 auto",
         paddingBottom: 80,
         minHeight: "100vh",
       }}
     >
-      <div
-        style={{
-          padding: viewMode === "web" ? "20px 32px 0" : "16px 24px 0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          gap: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <ViewSwitcher value={viewMode} onChange={setViewMode} />
-      </div>
-
-      {viewMode === "web" ? (
-        <WebLayout
-          status={status}
-          results={results}
-          dl={displayDl}
-          ul={displayUl}
-          progress={progress}
-          appLatencies={appLatencies}
-          aiText={aiText}
-          ctaButton={ctaButton}
-          progressBar={progressBar}
-        />
-      ) : (
-        <MobileLayout
-          status={status}
-          results={results}
-          dl={displayDl}
-          ul={displayUl}
-          progress={progress}
-          appLatencies={appLatencies}
-          aiText={aiText}
-          ctaButton={ctaButton}
-          progressBar={progressBar}
-        />
-      )}
+      <WebLayout
+        status={status}
+        results={results}
+        dl={displayDl}
+        ul={displayUl}
+        progress={progress}
+        appLatencies={appLatencies}
+        aiText={aiText}
+        ctaButton={ctaButton}
+        progressBar={progressBar}
+      />
       {status === "done" && results && (
-        <div style={{ padding: viewMode === "web" ? "0 32px" : "0 24px" }}>
+        <div style={{ padding: "0 32px" }}>
+
           <ShareResult
             title="Internet Speed Test"
             subtitle="pulse-speed.com speed test result"
@@ -868,58 +841,6 @@ function Index() {
 
 /* ============================================================
    VIEW SWITCHER
-   ============================================================ */
-function ViewSwitcher({
-  value,
-  onChange,
-}: {
-  value: ViewMode;
-  onChange: (v: ViewMode) => void;
-}) {
-  return (
-    <div
-      style={{
-        display: "inline-flex",
-        padding: 4,
-        borderRadius: 24,
-        border: `1px solid ${BORDER}`,
-        background: SURFACE2,
-        gap: 2,
-      }}
-    >
-      {(["web", "mobile"] as ViewMode[]).map((m) => {
-        const active = value === m;
-        return (
-          <button
-            key={m}
-            onClick={() => onChange(m)}
-            className="font-mono-pulse"
-            style={{
-              padding: "6px 16px",
-              borderRadius: 20,
-              border: "none",
-              background: active
-                ? `linear-gradient(135deg, ${TEAL}, #00b894)`
-                : "transparent",
-              color: active ? "#04150f" : TEXT_MUTED,
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: 1.5,
-              textTransform: "uppercase",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            {m === "web" ? "🖥 Web" : "📱 Mobile"}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-/* ============================================================
-   SHARED PANEL TYPES + SUB-COMPONENTS
    ============================================================ */
 type PanelProps = {
   status: Status;
@@ -2152,126 +2073,6 @@ function WebLayout(p: PanelProps) {
         <NetworkInfo />
       </section>
       <ToolsShowcase variant="web" />
-    </>
-  );
-}
-
-function MobileLayout(p: PanelProps) {
-  const {
-    status,
-    results,
-    dl,
-    ul,
-    appLatencies,
-    aiText,
-    ctaButton,
-    progressBar,
-  } = p;
-  return (
-    <>
-      <section style={{ padding: "32px 24px 28px" }}>
-        <div style={{ textAlign: "center" }}>
-          <Hero centered />
-        </div>
-      </section>
-      <section
-        style={{
-          display: "flex",
-          gap: 24,
-          padding: "0 24px",
-          justifyContent: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <Gauge
-          label="Download"
-          value={dl}
-          max={300}
-          unit="Mbps"
-          color={TEAL}
-          gradientId="gauge-dl-m"
-          gradientStops={[TEAL, "#00b894"]}
-          size={200}
-        />
-        <Gauge
-          label="Upload"
-          value={ul}
-          max={100}
-          unit="Mbps"
-          color={PURPLE}
-          gradientId="gauge-ul-m"
-          gradientStops={[PURPLE, "#7a6dd6"]}
-          size={200}
-        />
-      </section>
-      {status === "testing" && (
-        <section style={{ padding: "16px 24px 0" }}>{progressBar}</section>
-      )}
-      <section style={{ textAlign: "center", padding: "24px 24px 0" }}>
-        {ctaButton}
-      </section>
-      {status === "done" && results && (
-        <section
-          className="pulse-fadeUp"
-          style={{
-            padding: "28px 24px 0",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 10,
-          }}
-        >
-          <MetricCard
-            icon="📡"
-            label="Ping"
-            value={results.ping.toString()}
-            unit="ms"
-            color={AMBER}
-          />
-          <MetricCard
-            icon="〰"
-            label="Jitter"
-            value={results.jitter.toString()}
-            unit="ms"
-            color={RED}
-          />
-          <MetricCard
-            icon="↓"
-            label="Download"
-            value={results.download.toFixed(1)}
-            unit="Mbps"
-            color={TEAL}
-          />
-          <MetricCard
-            icon="↑"
-            label="Upload"
-            value={results.upload.toFixed(1)}
-            unit="Mbps"
-            color={PURPLE}
-          />
-        </section>
-      )}
-      <section style={{ padding: "24px 24px 0" }}>
-        <AiPanel aiText={aiText} />
-      </section>
-      {status === "done" && results && (
-        <section className="pulse-fadeUp" style={{ padding: "28px 24px 0" }}>
-          <UseCases results={results} />
-        </section>
-      )}
-      {status !== "idle" && (
-        <section className="pulse-fadeUp" style={{ padding: "28px 24px 0" }}>
-          <AppGrid appLatencies={appLatencies} columns={2} />
-        </section>
-      )}
-      {status === "done" && (
-        <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
-          <RouteTrace />
-        </section>
-      )}
-      <section className="pulse-fadeUp" style={{ padding: "24px 24px 0" }}>
-        <NetworkInfo />
-      </section>
-      <ToolsShowcase variant="mobile" />
     </>
   );
 }
