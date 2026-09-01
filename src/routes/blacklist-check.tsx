@@ -642,6 +642,27 @@ function BlacklistPage() {
         </>
       )}
 
+      {results && queried && !loading && (
+        <ShareResult
+          title="Blacklist Check"
+          subtitle={queried.value}
+          stats={[
+            { label: "Lists Flagged", value: `${listedCount} / ${totalCount}` },
+            { label: "Verdict", value: listedCount > 0 ? "Listed" : "Clean" },
+          ]}
+          rows={results
+            .filter((r) => r.status === "listed")
+            .slice(0, 8)
+            .map((r) => ({ label: r.list.name, value: r.code || "Listed" }))}
+          note={
+            listedCount > 0
+              ? `${listedCount} of ${totalCount} DNSBL feeds flagged this ${queried.kind}. Review the listings before allowing this asset to send mail or connect.`
+              : `${queried.value} is clean across all ${totalCount} DNSBL feeds checked.`
+          }
+          fileName="blacklist-check"
+        />
+      )}
+
       <div style={{ color: TEXT_MUTED, fontSize: 13, lineHeight: 1.7 }}>
         <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 10 }}>How it works</h2>
         <p style={{ marginBottom: 10 }}>
