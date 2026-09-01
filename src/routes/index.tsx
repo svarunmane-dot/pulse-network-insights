@@ -801,52 +801,26 @@ function Index() {
   return (
     <div
       style={{
-        maxWidth: viewMode === "web" ? 1180 : 480,
+        maxWidth: 1180,
         margin: "0 auto",
         paddingBottom: 80,
         minHeight: "100vh",
       }}
     >
-      <div
-        style={{
-          padding: viewMode === "web" ? "20px 32px 0" : "16px 24px 0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          gap: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <ViewSwitcher value={viewMode} onChange={setViewMode} />
-      </div>
-
-      {viewMode === "web" ? (
-        <WebLayout
-          status={status}
-          results={results}
-          dl={displayDl}
-          ul={displayUl}
-          progress={progress}
-          appLatencies={appLatencies}
-          aiText={aiText}
-          ctaButton={ctaButton}
-          progressBar={progressBar}
-        />
-      ) : (
-        <MobileLayout
-          status={status}
-          results={results}
-          dl={displayDl}
-          ul={displayUl}
-          progress={progress}
-          appLatencies={appLatencies}
-          aiText={aiText}
-          ctaButton={ctaButton}
-          progressBar={progressBar}
-        />
-      )}
+      <WebLayout
+        status={status}
+        results={results}
+        dl={displayDl}
+        ul={displayUl}
+        progress={progress}
+        appLatencies={appLatencies}
+        aiText={aiText}
+        ctaButton={ctaButton}
+        progressBar={progressBar}
+      />
       {status === "done" && results && (
-        <div style={{ padding: viewMode === "web" ? "0 32px" : "0 24px" }}>
+        <div style={{ padding: "0 32px" }}>
+
           <ShareResult
             title="Internet Speed Test"
             subtitle="pulse-speed.com speed test result"
