@@ -596,7 +596,6 @@ function buildAiText(r: {
    MAIN INDEX COMPONENT
    ============================================================ */
 function Index() {
-  const [viewMode, setViewMode] = useState<ViewMode>("web");
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<"" | "ping" | "download" | "upload">("");
@@ -842,58 +841,6 @@ function Index() {
 
 /* ============================================================
    VIEW SWITCHER
-   ============================================================ */
-function ViewSwitcher({
-  value,
-  onChange,
-}: {
-  value: ViewMode;
-  onChange: (v: ViewMode) => void;
-}) {
-  return (
-    <div
-      style={{
-        display: "inline-flex",
-        padding: 4,
-        borderRadius: 24,
-        border: `1px solid ${BORDER}`,
-        background: SURFACE2,
-        gap: 2,
-      }}
-    >
-      {(["web", "mobile"] as ViewMode[]).map((m) => {
-        const active = value === m;
-        return (
-          <button
-            key={m}
-            onClick={() => onChange(m)}
-            className="font-mono-pulse"
-            style={{
-              padding: "6px 16px",
-              borderRadius: 20,
-              border: "none",
-              background: active
-                ? `linear-gradient(135deg, ${TEAL}, #00b894)`
-                : "transparent",
-              color: active ? "#04150f" : TEXT_MUTED,
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: 1.5,
-              textTransform: "uppercase",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            {m === "web" ? "🖥 Web" : "📱 Mobile"}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-/* ============================================================
-   SHARED PANEL TYPES + SUB-COMPONENTS
    ============================================================ */
 type PanelProps = {
   status: Status;
