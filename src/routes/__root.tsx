@@ -225,6 +225,7 @@ function SiteHeader() {
         >
           {[
             { to: "/", label: "Speed Test" },
+            { to: "/stability-test", label: "24h Stability" },
             { to: "/ping", label: "Ping a Friend" },
             { to: "/global", label: "Global Latency" },
             { to: "/subnet-calculator", label: "Subnet Calculator" },
@@ -373,6 +374,7 @@ function SiteFooter() {
           links={[
             { to: "/", label: "Speed Test" },
             { to: "/ping", label: "Ping a Friend" },
+            { to: "/stability-test", label: "24h Stability Test" },
             { to: "/subnet-calculator", label: "Subnet Calculator" },
             { to: "/dns-lookup", label: "DNS Lookup" },
             { to: "/ping-ip", label: "Ping IP" },
