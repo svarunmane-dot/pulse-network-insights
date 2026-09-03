@@ -31,6 +31,7 @@ import { Route as PortCheckRouteImport } from './routes/port-check'
 import { Route as PortcheckRouteImport } from './routes/portcheck'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StabilityTestRouteImport } from './routes/stability-test'
 import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SubnetCalculatorRouteImport } from './routes/subnet-calculator'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -183,6 +184,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StabilityTestRoute = StabilityTestRouteImport.update({
+  id: '/stability-test',
+  path: '/stability-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubnetRoute = SubnetRouteImport.update({
@@ -431,6 +437,7 @@ export interface FileRoutesByFullPath {
   '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stability-test': typeof StabilityTestRoute
   '/subnet': typeof SubnetRoute
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
@@ -497,6 +504,7 @@ export interface FileRoutesByTo {
   '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stability-test': typeof StabilityTestRoute
   '/subnet': typeof SubnetRoute
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
@@ -565,6 +573,7 @@ export interface FileRoutesById {
   '/portcheck': typeof PortcheckRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stability-test': typeof StabilityTestRoute
   '/subnet': typeof SubnetRoute
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
@@ -634,6 +643,7 @@ export interface FileRouteTypes {
     | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
+    | '/stability-test'
     | '/subnet'
     | '/subnet-calculator'
     | '/terms'
@@ -700,6 +710,7 @@ export interface FileRouteTypes {
     | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
+    | '/stability-test'
     | '/subnet'
     | '/subnet-calculator'
     | '/terms'
@@ -767,6 +778,7 @@ export interface FileRouteTypes {
     | '/portcheck'
     | '/privacy'
     | '/sitemap.xml'
+    | '/stability-test'
     | '/subnet'
     | '/subnet-calculator'
     | '/terms'
@@ -835,6 +847,7 @@ export interface RootRouteChildren {
   PortcheckRoute: typeof PortcheckRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StabilityTestRoute: typeof StabilityTestRoute
   SubnetRoute: typeof SubnetRoute
   SubnetCalculatorRoute: typeof SubnetCalculatorRoute
   TermsRoute: typeof TermsRoute
@@ -999,6 +1012,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stability-test': {
+      id: '/stability-test'
+      path: '/stability-test'
+      fullPath: '/stability-test'
+      preLoaderRoute: typeof StabilityTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/subnet': {
@@ -1407,6 +1427,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortcheckRoute: PortcheckRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StabilityTestRoute: StabilityTestRoute,
   SubnetRoute: SubnetRoute,
   SubnetCalculatorRoute: SubnetCalculatorRoute,
   TermsRoute: TermsRoute,
