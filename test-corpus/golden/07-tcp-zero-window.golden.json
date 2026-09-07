@@ -14,13 +14,13 @@
       "detail": "Window 0 advertised by 192.168.1.10:50007, stalled ~1.319 s"
     },
     {
-      "ruleId": "tcp.zero-window-probe",
+      "ruleId": "tcp.zero-window-poll",
       "severity": "warning",
-      "certainty": "observed",
+      "certainty": "likely",
       "evidenceFrames": [
         5
       ],
-      "detail": "Sender keep-probe during zero-window"
+      "detail": "Sender-side ACK during the zero-window stall (no 1-byte probe payload). tshark 4.6 labels frame index 5 as 'TCP Dup ACK'; either classification is acceptable, but it must NOT be reported as packet loss."
     },
     {
       "ruleId": "tcp.window-update",

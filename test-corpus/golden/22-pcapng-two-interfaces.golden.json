@@ -30,5 +30,6 @@
   "corpusItem": 22,
   "file": "22-pcapng-two-interfaces.pcapng",
   "description": "pcapng with two IDBs; the same session captured on both interfaces (SPAN duplication).",
-  "frameCount": 6
+  "frameCount": 6,
+  "tsharkCrossReference": "tshark 4.6 reports 'TCP Retransmission' on frames 2 and 4 and 'TCP Dup ACK' on frame 6 because its flow key ignores the capture interface. Our frozen flow key includes ifaceId, so these MUST NOT be reported as retransmissions. Deliberate divergence from Wireshark."
 }
