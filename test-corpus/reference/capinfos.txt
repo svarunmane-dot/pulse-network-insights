@@ -1,0 +1,63 @@
+File name:           captures/01-clean-baseline-tcp-http.pcap
+Number of packets:   10
+
+File name:           captures/02-syn-no-synack.pcap
+Number of packets:   4
+
+File name:           captures/03-syn-rst-refused.pcap
+Number of packets:   2
+
+File name:           captures/04-tcp-retransmission-rto.pcap
+Number of packets:   7
+
+File name:           captures/05-dup-acks-fast-retransmit.pcap
+Number of packets:   11
+
+File name:           captures/06-tcp-out-of-order.pcap
+Number of packets:   8
+
+File name:           captures/07-tcp-zero-window.pcap
+Number of packets:   8
+
+File name:           captures/08-tcp-window-full.pcap
+Number of packets:   10
+
+File name:           captures/09-tcp-midstream-reset.pcap
+Number of packets:   6
+
+File name:           captures/10-tcp-high-rtt.pcap
+Number of packets:   6
+
+File name:           captures/11-dns-nxdomain-and-timeout.pcap
+Number of packets:   5
+
+File name:           captures/12-dns-slow-response.pcap
+Number of packets:   4
+
+File name:           captures/13-dhcp-discover-no-offer.pcap
+Number of packets:   4
+
+File name:           captures/14-arp-conflict-and-scan.pcap
+Number of packets:   15
+
+File name:           captures/17-icmp-unreachable-and-ttl.pcap
+Number of packets:   6
+
+File name:           captures/18-vlan-tagged-802.1q.pcap
+Number of packets:   6
+
+File name:           captures/19-ipv6-tcp-tls.pcap
+Number of packets:   5
+
+File name:           captures/20-tls-handshake-failure-alert.pcap
+Number of packets:   6
+
+File name:           captures/21-http-500-and-slow-response.pcap
+Number of packets:   8
+
+File name:           captures/22-pcapng-two-interfaces.pcapng
+Number of packets:   6
+
+File name:           captures/23-asymmetric-truncated-capture.pcap
+Packet size limit:   inferred: 54 bytes - 96 bytes (range)
+Number of packets:   7
