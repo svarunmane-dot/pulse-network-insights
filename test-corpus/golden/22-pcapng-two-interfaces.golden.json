@@ -1,0 +1,35 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectInterfaceCount": 2,
+    "expectDuplicateFrames": true
+  },
+  "mustReport": [
+    {
+      "ruleId": "capture.duplicate-frames",
+      "severity": "observation",
+      "certainty": "likely",
+      "evidenceFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "Every frame appears once per interface within 1 ms"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.dup-ack",
+    "tcp.out-of-order",
+    "tcp.handshake-incomplete"
+  ],
+  "notes": "Hard false-positive trap for the frozen flow key: 5-tuple + VLAN + INTERFACE means ifaceId 0 and 1 are distinct flows and duplicates must never surface as retransmissions.",
+  "corpusItem": 22,
+  "file": "22-pcapng-two-interfaces.pcapng",
+  "description": "pcapng with two IDBs; the same session captured on both interfaces (SPAN duplication).",
+  "frameCount": 6,
+  "tsharkCrossReference": "tshark 4.6 reports 'TCP Retransmission' on frames 2 and 4 and 'TCP Dup ACK' on frame 6 because its flow key ignores the capture interface. Our frozen flow key includes ifaceId, so these MUST NOT be reported as retransmissions. Deliberate divergence from Wireshark."
+}

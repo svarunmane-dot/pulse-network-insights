@@ -1,0 +1,28 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.out-of-order",
+      "severity": "observation",
+      "certainty": "observed",
+      "evidenceFrames": [
+        5,
+        6
+      ],
+      "detail": "seq 12201 seen before seq 10801; seq 10801 arrives 2 ms later with lower seq and no retransmit timer"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.fast-retransmission",
+    "tcp.dup-ack",
+    "tcp.packet-loss-indicator"
+  ],
+  "notes": "Discriminator: reordered segment arrives within one RTT and was never previously seen -> out-of-order, not retransmission.",
+  "corpusItem": 6,
+  "file": "06-tcp-out-of-order.pcap",
+  "description": "Server segments arrive 1,2,4,3,5 - one segment delivered out of sequence order.",
+  "frameCount": 8
+}

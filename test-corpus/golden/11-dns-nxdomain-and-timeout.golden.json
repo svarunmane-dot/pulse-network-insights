@@ -1,0 +1,47 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "dns.nxdomain",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        1
+      ],
+      "detail": "rcode=3 for does-not-exist.example.net"
+    },
+    {
+      "ruleId": "dns.no-response",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        2,
+        3,
+        4
+      ],
+      "detail": "txid 0x1235 timeout.example.net asked 3x, never answered"
+    },
+    {
+      "ruleId": "dns.query-retransmission",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        3,
+        4
+      ],
+      "detail": "2 retries at 1 s and 2 s"
+    }
+  ],
+  "mustNotReport": [
+    "dns.slow-response",
+    "tcp.retransmission",
+    "icmp.unreachable"
+  ],
+  "notes": "NXDOMAIN is a valid server answer - severity warning, never critical.",
+  "corpusItem": 11,
+  "file": "11-dns-nxdomain-and-timeout.pcap",
+  "description": "One NXDOMAIN answer plus a second query retried 3x with no answer at all.",
+  "frameCount": 5
+}

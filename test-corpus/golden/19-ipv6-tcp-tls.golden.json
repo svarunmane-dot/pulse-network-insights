@@ -1,0 +1,18 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectIpv6": true
+  },
+  "mustReport": [],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.handshake-incomplete",
+    "tls.handshake-failure",
+    "ipv6.unsupported"
+  ],
+  "notes": "Correctness contract for the frozen IPv6 interning design: srcAddr32/dstAddr32 must hold v6 side-table indices, and the two v6 addresses must intern to exactly 2 distinct entries.",
+  "corpusItem": 19,
+  "file": "19-ipv6-tcp-tls.pcap",
+  "description": "IPv6 TCP handshake followed by a TLS ClientHello with SNI secure.example.net.",
+  "frameCount": 5
+}

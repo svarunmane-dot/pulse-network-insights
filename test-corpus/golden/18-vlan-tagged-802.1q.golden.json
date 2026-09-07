@@ -1,0 +1,21 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectVlansSeen": [
+      10,
+      20
+    ]
+  },
+  "mustReport": [],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.handshake-incomplete",
+    "vlan.mismatch",
+    "tcp.dup-ack"
+  ],
+  "notes": "Correctness contract: vlanId column must be 10 for frames 0-2 and 20 for frames 3-5, flowId must differ per VLAN even if the 5-tuple repeated.",
+  "corpusItem": 18,
+  "file": "18-vlan-tagged-802.1q.pcap",
+  "description": "Two healthy TCP handshakes on 802.1Q VLANs 10 and 20 on the same trunk.",
+  "frameCount": 6
+}

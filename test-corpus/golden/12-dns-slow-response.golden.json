@@ -1,0 +1,27 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "dns.slow-response",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0,
+        1
+      ],
+      "detail": "2450 ms query->response latency for slow.example.net"
+    }
+  ],
+  "mustNotReport": [
+    "dns.no-response",
+    "dns.nxdomain",
+    "dns.query-retransmission"
+  ],
+  "notes": "The 8 ms control transaction must not be flagged; threshold must be well above 8 ms and at/below 2450 ms.",
+  "corpusItem": 12,
+  "file": "12-dns-slow-response.pcap",
+  "description": "One DNS answer takes 2.45 s; a control query answers in 8 ms.",
+  "frameCount": 4
+}

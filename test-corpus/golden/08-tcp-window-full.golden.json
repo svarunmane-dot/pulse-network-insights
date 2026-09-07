@@ -1,0 +1,38 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.window-full",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        8
+      ],
+      "detail": "Bytes in flight reach advertised window 8192 for 203.0.113.50:445"
+    },
+    {
+      "ruleId": "tcp.throughput-limited-by-window",
+      "severity": "observation",
+      "certainty": "likely",
+      "evidenceFrames": [
+        3,
+        8,
+        9
+      ],
+      "detail": "Small receive window plus 20 ms RTT bounds throughput"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.zero-window",
+    "tcp.retransmission",
+    "tcp.dup-ack",
+    "tcp.reset"
+  ],
+  "notes": "window-full is a sender-side condition and must not be conflated with zero-window (receiver-side).",
+  "corpusItem": 8,
+  "file": "08-tcp-window-full.pcap",
+  "description": "Sender fills the receiver's entire advertised 8192-byte window and stalls awaiting an ACK.",
+  "frameCount": 10
+}

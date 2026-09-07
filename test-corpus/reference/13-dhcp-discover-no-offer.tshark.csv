@@ -1,0 +1,5 @@
+frame.number,frame.time_epoch,frame.cap_len,frame.len,frame.interface_id,ip.src,ipv6.src,ip.dst,ipv6.dst,tcp.srcport,tcp.dstport,udp.srcport,udp.dstport,tcp.flags,tcp.seq_raw,tcp.ack_raw,tcp.window_size_value,vlan.id
+1,1767225600.000000000,286,286,,0.0.0.0,,255.255.255.255,,,,68,67,,,,,
+2,1767225602.000000000,286,286,,0.0.0.0,,255.255.255.255,,,,68,67,,,,,
+3,1767225606.000000000,286,286,,0.0.0.0,,255.255.255.255,,,,68,67,,,,,
+4,1767225614.000000000,286,286,,0.0.0.0,,255.255.255.255,,,,68,67,,,,,

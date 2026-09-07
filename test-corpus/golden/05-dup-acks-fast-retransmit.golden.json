@@ -1,0 +1,51 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.dup-ack",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        7,
+        8,
+        9
+      ],
+      "detail": "3 duplicate ACKs for ack=7001"
+    },
+    {
+      "ruleId": "tcp.fast-retransmission",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        10
+      ],
+      "detail": "Retransmit of seq 7001 immediately after 3rd dup-ACK"
+    },
+    {
+      "ruleId": "tcp.packet-loss-indicator",
+      "severity": "warning",
+      "certainty": "likely",
+      "evidenceFrames": [
+        3,
+        7,
+        8,
+        9,
+        10
+      ],
+      "detail": "Gap in server sequence space before the capture point"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.zero-window",
+    "tcp.reset",
+    "tcp.handshake-incomplete",
+    "tcp.connection-refused"
+  ],
+  "notes": "Segments 3..6 arriving above the gap must be classified as out-of-order OR previous-segment-missing, not as retransmissions.",
+  "corpusItem": 5,
+  "file": "05-dup-acks-fast-retransmit.pcap",
+  "description": "Missing server segment triggers 3 duplicate ACKs and a fast retransmit.",
+  "frameCount": 11
+}

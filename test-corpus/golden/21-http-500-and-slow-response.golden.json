@@ -1,0 +1,46 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "http.server-error",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        5
+      ],
+      "detail": "HTTP 500 for GET /api/report"
+    },
+    {
+      "ruleId": "http.slow-response",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        3,
+        5
+      ],
+      "detail": "5179 ms between request and response, TCP ACK at 20 ms proves the delay is server-side"
+    },
+    {
+      "ruleId": "http.client-error",
+      "severity": "observation",
+      "certainty": "observed",
+      "evidenceFrames": [
+        7
+      ],
+      "detail": "HTTP 404 for GET /api/missing"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.high-rtt",
+    "tcp.zero-window",
+    "tcp.reset"
+  ],
+  "notes": "Key discrimination: application slowness must NOT be reported as network latency, because the transport ACK returned in 20 ms.",
+  "corpusItem": 21,
+  "file": "21-http-500-and-slow-response.pcap",
+  "description": "HTTP/1.1 request answered with 500 after 5.18 s server think time, then a fast 404.",
+  "frameCount": 8
+}

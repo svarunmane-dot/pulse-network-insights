@@ -1,0 +1,44 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "icmp.port-unreachable",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        3
+      ],
+      "detail": "type 3 code 3 from 203.0.113.1 quoting TCP 50017->443"
+    },
+    {
+      "ruleId": "icmp.fragmentation-needed",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        5
+      ],
+      "detail": "type 3 code 4 - PMTU black-hole risk"
+    },
+    {
+      "ruleId": "icmp.ttl-exceeded",
+      "severity": "observation",
+      "certainty": "observed",
+      "evidenceFrames": [
+        1
+      ],
+      "detail": "type 11 code 0, consistent with a traceroute probe"
+    }
+  ],
+  "mustNotReport": [
+    "icmp.echo-no-reply",
+    "tcp.handshake-incomplete",
+    "tcp.reset"
+  ],
+  "notes": "TTL-exceeded next to a TTL=1 UDP probe to port 33434 is expected traceroute behaviour - observation, not a fault.",
+  "corpusItem": 17,
+  "file": "17-icmp-unreachable-and-ttl.pcap",
+  "description": "ICMP TTL exceeded, port unreachable, and fragmentation-needed responses.",
+  "frameCount": 6
+}

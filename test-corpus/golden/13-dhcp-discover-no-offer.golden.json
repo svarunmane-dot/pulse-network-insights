@@ -1,0 +1,40 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "unidirectional-flow"
+  },
+  "mustReport": [
+    {
+      "ruleId": "dhcp.no-offer",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "detail": "4 DISCOVERs for xid 0xAABBCCDD over 14 s, zero OFFERs"
+    },
+    {
+      "ruleId": "dhcp.discover-retransmission",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        1,
+        2,
+        3
+      ],
+      "detail": "Backoff 2 s / 4 s / 8 s"
+    }
+  ],
+  "mustNotReport": [
+    "dhcp.nak",
+    "dhcp.duplicate-offer",
+    "arp.duplicate-address"
+  ],
+  "notes": "Causes 'possible': no DHCP server on the VLAN, relay misconfigured, pool exhausted (pool exhaustion normally yields a NAK, so rank it lower).",
+  "corpusItem": 13,
+  "file": "13-dhcp-discover-no-offer.pcap",
+  "description": "Four DHCP DISCOVERs with exponential backoff and no OFFER on the wire.",
+  "frameCount": 4
+}

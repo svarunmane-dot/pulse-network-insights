@@ -1,0 +1,42 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "unidirectional-flow",
+    "expectTruncated": false
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.syn-retransmission",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        1,
+        2,
+        3
+      ],
+      "detail": "3 SYN retransmissions with ~1s/2s/4s exponential backoff"
+    },
+    {
+      "ruleId": "tcp.handshake-incomplete",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "detail": "No SYN/ACK for 192.168.1.10:50002 -> 203.0.113.50:8443"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.reset",
+    "tcp.dup-ack",
+    "tcp.zero-window",
+    "tcp.out-of-order"
+  ],
+  "notes": "Causes must be tiered 'possible': firewall drop, service not listening with silent drop, black-holed route. Must NOT assert which one.",
+  "corpusItem": 2,
+  "file": "02-syn-no-synack.pcap",
+  "description": "Four SYN retries to port 8443, no SYN/ACK ever returned; connection never establishes.",
+  "frameCount": 4
+}
