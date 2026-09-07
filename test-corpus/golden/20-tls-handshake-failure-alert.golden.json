@@ -1,0 +1,38 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tls.fatal-alert",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        4
+      ],
+      "detail": "Alert level 2 (fatal) description 40 (handshake_failure)"
+    },
+    {
+      "ruleId": "tls.handshake-incomplete",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        3,
+        4,
+        5
+      ],
+      "detail": "ClientHello sent, no ServerHello, session closed"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.reset",
+    "tcp.retransmission",
+    "tls.weak-cipher",
+    "tcp.handshake-incomplete"
+  ],
+  "notes": "SNI broken.example.net must appear in evidence. Causes 'possible': no shared cipher/version, SNI not served, client cert required.",
+  "corpusItem": 20,
+  "file": "20-tls-handshake-failure-alert.pcap",
+  "description": "TLS ClientHello (SNI broken.example.net) answered with fatal alert 40 handshake_failure.",
+  "frameCount": 6
+}

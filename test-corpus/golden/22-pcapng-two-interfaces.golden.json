@@ -1,0 +1,34 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectInterfaceCount": 2,
+    "expectDuplicateFrames": true
+  },
+  "mustReport": [
+    {
+      "ruleId": "capture.duplicate-frames",
+      "severity": "observation",
+      "certainty": "likely",
+      "evidenceFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "detail": "Every frame appears once per interface within 1 ms"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.dup-ack",
+    "tcp.out-of-order",
+    "tcp.handshake-incomplete"
+  ],
+  "notes": "Hard false-positive trap for the frozen flow key: 5-tuple + VLAN + INTERFACE means ifaceId 0 and 1 are distinct flows and duplicates must never surface as retransmissions.",
+  "corpusItem": 22,
+  "file": "22-pcapng-two-interfaces.pcapng",
+  "description": "pcapng with two IDBs; the same session captured on both interfaces (SPAN duplication).",
+  "frameCount": 6
+}

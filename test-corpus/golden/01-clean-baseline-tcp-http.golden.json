@@ -1,0 +1,25 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectTruncated": false,
+    "expectDropIndicators": false
+  },
+  "mustReport": [],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.dup-ack",
+    "tcp.out-of-order",
+    "tcp.zero-window",
+    "tcp.window-full",
+    "tcp.reset",
+    "tcp.handshake-incomplete",
+    "tcp.high-rtt",
+    "capture.asymmetric",
+    "capture.truncated"
+  ],
+  "notes": "Baseline false-positive guard. Any finding at all is a rule-engine failure.",
+  "corpusItem": 1,
+  "file": "01-clean-baseline-tcp-http.pcap",
+  "description": "Clean bidirectional TCP+HTTP session: handshake, request, 200 OK, graceful FIN close.",
+  "frameCount": 10
+}

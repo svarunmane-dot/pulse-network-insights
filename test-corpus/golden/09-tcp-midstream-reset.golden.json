@@ -1,0 +1,38 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.reset",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        5
+      ],
+      "detail": "RST from 203.0.113.50:443 on an established flow after 2.02 s idle"
+    },
+    {
+      "ruleId": "tcp.request-unanswered",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        3,
+        4,
+        5
+      ],
+      "detail": "140 request bytes ACKed but never answered with payload"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.connection-refused",
+    "tcp.handshake-incomplete",
+    "tcp.retransmission",
+    "tcp.zero-window"
+  ],
+  "notes": "Mid-stream RST must be a distinct rule from SYN-RST refusal (item 3).",
+  "corpusItem": 9,
+  "file": "09-tcp-midstream-reset.pcap",
+  "description": "Established session torn down by a server RST 2 s after the client request, with no response data.",
+  "frameCount": 6
+}

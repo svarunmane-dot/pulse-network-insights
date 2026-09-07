@@ -1,0 +1,50 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "unidirectional",
+    "expectTruncated": true,
+    "expectSnaplen": 96,
+    "expectCertaintyCap": "possible"
+  },
+  "mustReport": [
+    {
+      "ruleId": "capture.asymmetric",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0,
+        1
+      ],
+      "detail": "Zero frames from 203.0.113.50; only one direction present"
+    },
+    {
+      "ruleId": "capture.truncated",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0
+      ],
+      "detail": "capLen 96 < origLen 1514 on every frame"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.handshake-incomplete",
+    "tcp.dup-ack",
+    "http.server-error",
+    "tls.fatal-alert"
+  ],
+  "certaintyGovernance": {
+    "rule": "Every rule that fires on this fixture must be capped at 'possible' or lower by finalise(), except capture.* rules which describe the capture itself.",
+    "appliesTo": "all registered rules",
+    "example": {
+      "ruleId": "tcp.retransmission",
+      "baseCertainty": "observed",
+      "finalCertainty": "possible",
+      "reason": "ACK stream missing - apparent retransmit at frame 6 may be an unseen-ACK artefact"
+    }
+  },
+  "notes": "This is THE certainty-monotonicity unit-test fixture referenced in the frozen decisions.",
+  "corpusItem": 23,
+  "file": "23-asymmetric-truncated-capture.pcap",
+  "description": "Client-side-only capture with 96-byte snaplen: no server frames at all, payload truncated.",
+  "frameCount": 7
+}

@@ -1,0 +1,68 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "broadcast-only"
+  },
+  "mustReport": [
+    {
+      "ruleId": "arp.duplicate-address",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0,
+        1,
+        2
+      ],
+      "detail": "192.168.1.77 announced by 00:15:5d:01:01:01 and 00:15:5d:02:02:02"
+    },
+    {
+      "ruleId": "arp.scan-burst",
+      "severity": "observation",
+      "certainty": "likely",
+      "evidenceFrames": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "detail": "12 ARP requests for 12 distinct targets from one MAC in 120 ms"
+    },
+    {
+      "ruleId": "arp.unanswered-request",
+      "severity": "observation",
+      "certainty": "observed",
+      "evidenceFrames": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "detail": "None of the 12 sweep requests are answered in this capture"
+    }
+  ],
+  "mustNotReport": [
+    "arp.gratuitous-normal",
+    "tcp.retransmission",
+    "dhcp.no-offer"
+  ],
+  "notes": "Sweep certainty is 'likely' - a legitimate scanner or monitoring tool is an equally valid cause.",
+  "corpusItem": 14,
+  "file": "14-arp-conflict-and-scan.pcap",
+  "description": "Two MACs claim 192.168.1.77 (duplicate address), followed by a 12-target ARP sweep.",
+  "frameCount": 15
+}

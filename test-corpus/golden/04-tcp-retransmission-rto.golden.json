@@ -1,0 +1,41 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.retransmission",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        4,
+        5
+      ],
+      "detail": "2 retransmissions of seq 4001 len 1400 (300 ms then 600 ms RTO)"
+    },
+    {
+      "ruleId": "tcp.packet-loss-indicator",
+      "severity": "warning",
+      "certainty": "likely",
+      "evidenceFrames": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "detail": "Loss inferred from timer-based retransmit with no intervening ACK"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.out-of-order",
+    "tcp.dup-ack",
+    "tcp.zero-window",
+    "tcp.handshake-incomplete",
+    "tcp.reset"
+  ],
+  "notes": "Retransmission itself is 'observed'; direction of loss is 'likely' only - capture point is client-side.",
+  "corpusItem": 4,
+  "file": "04-tcp-retransmission-rto.pcap",
+  "description": "Same 1400-byte segment sent three times with RTO backoff before it is finally ACKed.",
+  "frameCount": 7
+}

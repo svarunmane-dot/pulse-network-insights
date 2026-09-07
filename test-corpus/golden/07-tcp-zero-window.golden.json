@@ -1,0 +1,45 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.zero-window",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        4,
+        6
+      ],
+      "detail": "Window 0 advertised by 192.168.1.10:50007, stalled ~1.319 s"
+    },
+    {
+      "ruleId": "tcp.zero-window-probe",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [
+        5
+      ],
+      "detail": "Sender keep-probe during zero-window"
+    },
+    {
+      "ruleId": "tcp.window-update",
+      "severity": "observation",
+      "certainty": "observed",
+      "evidenceFrames": [
+        7
+      ],
+      "detail": "Window re-opened to 64240"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.reset",
+    "tcp.dup-ack"
+  ],
+  "notes": "Cause must be 'likely': receiving application not draining its socket buffer. Never assert a specific application.",
+  "corpusItem": 7,
+  "file": "07-tcp-zero-window.pcap",
+  "description": "Receiver advertises window 0 for ~1.3 s, sender probes, window finally re-opens.",
+  "frameCount": 8
+}

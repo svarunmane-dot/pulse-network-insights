@@ -1,0 +1,28 @@
+{
+  "captureQuality": {
+    "expectDirectionality": "bidirectional"
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.connection-refused",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [
+        0,
+        1
+      ],
+      "detail": "RST/ACK 18 ms after SYN, before any data"
+    }
+  ],
+  "mustNotReport": [
+    "tcp.syn-retransmission",
+    "tcp.handshake-incomplete",
+    "tcp.retransmission",
+    "tcp.high-rtt"
+  ],
+  "notes": "Fast RST implies reachable host with closed port or a rejecting middlebox - both 'likely', neither 'observed'.",
+  "corpusItem": 3,
+  "file": "03-syn-rst-refused.pcap",
+  "description": "SYN answered immediately with RST/ACK: connection actively refused.",
+  "frameCount": 2
+}
