@@ -1,0 +1,57 @@
+
+===================================================================
+Protocol Hierarchy Statistics
+Filter: 
+
+frame                                    frames:94410 bytes:54670237
+  eth                                    frames:94410 bytes:54670237
+    ip                                   frames:90379 bytes:54413507
+      tcp                                frames:83114 bytes:52515171
+        http                             frames:10103 bytes:7007064
+          image-gif                      frames:1136 bytes:737880
+          image-jfif                     frames:1180 bytes:982489
+          data-text-lines                frames:744 bytes:529526
+          xml                            frames:581 bytes:554874
+          png                            frames:136 bytes:112564
+          http                           frames:4 bytes:1484
+          urlencoded-form                frames:28 bytes:14515
+          media                          frames:467 bytes:248381
+          data                           frames:7 bytes:7097
+          amf                            frames:1 bytes:511
+          ocsp                           frames:2 bytes:1108
+        tls                              frames:1561 bytes:931191
+          tls                            frames:216 bytes:245641
+        vssmonitoring                    frames:1 bytes:64
+        _ws.malformed                    frames:1 bytes:64
+        prp                              frames:2 bytes:134
+        xmpp                             frames:18 bytes:3131
+        data                             frames:50 bytes:12304
+        msnms                            frames:6 bytes:820
+        ymsg                             frames:8 bytes:2219
+          prp                            frames:1 bytes:191
+          ymsg                           frames:1 bytes:375
+            ymsg                         frames:1 bytes:375
+              ymsg                       frames:1 bytes:375
+      udp                                frames:7200 bytes:1874348
+        dns                              frames:2905 bytes:434973
+        sip                              frames:297 bytes:201582
+        ntp                              frames:184 bytes:17296
+        ssdp                             frames:2225 bytes:818614
+        dcerpc                           frames:23 bytes:13487
+          messenger                      frames:22 bytes:13065
+        bt-dht                           frames:38 bytes:5495
+        rtp                              frames:1060 bytes:230772
+        rtcp                             frames:12 bytes:1372
+          rtcp                           frames:12 bytes:1372
+        isakmp                           frames:2 bytes:1411
+        udpencap                         frames:448 bytes:148734
+          isakmp                         frames:40 bytes:7952
+          esp                            frames:395 bytes:139950
+        rip                              frames:2 bytes:140
+        data                             frames:4 bytes:472
+      icmp                               frames:20 bytes:21396
+      igmp                               frames:45 bytes:2592
+    arp                                  frames:4026 bytes:256410
+    llc                                  frames:5 bytes:320
+      data                               frames:5 bytes:320
+===================================================================
