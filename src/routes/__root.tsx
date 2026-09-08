@@ -168,6 +168,8 @@ function RootComponent() {
 }
 
 function SiteHeader() {
+  const [open, setOpen] = useState(false);
+
   return (
     <header
       style={{
@@ -183,10 +185,11 @@ function SiteHeader() {
         style={{
           maxWidth: 1180,
           margin: "0 auto",
-          padding: "14px 24px",
+          padding: "14px 16px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          flexWrap: "wrap",
           gap: 12,
         }}
       >
@@ -198,6 +201,7 @@ function SiteHeader() {
             gap: 10,
             textDecoration: "none",
             color: "#fff",
+            minWidth: 0,
           }}
           aria-label="Pulse Speed home"
         >
@@ -206,6 +210,7 @@ function SiteHeader() {
             style={{
               width: 32,
               height: 32,
+              flexShrink: 0,
               borderRadius: 9,
               background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
               display: "inline-flex",
@@ -221,7 +226,7 @@ function SiteHeader() {
         </Link>
         <nav
           aria-label="Primary"
-          style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}
+          className={`pulse-nav-desktop${open ? " pulse-nav-open" : ""}`}
         >
           {[
             { to: "/", label: "Speed Test" },
@@ -245,6 +250,7 @@ function SiteHeader() {
             <Link
               key={l.to}
               to={l.to}
+              onClick={() => setOpen(false)}
               activeOptions={{ exact: true }}
               activeProps={{ style: { color: "#00D4AA" } }}
               style={{
@@ -259,7 +265,30 @@ function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <BookmarkButton />
+        <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+          <button
+            type="button"
+            className="pulse-menu-btn"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              border: "1px solid #1f2740",
+              background: "#0f1422",
+              color: "#c8d0e0",
+              cursor: "pointer",
+              fontSize: 16,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {open ? "✕" : "☰"}
+          </button>
+          <BookmarkButton />
+        </span>
       </div>
     </header>
   );
