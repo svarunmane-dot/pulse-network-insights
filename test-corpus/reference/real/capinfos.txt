@@ -1,0 +1,53 @@
+File name:           nitroba.pcap
+Packet size limit:   file hdr: 4096 bytes
+Number of packets:   94 k
+File size:           56 MB
+Data size:           54 MB
+Capture duration:    15759.950751 seconds
+Earliest packet time: 2008-07-22 01:51:07.095278
+Latest packet time:   2008-07-22 06:13:47.046029
+
+File name:           wpa-Induction.pcap
+Packet size limit:   file hdr: 65535 bytes
+Number of packets:   1093
+File size:           179 kB
+Data size:           161 kB
+Capture duration:    40.760153 seconds
+Earliest packet time: 2007-01-04 06:14:45.859308
+Latest packet time:   2007-01-04 06:15:26.619461
+
+File name:           wpa-test-decode.pcap
+Packet size limit:   file hdr: 262144 bytes
+Number of packets:   4274
+File size:           872 kB
+Data size:           804 kB
+Capture duration:    318.467336 seconds
+Earliest packet time: 2015-10-24 14:06:49.106423
+Latest packet time:   2015-10-24 14:12:07.573759
+
+File name:           wpa-test-decode-mgmt.pcap
+Packet size limit:   file hdr: 65535 bytes
+Number of packets:   11
+File size:           1650 bytes
+Data size:           1450 bytes
+Capture duration:    50.259770 seconds
+Earliest packet time: 2016-01-07 09:23:45.140832
+Latest packet time:   2016-01-07 09:24:35.400602
+
+File name:           wpa-eap-tls.pcap
+Packet size limit:   file hdr: 262144 bytes
+Number of packets:   86
+File size:           33 kB
+Data size:           31 kB
+Capture duration:    255.900203 seconds
+Earliest packet time: 2015-05-03 14:19:18.172173
+Latest packet time:   2015-05-03 14:23:34.072376
+
+File name:           arp-storm.pcap
+Packet size limit:   file hdr: 65535 bytes
+Number of packets:   622
+File size:           47 kB
+Data size:           37 kB
+Capture duration:    28.969106 seconds
+Earliest packet time: 2004-10-05 14:01:05.275344
+Latest packet time:   2004-10-05 14:01:34.244450

@@ -1,0 +1,68 @@
+{
+  "corpusItem": 15,
+  "file": "real/wpa-Induction.pcap",
+  "source": "real capture (Wireshark sample set), radiotap + 802.11, 2.4 GHz channel 1",
+  "description": "Real WPA-PSK Wi-Fi monitor-mode capture: 1093 frames, 35 retries, one Disassociation with reason code 8, radiotap dB antenna signal / rate / channel present.",
+  "frameCount": 1093,
+  "linkType": "IEEE 802.11 plus radiotap (LINKTYPE 127)",
+  "captureQuality": {
+    "expectDirectionality": "monitor-mode",
+    "expectTruncated": false,
+    "expectDropIndicators": false,
+    "snaplen": 65535,
+    "radiotapFieldsPresent": ["flags", "rate", "channel", "lock_quality", "antenna", "db_antsignal", "rx_flags"],
+    "radiotapFieldsAbsent": ["dbm_antsignal", "mcs", "vht", "he"],
+    "notes": "Signal is dB (radiotap.db_antsignal, values 40-43), NOT dBm. Any rule that reports absolute RSSI in dBm from this file is wrong; report relative signal or withhold."
+  },
+  "groundTruth": {
+    "totalFrames": 1093,
+    "retryFrames": 35,
+    "retryRatePct": 3.2,
+    "retryFrameNumbers1Based": [68, 69, 70, 71, 72, 74, 151, 217, 273, 275, 277, 296, 298, 422, 430, 445, 448, 449, 454, 455, 770, 778, 837, 1007, 1008, 1009, 1010, 1012, 1013, 1018, 1019, 1020, 1021, 1022, 1023],
+    "subtypeHistogram": {
+      "0x0008 beacon": 398,
+      "0x0020 data": 285,
+      "0x001d (control)": 191,
+      "0x001c (control)": 165,
+      "0x0005 probe-response": 26,
+      "0x0004 probe-request": 13,
+      "0x000b authentication": 2,
+      "0x000a disassociation": 1,
+      "0x0001 assoc-response": 1,
+      "0x0000 assoc-request": 1,
+      "undissected": 10
+    },
+    "channelFreqMHz": 2412,
+    "dataRateMbps": 1
+  },
+  "mustReport": [
+    {
+      "ruleId": "wifi.disassociation",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [1049],
+      "detail": "Disassociation from 00:0d:93:82:36:3a to 00:0c:41:82:b2:55, reason code 8 (Disassociated because sending STA is leaving BSS) at t+36.80 s"
+    },
+    {
+      "ruleId": "wifi.retry-rate",
+      "severity": "info",
+      "certainty": "observed",
+      "evidenceFrames": [67, 68, 69, 70, 71, 73, 1006, 1007, 1008, 1009, 1011, 1012],
+      "detail": "35 of 1093 frames carry the retry bit (3.2%); retries cluster in two bursts (probe responses ~frames 68-74 and 1007-1023) rather than being uniformly distributed"
+    }
+  ],
+  "mustNotReport": [
+    "wifi.deauthentication",
+    "wifi.rssi-weak",
+    "wifi.mcs-degraded",
+    "wifi.channel-utilization",
+    "tcp.retransmission",
+    "capture.truncated"
+  ],
+  "certaintyGovernance": {
+    "rssi": "withheld - radiotap carries dB antenna signal only, no dBm reference; engine must not emit an absolute-RSSI finding",
+    "mcs": "withheld - no MCS/VHT/HE radiotap field present",
+    "retryCause": "at most 'likely' - retry bit alone cannot distinguish interference from range or hidden node"
+  },
+  "notes": "Retry-rate threshold must sit above 0.6% (item 16 baseline) and at/below 3.2%. Reason code 8 must be decoded from a Disassociation (subtype 0x000a), not misread as a Deauthentication."
+}

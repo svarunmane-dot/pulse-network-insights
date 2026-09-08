@@ -1,0 +1,12 @@
+frame.number,frame.time_epoch,frame.cap_len,frame.len,wlan.fc.type_subtype,wlan.fc.retry,wlan.fixed.reason_code,wlan.ta,wlan.ra,radiotap.channel.freq,radiotap.db_antsignal,radiotap.datarate,eapol.type
+1,1452158625.140832000,60,60,0x000b,False,,6a:bb:cc:dd:ee:ff,90:f6:52:e6:ef:92,2437,,1,
+2,1452158625.142075000,60,60,0x000b,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,1,
+3,1452158625.143702000,154,154,0x0000,False,,6a:bb:cc:dd:ee:ff,90:f6:52:e6:ef:92,2437,,1,
+4,1452158625.158330000,169,169,0x0001,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,1,
+5,1452158625.169458000,166,166,0x0028,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,52,3
+6,1452158625.174078000,194,194,0x0028,False,,6a:bb:cc:dd:ee:ff,90:f6:52:e6:ef:92,2437,,65,3
+7,1452158625.175081000,254,254,0x0028,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,52,3
+8,1452158625.185668000,166,166,0x0028,False,,6a:bb:cc:dd:ee:ff,90:f6:52:e6:ef:92,2437,,65,3
+9,1452158633.826581000,79,79,0x000d,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,1,
+10,1452158634.850582000,76,76,0x000d,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,1,
+11,1452158675.400602000,72,72,0x000c,False,,90:f6:52:e6:ef:92,6a:bb:cc:dd:ee:ff,2437,,1,
