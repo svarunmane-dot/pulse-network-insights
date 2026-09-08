@@ -221,3 +221,53 @@ html[data-theme="light"] [data-no-invert] {
 /* Scrollbar in light mode */
 html[data-theme="light"] ::-webkit-scrollbar-track { background: #e8e4dd; }
 html[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c9c3b8; }
+
+/* ============================================================
+   Fit-to-screen: make every page adapt to phones and tablets.
+   The site is authored with inline styles, so these rules use
+   !important to override fixed desktop-only values.
+   ============================================================ */
+html, body { max-width: 100%; overflow-x: hidden; }
+* { box-sizing: border-box; }
+img, canvas, video, svg, table, pre { max-width: 100%; }
+pre { overflow-x: auto; }
+
+@media (max-width: 860px) {
+  main [style*="grid-template-columns"]:not([data-keep-grid]) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  main > div,
+  main > article,
+  main > section,
+  main > main {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  main h1 { font-size: clamp(24px, 7vw, 34px) !important; line-height: 1.2 !important; }
+  main h2 { font-size: clamp(19px, 5.4vw, 26px) !important; line-height: 1.25 !important; }
+  main input, main select, main textarea, main button { max-width: 100%; }
+}
+
+/* Horizontally scrollable tables instead of page overflow */
+@media (max-width: 860px) {
+  main table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+/* Header: mobile menu */
+.pulse-nav-desktop { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.pulse-menu-btn { display: none; }
+@media (max-width: 1100px) {
+  .pulse-nav-desktop { display: none; }
+  .pulse-menu-btn { display: inline-flex; }
+  .pulse-nav-desktop.pulse-nav-open {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    width: 100%;
+    order: 3;
+    gap: 2px;
+    padding-top: 10px;
+  }
+}
