@@ -73,3 +73,31 @@ nix shell nixpkgs#wireshark-cli -c tshark -r test-corpus/captures/04-tcp-retrans
 
 Items 15, 16 and 24 (real Wi-Fi monitor-mode, real mixed enterprise, real
 100 MB) are intentionally absent — they must come from real captures.
+
+## Phase 0b — real captures (items 15, 16, realism half of 24)
+
+```
+test-corpus/
+  captures/real/               5 real captures (committed)
+  reference/real/              tshark 4.6.3 CSV + capinfos + protocol hierarchy
+  golden/15-...  15b-...  16-...  24a-...  25-...  26-...
+```
+
+| Item | File | Committed | Covers |
+|------|------|-----------|--------|
+| 15 | real/wpa-Induction.pcap | yes | retry rate 3.2% (35/1093), Disassoc reason code 8, radiotap dB signal / rate / channel (no dBm, no MCS) |
+| 15b | real/wpa-test-decode-mgmt.pcap | yes | PMF-protected Deauth/Disassoc — reason code must be reported unavailable, never defaulted |
+| 16 | real/wpa-test-decode.pcap | yes | EAPOL M1/M2 only at 0-based indices 15–16 of 4,274 frames; verified nothing after |
+| 24a | nitroba.pcap | **no** (56 MB, md5 `9981827f11968773ff815e39f5458ec8`) | realism half only: 94,410 frames, 579 B avg, TCP/HTTP/TLS/DNS/SSDP/SIP/ARP/ICMP mix, aggregation + false-positive calibration |
+| 25 | real/arp-storm.pcap | yes | bonus: 622 unanswered ARP requests from one MAC in 29 s |
+| 26 | real/wpa-eap-tls.pcap | yes | bonus: clean 802.1X/EAP-TLS success — zero findings expected |
+
+Notes:
+- `pmkid-not-recognized.cap` was not among the uploads; `wpa-test-decode-mgmt.pcap`
+  supplies the reason-code half of item 15 instead (and is stricter: the reason
+  code is encrypted, so the engine must withhold rather than guess).
+- `nitroba.pcap` is deliberately not committed. Ground truth for it lives in
+  `reference/real/nitroba.tshark.csv.gz` (per-frame, gzipped) and
+  `reference/real/nitroba.phs.txt`. Verify the md5 before use.
+- The 1.4M-frame memory-stress half of item 24 is still outstanding and must
+  come from a synthetic small-packet replay generated separately.

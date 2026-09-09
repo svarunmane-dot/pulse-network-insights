@@ -1,0 +1,38 @@
+{
+  "corpusItem": 26,
+  "bonus": true,
+  "file": "real/wpa-eap-tls.pcap",
+  "source": "real capture (Wireshark sample set), radiotap + 802.11",
+  "description": "Real 802.1X/EAP-TLS enterprise authentication exchange: EAP Identity round then a 16-frame EAP-TLS conversation ending in EAP Success.",
+  "frameCount": 86,
+  "linkType": "IEEE 802.11 plus radiotap (LINKTYPE 127)",
+  "captureQuality": {
+    "expectDirectionality": "monitor-mode",
+    "expectTruncated": false,
+    "snaplen": 262144
+  },
+  "groundTruth": {
+    "totalFrames": 86,
+    "durationSeconds": 255.900203,
+    "eapSequence1Based": {
+      "1-3": "EAP Request Identity (code 1, type 1)",
+      "4": "EAP Response Identity (code 2, type 1)",
+      "5-20": "EAP-TLS (type 13), alternating request/response",
+      "21": "EAP Success (code 3)"
+    },
+    "eapTlsRoundTrips": 8,
+    "authCompleted": true
+  },
+  "mustReport": [],
+  "mustNotReport": [
+    "wifi.eapol-handshake-incomplete",
+    "wifi.eap-failure",
+    "tls.handshake-failure",
+    "wifi.retry-rate",
+    "capture.truncated"
+  ],
+  "certaintyGovernance": {
+    "eapTlsVsTls": "EAP-TLS inside 802.1X must not be routed through the plain-TLS rules; a TLS-alert rule firing here is a mis-scope failure"
+  },
+  "notes": "Enterprise-auth false-positive guard. The 8 EAP-TLS round trips look like retransmission to a naive matcher; correct EAP identifier tracking yields zero findings. Pairs with item 16, where the handshake genuinely does not complete."
+}

@@ -1,0 +1,59 @@
+{
+  "corpusItem": 16,
+  "file": "real/wpa-test-decode.pcap",
+  "source": "real capture (Wireshark sample set), radiotap + 802.11, 2.4 GHz channel 5",
+  "description": "4,274-frame real WPA capture containing exactly two EAPOL-Key frames (M1 and M2) and nothing after: an incomplete 4-way handshake inside a large, otherwise healthy capture.",
+  "frameCount": 4274,
+  "linkType": "IEEE 802.11 plus radiotap (LINKTYPE 127)",
+  "captureQuality": {
+    "expectDirectionality": "monitor-mode",
+    "expectTruncated": false,
+    "expectDropIndicators": false,
+    "snaplen": 262144
+  },
+  "groundTruth": {
+    "totalFrames": 4274,
+    "eapolFrames1Based": [16, 17],
+    "eapolFrameIndices0Based": [15, 16],
+    "eapolType": "3 (EAPOL-Key) for both",
+    "m1": { "index0Based": 15, "ta": "10:6f:3f:0e:33:3c", "ra": "00:1b:77:2f:93:04", "timeEpoch": 1445695609.794361 },
+    "m2": { "index0Based": 16, "ta": "00:1b:77:2f:93:04", "ra": "10:6f:3f:0e:33:3c", "timeEpoch": 1445695609.795036 },
+    "m1ToM2DeltaMs": 0.675,
+    "retryFrames": 25,
+    "retryRatePct": 0.585,
+    "channelFreqMHz": 2432,
+    "subtypeHistogram": {
+      "0x0008 beacon": 3106,
+      "0x0028 QoS data": 720,
+      "0x0020 data": 218,
+      "0x002c QoS null": 150,
+      "0x0004 probe-request": 43,
+      "0x0005 probe-response": 33,
+      "0x000b authentication": 2,
+      "0x0001 assoc-response": 1,
+      "0x0000 assoc-request": 1
+    }
+  },
+  "mustReport": [
+    {
+      "ruleId": "wifi.eapol-handshake-incomplete",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [15, 16],
+      "detail": "EAPOL 4-way handshake stops after M2: exactly 2 EAPOL-Key frames in 4,274 frames, no M3/M4 anywhere in the remaining 4,257 frames"
+    }
+  ],
+  "mustNotReport": [
+    "wifi.eapol-handshake-complete",
+    "wifi.retry-rate",
+    "wifi.deauthentication",
+    "wifi.disassociation",
+    "capture.truncated",
+    "tcp.retransmission"
+  ],
+  "certaintyGovernance": {
+    "cause": "at most 'likely' - missing M3/M4 can be a PSK mismatch, a supplicant abort, or monitor-mode capture loss; the engine must not assert 'wrong password'",
+    "captureLoss": "must be offered as an alternative explanation because monitor-mode capture is inherently lossy"
+  },
+  "notes": "Scale + sparsity fixture: two significant frames buried in 4,274. A rule engine that only scans the first N frames still passes; one that mis-scopes EAPOL to a per-BSS counter and reports 'complete' fails. Retry rate 0.585% must stay below the item 15 alert threshold."
+}

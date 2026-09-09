@@ -1,0 +1,51 @@
+{
+  "corpusItem": 25,
+  "bonus": true,
+  "file": "real/arp-storm.pcap",
+  "source": "real capture (Wireshark sample set), Ethernet",
+  "description": "Real ARP broadcast storm: 622 ARP requests from a single host in 29 s, no replies at all.",
+  "frameCount": 622,
+  "linkType": "Ethernet (LINKTYPE 1)",
+  "captureQuality": {
+    "expectDirectionality": "unidirectional",
+    "expectTruncated": false,
+    "snaplen": 65535
+  },
+  "groundTruth": {
+    "totalFrames": 622,
+    "arpFrames": 622,
+    "arpRequests": 622,
+    "arpReplies": 0,
+    "singleSourceMac": "00:07:0d:af:f4:54",
+    "durationSeconds": 28.969106,
+    "requestsPerSecond": 21.5,
+    "nonArpFrames": 0
+  },
+  "mustReport": [
+    {
+      "ruleId": "arp.storm",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [0, 1, 2],
+      "detail": "622 ARP requests from a single MAC 00:07:0d:af:f4:54 in 28.97 s (~21.5/s) with zero replies"
+    },
+    {
+      "ruleId": "arp.unanswered",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [0, 621],
+      "detail": "No ARP reply appears anywhere in the capture"
+    }
+  ],
+  "mustNotReport": [
+    "arp.conflict",
+    "tcp.retransmission",
+    "dns.no-response",
+    "capture.truncated"
+  ],
+  "certaintyGovernance": {
+    "cause": "at most 'likely' - a storm from one MAC can be a scanning host, a loop, or a broken gateway; the engine must not assert a switching loop from ARP alone",
+    "directionality": "the capture is single-direction by nature; 'no replies' must be qualified as possibly a capture-vantage artefact"
+  },
+  "notes": "Aggregation fixture: 622 identical events must roll up into one storm finding, not 622 findings. Complements synthetic item 14 (conflict + sweep) with real duplicate-free storm traffic."
+}
