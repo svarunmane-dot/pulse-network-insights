@@ -1,0 +1,102 @@
+{
+  "corpusItem": "24a",
+  "half": "realism (the 1.4M-frame memory-stress half is NOT covered here)",
+  "file": "nitroba.pcap",
+  "inRepo": false,
+  "md5": "9981827f11968773ff815e39f5458ec8",
+  "fileSizeBytes": 56180821,
+  "source": "real capture (Nitroba University Harassment scenario, digitalcorpora), Ethernet",
+  "description": "94,410 real Ethernet frames over 4h22m: TCP/HTTP/TLS, UDP DNS/SSDP/SIP/NTP, ARP, ICMP. Mixed real-world noise for false-positive calibration and throughput measurement.",
+  "frameCount": 94410,
+  "linkType": "Ethernet (LINKTYPE 1)",
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectTruncated": false,
+    "expectDropIndicators": false,
+    "snaplen": 4096,
+    "notes": "No frame has cap_len < len, so despite the 4096 snaplen the engine must NOT raise capture.truncated."
+  },
+  "groundTruth": {
+    "totalFrames": 94410,
+    "totalBytes": 54670237,
+    "avgFrameBytes": 579.07,
+    "durationSeconds": 15759.950751,
+    "earliestPacket": "2008-07-22T01:51:07.095278Z",
+    "latestPacket": "2008-07-22T06:13:47.046029Z",
+    "protocolMix": {
+      "ip": 90379,
+      "tcp": 83114,
+      "http": 10103,
+      "tls": 1561,
+      "udp": 7200,
+      "dns": 2905,
+      "ssdp": 2225,
+      "sip": 297,
+      "ntp": 184,
+      "arp": 4026,
+      "icmp": 20,
+      "ipv6": 0,
+      "vlan": 0
+    },
+    "conversations": { "ip": 482, "tcp": 2027, "udp": 827 },
+    "tcpSynFrames": 2169,
+    "dnsQueries": 1488,
+    "tcpAnalysis": {
+      "retransmissions": 3147,
+      "duplicateAcks": 1522,
+      "zeroWindow": 1,
+      "resetFrames": 391
+    },
+    "dnsNxdomainResponses": 489,
+    "truncatedFrames": 0
+  },
+  "mustReport": [
+    {
+      "ruleId": "tcp.retransmission",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": "engine output must be within +/-5% of 3147 frames",
+      "detail": "3.33% of TCP frames are retransmissions across 2,027 conversations"
+    },
+    {
+      "ruleId": "tcp.dup-ack",
+      "severity": "info",
+      "certainty": "observed",
+      "evidenceFrames": "engine output must be within +/-5% of 1522 frames",
+      "detail": "1,522 duplicate ACKs, concentrated in the large HTTP downloads"
+    },
+    {
+      "ruleId": "tcp.reset",
+      "severity": "info",
+      "certainty": "observed",
+      "evidenceFrames": "engine output must be within +/-2% of 391 frames",
+      "detail": "391 RST frames - normal browser teardown behaviour at this scale, must be summarized per-flow and not emitted as 391 separate findings"
+    },
+    {
+      "ruleId": "dns.nxdomain",
+      "severity": "info",
+      "certainty": "observed",
+      "evidenceFrames": "engine output must be within +/-2% of 489 responses",
+      "detail": "489 NXDOMAIN responses out of 1,488 queries"
+    }
+  ],
+  "mustNotReport": [
+    "capture.truncated",
+    "capture.asymmetric",
+    "tcp.window-full",
+    "arp.conflict",
+    "wifi.retry-rate"
+  ],
+  "aggregationContract": {
+    "maxFindingsEmitted": 50,
+    "rule": "Every finding class must roll up to one finding per rule per flow (or per rule overall with a count), never one finding per frame. A run that emits thousands of findings fails the fixture even if every individual detection is correct.",
+    "zeroWindow": "The single zero-window frame must be surfaced as at most 'info' - one event in 83,114 TCP frames is not a stall."
+  },
+  "performanceContract": {
+    "purpose": "throughput and stability only, NOT the memory-stress gate",
+    "framesPerSecondFloor": 40000,
+    "peakHeapCeilingMB": 180,
+    "note": "56 MB / 94,410 frames at 579 B average. Item 24's 1.4M-frame small-packet memory stress must come from a separately generated synthetic replay - this file does not satisfy it."
+  },
+  "notes": "Primary false-positive calibration fixture. Reference ground truth is reference/real/nitroba.tshark.csv.gz (gzipped per-frame CSV) and reference/real/nitroba.phs.txt (protocol hierarchy). The capture itself is intentionally not committed - verify md5 9981827f11968773ff815e39f5458ec8 before use."
+}
