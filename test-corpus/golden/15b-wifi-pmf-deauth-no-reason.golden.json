@@ -1,0 +1,56 @@
+{
+  "corpusItem": "15b",
+  "file": "real/wpa-test-decode-mgmt.pcap",
+  "source": "real capture (Wireshark sample set), radiotap + 802.11 with protected management frames",
+  "description": "11-frame association lifecycle ending in two Disassociations and one Deauthentication; management frames are PMF-protected so no reason code is readable.",
+  "frameCount": 11,
+  "linkType": "IEEE 802.11 plus radiotap (LINKTYPE 127)",
+  "captureQuality": {
+    "expectDirectionality": "monitor-mode",
+    "expectTruncated": false,
+    "snaplen": 65535,
+    "radiotapFieldsPresent": ["channel", "dbm_antsignal"],
+    "notes": "wlan_radio.signal_dbm is present here (-65 to -66 dBm) even though the substituted capture for item 15 has dB only."
+  },
+  "groundTruth": {
+    "totalFrames": 11,
+    "retryFrames": 0,
+    "retryRatePct": 0.0,
+    "channelFreqMHz": 2437,
+    "sequence1Based": {
+      "1-2": "Authentication (0x000b) both directions",
+      "3": "Association request (0x0000)",
+      "4": "Association response (0x0001)",
+      "5-8": "Action frames (0x0028)",
+      "9-10": "Disassociation (0x000d) from AP 90:f6:52:e6:ef:92, Protected flag set",
+      "11": "Deauthentication (0x000c) from AP, Protected flag set"
+    }
+  },
+  "mustReport": [
+    {
+      "ruleId": "wifi.deauthentication",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [10],
+      "detail": "Deauthentication from AP 90:f6:52:e6:ef:92 to 6a:bb:cc:dd:ee:ff at t+50.26 s; frame body is PMF-protected, reason code not recoverable"
+    },
+    {
+      "ruleId": "wifi.disassociation",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [8, 9],
+      "detail": "Two Disassociation frames from the AP 1.02 s apart, both PMF-protected, reason code not recoverable"
+    }
+  ],
+  "mustNotReport": [
+    "wifi.deauth-reason-code",
+    "wifi.retry-rate",
+    "wifi.rssi-weak",
+    "capture.truncated"
+  ],
+  "certaintyGovernance": {
+    "reasonCode": "must be reported as unavailable, never guessed or defaulted to 0/1; the Protected flag is set on subtypes 0x000c and 0x000d",
+    "deauthCause": "at most 'likely' - AP-initiated deauth can be idle timeout, load balancing, or an attack"
+  },
+  "notes": "Discrimination fixture for the reason-code half of item 15: proves the engine distinguishes 'reason code absent because encrypted' from 'reason code 0'. Zero retries here also anchors the low end of the retry-rate threshold."
+}
