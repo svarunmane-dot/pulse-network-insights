@@ -1,0 +1,11 @@
+
+===================================================================
+Protocol Hierarchy Statistics
+Filter: 
+
+frame                                    frames:20056 bytes:1111696
+  wlan                                   frames:20056 bytes:1111696
+    data                                 frames:2589 bytes:335712
+    llc                                  frames:26 bytes:4384
+      eapol                              frames:26 bytes:4384
+===================================================================
