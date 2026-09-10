@@ -78,24 +78,28 @@ Items 15, 16 and 24 (real Wi-Fi monitor-mode, real mixed enterprise, real
 
 ```
 test-corpus/
-  captures/real/               5 real captures (committed)
+  captures/real/               6 real captures (committed)
   reference/real/              tshark 4.6.3 CSV + capinfos + protocol hierarchy
-  golden/15-...  15b-...  16-...  24a-...  25-...  26-...
+  golden/15-...  15b-...  15c-...  16-...  24a-...  25-...  26-...
 ```
 
 | Item | File | Committed | Covers |
 |------|------|-----------|--------|
 | 15 | real/wpa-Induction.pcap | yes | retry rate 3.2% (35/1093), Disassoc reason code 8, radiotap dB signal / rate / channel (no dBm, no MCS) |
 | 15b | real/wpa-test-decode-mgmt.pcap | yes | PMF-protected Deauth/Disassoc — reason code must be reported unavailable, never defaulted |
+| 15c | real/pmkid-not-recognized.cap | yes (1.4 MB, md5 `602dc0711a472e2144034e5c260ad8c5`) | deauth storm: 6,153 Deauth over 378.6 s, reason code 7 dominant (6,145), 29 Disassoc, retry 3.3% (663/20,056), raw 802.11 with **no radiotap** |
 | 16 | real/wpa-test-decode.pcap | yes | EAPOL M1/M2 only at 0-based indices 15–16 of 4,274 frames; verified nothing after |
 | 24a | nitroba.pcap | **no** (56 MB, md5 `9981827f11968773ff815e39f5458ec8`) | realism half only: 94,410 frames, 579 B avg, TCP/HTTP/TLS/DNS/SSDP/SIP/ARP/ICMP mix, aggregation + false-positive calibration |
 | 25 | real/arp-storm.pcap | yes | bonus: 622 unanswered ARP requests from one MAC in 29 s |
 | 26 | real/wpa-eap-tls.pcap | yes | bonus: clean 802.1X/EAP-TLS success — zero findings expected |
 
 Notes:
-- `pmkid-not-recognized.cap` was not among the uploads; `wpa-test-decode-mgmt.pcap`
-  supplies the reason-code half of item 15 instead (and is stricter: the reason
-  code is encrypted, so the engine must withhold rather than guess).
+- Item 15 has three halves: 15 (radiotap/signal + retry baseline), 15b (reason code
+  withheld under PMF), 15c (reason-code decoding + deauth volume, no radiotap).
+- `pmkid-not-recognized.cap` reads 20,056 complete frames; capinfos reports the file
+  was cut short mid-record on the final packet. That is a file-integrity note, not
+  per-frame snaplen truncation — `capture.truncated` must NOT fire.
+
 - `nitroba.pcap` is deliberately not committed. Ground truth for it lives in
   `reference/real/nitroba.tshark.csv.gz` (per-frame, gzipped) and
   `reference/real/nitroba.phs.txt`. Verify the md5 before use.
