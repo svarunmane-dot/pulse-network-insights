@@ -1,0 +1,119 @@
+{
+  "corpusItem": "15c",
+  "file": "real/pmkid-not-recognized.cap",
+  "source": "real capture (aircrack-ng test suite), raw IEEE 802.11 (LINKTYPE 105) - NO radiotap header",
+  "description": "Sustained deauthentication storm: 6,153 Deauthentication frames over a 380.5 s capture, overwhelmingly reason code 7 (Class 3 frame received from nonassociated station), plus 29 Disassociations and a 3.3% retry rate.",
+  "frameCount": 20056,
+  "linkType": "IEEE 802.11 without radiotap (LINKTYPE 105 / encap 20)",
+  "md5": "602dc0711a472e2144034e5c260ad8c5",
+  "captureQuality": {
+    "expectDirectionality": "monitor-mode",
+    "expectTruncated": false,
+    "expectFileCutShort": true,
+    "snaplen": 65535,
+    "radiotapFieldsPresent": [],
+    "radiotapFieldsAbsent": ["channel", "datarate", "db_antsignal", "dbm_antsignal", "mcs", "vht", "he", "rx_flags"],
+    "notes": "No radiotap header at all: no RSSI, no channel, no rate, no MCS. Any rule emitting signal strength, channel utilisation or PHY-rate findings from this file is wrong. capinfos reports the file was cut short in the middle of the final packet after 20,056 complete frames; the engine should surface that as a file-integrity note (partial trailing record), NOT as per-frame snaplen truncation."
+  },
+  "groundTruth": {
+    "totalFrames": 20056,
+    "captureDurationSec": 380.541266,
+    "avgFrameBytes": 55.43,
+    "retryFrames": 663,
+    "retryRatePct": 3.3,
+    "deauthentication": {
+      "subtype": "0x000c",
+      "count": 6153,
+      "reasonCodeHistogram": { "7": 6145, "2": 4, "3": 3, "unavailable": 1 },
+      "protectedFrames": 1,
+      "firstFrame1Based": 5,
+      "firstRelTimeSec": 0.323183,
+      "lastFrame1Based": 19898,
+      "lastRelTimeSec": 378.875078,
+      "distribution": "sustained across the whole capture; ~768-772 deauths in each populated 30 s bucket (buckets 0,1,2,4,5,6,9,11), i.e. roughly 16 deauth/s while active - not one isolated burst",
+      "topPairs": [
+        { "ta": "8c:de:f9:d0:b4:61", "ra": "60:7e:a4:4c:ee:73", "count": 3073 },
+        { "ta": "60:7e:a4:4c:ee:73", "ta_note": "same pair, reverse direction", "ra": "8c:de:f9:d0:b4:61", "count": 3072 },
+        { "ta": "8c:de:f9:d0:b4:61", "ra": "24:df:a7:95:54:e6", "count": 5 },
+        { "ta": "ac:76:4c:e7:d2:a3", "ra": "8c:de:f9:d0:b4:61", "count": 1 },
+        { "ta": "8c:de:f9:d0:b4:61", "ra": "ff:ff:ff:ff:ff:ff", "count": 1 }
+      ]
+    },
+    "disassociation": {
+      "subtype": "0x000a",
+      "count": 29,
+      "reasonCodeHistogram": { "2": 11, "4": 15, "8": 1, "unavailable": 2 }
+    },
+    "subtypeHistogram": {
+      "0x001d (control)": 6858,
+      "0x000c deauthentication": 6153,
+      "0x0020 data": 2028,
+      "0x0005 probe-response": 877,
+      "0x0018 (control)": 798,
+      "0x001b (control)": 660,
+      "0x0019 (control)": 613,
+      "0x0028 action": 547,
+      "0x000b authentication": 343,
+      "0x001c (control)": 292,
+      "0x002c": 188,
+      "0x0001 assoc-response": 162,
+      "0x0000 assoc-request": 142,
+      "0x0024": 137,
+      "0x0004 probe-request": 128,
+      "0x000d action": 55,
+      "0x0015": 30,
+      "0x000a disassociation": 29,
+      "0x001a (control)": 15,
+      "0x0008 beacon": 1
+    },
+    "eapolFirstFrames1Based": [16714, 16717, 16798, 16801],
+    "eapolNote": "EAPOL-Key frames (type 3) appear only late in the capture, from frame 16714 onward"
+  },
+  "mustReport": [
+    {
+      "ruleId": "wifi.deauth-storm",
+      "severity": "critical",
+      "certainty": "observed",
+      "evidenceFrames": [4, 5, 6, 17998, 18320, 19897],
+      "detail": "6,153 Deauthentication frames over 378.6 s (first t+0.32 s, last t+378.88 s), 6,145 of them reason code 7 (Class 3 frame received from nonassociated station). 6,145 of 6,153 concentrate on the single pair 8c:de:f9:d0:b4:61 <-> 60:7e:a4:4c:ee:73 in both directions, ~16 deauth/s while active. Finding text must name reason code 7 explicitly, not a generic 'deauthentication detected'."
+    },
+    {
+      "ruleId": "wifi.deauthentication",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [4],
+      "detail": "Deauthentication frames present; minor reason codes 2 (Previous authentication no longer valid, x4) and 3 (Deauthenticated because sending STA is leaving, x3) also observed alongside the dominant code 7"
+    },
+    {
+      "ruleId": "wifi.disassociation",
+      "severity": "warning",
+      "certainty": "observed",
+      "evidenceFrames": [],
+      "detail": "29 Disassociation frames across reason codes 4 (x15), 2 (x11) and 8 (x1); 2 frames carry no readable reason code"
+    },
+    {
+      "ruleId": "wifi.retry-rate",
+      "severity": "info",
+      "certainty": "observed",
+      "evidenceFrames": [],
+      "detail": "663 of 20,056 frames carry the retry bit (3.3%)"
+    }
+  ],
+  "mustNotReport": [
+    "wifi.rssi-weak",
+    "wifi.mcs-degraded",
+    "wifi.channel-utilization",
+    "wifi.phy-rate-degraded",
+    "capture.truncated",
+    "tcp.retransmission",
+    "eapol.handshake-incomplete-at-start"
+  ],
+  "certaintyGovernance": {
+    "reasonCodeDecoding": "reason code 7 must be decoded and named; the 1 protected Deauth and the 2 protected Disassocs must be reported as reason code unavailable, never folded into the code-7 tally",
+    "rssi": "withheld - no radiotap header exists in this capture",
+    "channel": "withheld - no radiotap header exists in this capture",
+    "deauthCause": "at most 'likely' - a code-7 storm is consistent with a deauth-flood attack, a confused AP/STA state machine, or a driver bug; the engine must not assert 'attack' with 'observed' certainty",
+    "aggregation": "6,153 deauth frames must collapse into at most 2 findings; per-frame emission is a failure"
+  },
+  "notes": "Item 15 has three halves. This file covers retry rate + deauth volume + reason-code decoding on raw 802.11 with no radiotap. real/wpa-test-decode-mgmt.pcap covers 'reason code correctly withheld under PMF'. real/wpa-Induction.pcap covers the radiotap/signal dimension and the 3.2% retry baseline. Retry rate here (3.3%) is intentionally close to wpa-Induction (3.2%): a retry-rate threshold must classify both consistently. Also a performance fixture: 20,056 frames with 6,153 management frames of the same subtype must not degrade the rule pass."
+}
