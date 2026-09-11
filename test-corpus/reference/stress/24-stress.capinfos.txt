@@ -1,0 +1,9 @@
+File name:           24-ack-storm-memory-stress.pcap
+Number of packets:   1450000
+File size:           102225024 bytes
+Data size:           79025000 bytes
+Capture duration:    289.999800 seconds
+Earliest packet time: 2027-01-15 08:00:00.000200
+Latest packet time:   2027-01-15 08:04:50.000000
+SHA256:              17c33f989efed0be69f2e4a756d21169790022978082b40ea6f9d4a0998c3819
+SHA1:                f16aace058c35bfc70ca595f25b5e1df61bebade
