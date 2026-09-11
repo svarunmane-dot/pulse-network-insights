@@ -1,0 +1,93 @@
+{
+  "corpusItem": "24b",
+  "half": "memory stress (the realism half is 24a / nitroba.pcap)",
+  "file": "24-ack-storm-memory-stress.pcap",
+  "inRepo": false,
+  "generator": "test-corpus/generate-stress.py (deterministic, stdlib only, ~6 s)",
+  "md5": "0aaa00d5e3e662a9984e599c5d376de3",
+  "sha256": "17c33f989efed0be69f2e4a756d21169790022978082b40ea6f9d4a0998c3819",
+  "fileSizeBytes": 102225024,
+  "source": "synthetic, Ethernet",
+  "description": "1,450,000 small frames over 290 s across 200 concurrent TCP conversations. Per conversation the server sends a 1-byte segment (55 B frame) and the client answers with a 54-byte pure ACK whose ack number strictly advances by 1 every time. Worst case for frames-per-megabyte and flow-table churn; healthy traffic in every other respect.",
+  "frameCount": 1450000,
+  "linkType": "Ethernet (LINKTYPE 1)",
+  "captureQuality": {
+    "expectDirectionality": "bidirectional",
+    "expectTruncated": false,
+    "expectDropIndicators": false,
+    "snaplen": 65535,
+    "notes": "No frame has cap_len < len."
+  },
+  "groundTruth": {
+    "totalFrames": 1450000,
+    "totalBytes": 79025000,
+    "fileSizeBytes": 102225024,
+    "avgFrameBytes": 54.5,
+    "durationSeconds": 289.9998,
+    "earliestPacket": "2027-01-15T08:00:00.000200Z",
+    "latestPacket": "2027-01-15T08:04:50.000000Z",
+    "framesPerSecond": 5000,
+    "protocolMix": {
+      "eth": 1450000,
+      "ip": 1450000,
+      "tcp": 1450000,
+      "tcpWithPayload": 725000,
+      "tcpPureAck": 725000,
+      "udp": 0,
+      "arp": 0,
+      "icmp": 0,
+      "ipv6": 0,
+      "vlan": 0
+    },
+    "conversations": { "tcp": 200, "ip": 200 },
+    "tcpAnalysis": {
+      "retransmissions": 0,
+      "duplicateAcks": 0,
+      "keepAlives": 0,
+      "ackedUnseenSegment": 0,
+      "previousSegmentNotCaptured": 0,
+      "zeroWindow": 0,
+      "windowFull": 0,
+      "resetFrames": 0,
+      "synFrames": 0
+    },
+    "checksums": { "badIpv4": 0, "badTcp": 0 },
+    "truncatedFrames": 0,
+    "tsharkVerification": "tshark 4.6.3: `-Y tcp.analysis.flags` matches 0 frames; `-Y 'tcp.checksum.status==\"Bad\" || ip.checksum.status==\"Bad\"'` matches 0 frames.",
+    "phsNote": "tshark protocol hierarchy attributes 721,375 frames to the `data` layer rather than 725,000 because consecutive 1-byte segments are grouped by TCP PDU reassembly. The on-wire count of payload-bearing frames is exactly 725,000."
+  },
+  "mustReport": [],
+  "mustNotReport": [
+    "tcp.retransmission",
+    "tcp.dup-ack",
+    "tcp.keep-alive",
+    "tcp.out-of-order",
+    "tcp.zero-window",
+    "tcp.window-full",
+    "tcp.reset",
+    "tcp.handshake-incomplete",
+    "tcp.acked-unseen-segment",
+    "capture.truncated",
+    "capture.asymmetric",
+    "capture.drops",
+    "checksum.bad",
+    "dns.no-response",
+    "arp.storm",
+    "wifi.retry-rate"
+  ],
+  "certaintyGovernance": {
+    "rule": "Zero findings. This fixture is a false-positive guard at scale: the traffic is healthy, so volume alone must never be escalated into a finding.",
+    "absentHandshake": "No SYN appears (the capture starts mid-stream). The engine may note handshake absence as a capture-vantage observation at 'info' at most, and must NOT report tcp.handshake-incomplete as a network fault.",
+    "smallFrames": "A 54-byte average frame size is a property of the traffic, not a defect. No 'small packet' or 'ACK flood' finding is permitted without an accompanying loss or latency signal, and neither exists here."
+  },
+  "performanceContract": {
+    "purpose": "the memory-stress gate for item 24",
+    "frameCountFloor": 1400000,
+    "fileSizeFloorBytes": 100000000,
+    "peakHeapCeilingMB": 350,
+    "framesPerSecondFloor": 40000,
+    "maxFindingsEmitted": 0,
+    "note": "1,450,000 frames at 54.5 B average in 102.2 MB - the highest frame-count-per-byte case the engine will see. The columnar SoA store must hold this without exceeding the heap ceiling and without falling back to per-frame object allocation. A run that completes but emits any finding fails the fixture."
+  },
+  "notes": "The capture is intentionally not committed (102 MB). Regenerate with `python3 test-corpus/generate-stress.py` and verify md5 0aaa00d5e3e662a9984e599c5d376de3 before use. Reference ground truth lives in test-corpus/reference/stress/ (capinfos with SHA-256, protocol hierarchy, and a gzipped per-frame tshark CSV of the first 20,000 frames - the full 1.45M-row CSV is not committed for size reasons). A pure zero-length-ACK capture is deliberately NOT used: acknowledging data that never appears on the wire produces 'ACKed unseen segment' on every frame, which is a real finding and would contradict the zero-findings contract."
+}
