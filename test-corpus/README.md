@@ -103,5 +103,37 @@ Notes:
 - `nitroba.pcap` is deliberately not committed. Ground truth for it lives in
   `reference/real/nitroba.tshark.csv.gz` (per-frame, gzipped) and
   `reference/real/nitroba.phs.txt`. Verify the md5 before use.
-- The 1.4M-frame memory-stress half of item 24 is still outstanding and must
-  come from a synthetic small-packet replay generated separately.
+
+## Phase 0c — item 24b, the memory-stress half
+
+```
+test-corpus/
+  generate-stress.py           deterministic generator (stdlib only, ~6 s)
+  reference/stress/            capinfos (+SHA-256), protocol hierarchy,
+                               gzipped per-frame CSV of the first 20k frames
+  golden/24b-ack-storm-memory-stress.golden.json
+```
+
+| Item | File | Committed | Covers |
+|------|------|-----------|--------|
+| 24b | 24-ack-storm-memory-stress.pcap | **no** (102 MB, md5 `0aaa00d5e3e662a9984e599c5d376de3`) | 1,450,000 frames / 54.5 B avg / 290 s / 200 TCP conversations — peak frames-per-megabyte, zero findings expected |
+
+Regenerate with:
+
+```bash
+python3 test-corpus/generate-stress.py
+```
+
+Notes:
+- Each conversation alternates a 1-byte server segment (55 B frame) with a
+  54-byte pure client ACK whose ack number strictly advances by 1. tshark 4.6.3
+  reports **0** frames matching `tcp.analysis.flags` and **0** bad IPv4/TCP
+  checksums, so the golden contract is zero findings.
+- A capture of pure zero-length ACKs is deliberately not used: acknowledging
+  data that never appears on the wire flags every frame as "ACKed unseen
+  segment", which is a genuine finding and would break the zero-findings gate.
+- No SYN appears (mid-stream capture). `tcp.handshake-incomplete` must not fire.
+
+Phase 0 is complete: 21 synthetic fixtures, 6 real captures, and the
+memory-stress fixture, each with tshark 4.6.3 ground truth and a golden JSON.
+
