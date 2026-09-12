@@ -14,6 +14,11 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    // The PCAP worker is a module worker that uses dynamic import(), which
+    // requires the ES worker output format (Vite defaults to iife).
+    worker: {
+      format: "es",
+    },
     build: {
       rollupOptions: {
         external: ["cloudflare:sockets"],
