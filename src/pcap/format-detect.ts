@@ -41,10 +41,10 @@ export type CaptureFormat =
 
 const LIBPCAP_MAGICS = {
   // magic bytes as read big-endian-first from the file
-  "d4c3b2a1": { endianness: "little", timestampResolution: "microsecond" },
-  "a1b2c3d4": { endianness: "big", timestampResolution: "microsecond" },
+  d4c3b2a1: { endianness: "little", timestampResolution: "microsecond" },
+  a1b2c3d4: { endianness: "big", timestampResolution: "microsecond" },
   "4d3cb2a1": { endianness: "little", timestampResolution: "nanosecond" },
-  "a1b23c4d": { endianness: "big", timestampResolution: "nanosecond" },
+  a1b23c4d: { endianness: "big", timestampResolution: "nanosecond" },
 } as const satisfies Record<
   string,
   { endianness: PcapEndianness; timestampResolution: PcapTimestampResolution }
