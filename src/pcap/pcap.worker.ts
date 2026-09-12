@@ -15,7 +15,6 @@
     "EventSource",
     "importScripts",
     "sendBeacon",
-send_placeholder
   ]) {
     try {
       Object.defineProperty(scope, name, {
