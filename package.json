@@ -1,7 +1,9 @@
 {
   "name": "tanstack_start_ts",
   "private": true,
-  "sideEffects": ["src/lib/error-capture.ts"],
+  "sideEffects": [
+    "src/lib/error-capture.ts"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -9,7 +11,8 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prebuild": "eslint src/pcap --max-warnings=0"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
