@@ -36,5 +36,57 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  // --- PCAP isolation boundary -------------------------------------------
+  // src/pcap/** must stay offline and storage-free: no backend client, no
+  // server functions, no analytics, no persistence, no network primitives.
+  {
+    files: ["src/pcap/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "@supabase/*",
+                "**/integrations/supabase/**",
+                "@/integrations/supabase/**",
+                "*.functions",
+                "**/*.functions",
+                "@/lib/*.functions",
+                "*.server",
+                "**/*.server",
+              ],
+              message:
+                "src/pcap/** is an offline analysis boundary: no backend, server-function, or server-module imports.",
+            },
+          ],
+        },
+      ],
+      "no-restricted-globals": [
+        "error",
+        { name: "fetch", message: "PCAP boundary: no network access." },
+        { name: "XMLHttpRequest", message: "PCAP boundary: no network access." },
+        { name: "WebSocket", message: "PCAP boundary: no network access." },
+        { name: "EventSource", message: "PCAP boundary: no network access." },
+        { name: "importScripts", message: "PCAP boundary: no remote code loading." },
+        { name: "sendBeacon", message: "PCAP boundary: no telemetry." },
+        { name: "gtag", message: "PCAP boundary: no analytics." },
+        { name: "dataLayer", message: "PCAP boundary: no analytics." },
+        { name: "localStorage", message: "PCAP boundary: no persistence of capture data." },
+        { name: "sessionStorage", message: "PCAP boundary: no persistence of capture data." },
+        { name: "indexedDB", message: "PCAP boundary: no persistence of capture data." },
+        { name: "console", message: "PCAP boundary: no logging of capture contents." },
+      ],
+      "no-console": "error",
+      "no-restricted-properties": [
+        "error",
+        { object: "navigator", property: "sendBeacon", message: "PCAP boundary: no telemetry." },
+        { object: "window", property: "fetch", message: "PCAP boundary: no network access." },
+        { object: "self", property: "fetch", message: "PCAP boundary: no network access." },
+        { object: "globalThis", property: "fetch", message: "PCAP boundary: no network access." },
+      ],
+    },
+  },
   eslintPluginPrettier,
 );

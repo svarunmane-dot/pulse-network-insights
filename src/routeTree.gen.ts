@@ -24,6 +24,7 @@ import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as NetworkDiagramRouteImport } from './routes/network-diagram'
+import { Route as PcapAnalyzerRouteImport } from './routes/pcap-analyzer'
 import { Route as PingRouteImport } from './routes/ping'
 import { Route as PingIpRouteImport } from './routes/ping-ip'
 import { Route as PingipRouteImport } from './routes/pingip'
@@ -149,6 +150,11 @@ const MonitoringRoute = MonitoringRouteImport.update({
 const NetworkDiagramRoute = NetworkDiagramRouteImport.update({
   id: '/network-diagram',
   path: '/network-diagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PcapAnalyzerRoute = PcapAnalyzerRouteImport.update({
+  id: '/pcap-analyzer',
+  path: '/pcap-analyzer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PingRoute = PingRouteImport.update({
@@ -430,6 +436,7 @@ export interface FileRoutesByFullPath {
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
+  '/pcap-analyzer': typeof PcapAnalyzerRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
   '/pingip': typeof PingipRoute
@@ -497,6 +504,7 @@ export interface FileRoutesByTo {
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
+  '/pcap-analyzer': typeof PcapAnalyzerRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
   '/pingip': typeof PingipRoute
@@ -566,6 +574,7 @@ export interface FileRoutesById {
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
+  '/pcap-analyzer': typeof PcapAnalyzerRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
   '/pingip': typeof PingipRoute
@@ -636,6 +645,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/monitoring'
     | '/network-diagram'
+    | '/pcap-analyzer'
     | '/ping'
     | '/ping-ip'
     | '/pingip'
@@ -703,6 +713,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/monitoring'
     | '/network-diagram'
+    | '/pcap-analyzer'
     | '/ping'
     | '/ping-ip'
     | '/pingip'
@@ -771,6 +782,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/monitoring'
     | '/network-diagram'
+    | '/pcap-analyzer'
     | '/ping'
     | '/ping-ip'
     | '/pingip'
@@ -840,6 +852,7 @@ export interface RootRouteChildren {
   GlobalRoute: typeof GlobalRoute
   MonitoringRoute: typeof MonitoringRoute
   NetworkDiagramRoute: typeof NetworkDiagramRoute
+  PcapAnalyzerRoute: typeof PcapAnalyzerRoute
   PingRoute: typeof PingRoute
   PingIpRoute: typeof PingIpRoute
   PingipRoute: typeof PingipRoute
@@ -963,6 +976,13 @@ declare module '@tanstack/react-router' {
       path: '/network-diagram'
       fullPath: '/network-diagram'
       preLoaderRoute: typeof NetworkDiagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pcap-analyzer': {
+      id: '/pcap-analyzer'
+      path: '/pcap-analyzer'
+      fullPath: '/pcap-analyzer'
+      preLoaderRoute: typeof PcapAnalyzerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ping': {
@@ -1420,6 +1440,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlobalRoute: GlobalRoute,
   MonitoringRoute: MonitoringRoute,
   NetworkDiagramRoute: NetworkDiagramRoute,
+  PcapAnalyzerRoute: PcapAnalyzerRoute,
   PingRoute: PingRoute,
   PingIpRoute: PingIpRoute,
   PingipRoute: PingipRoute,
