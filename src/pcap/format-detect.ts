@@ -139,7 +139,7 @@ export function detectCaptureFormat(head: Uint8Array): CaptureFormat {
   const known: Record<string, string> = {
     "1f8b0800": "Gzip archive — decompress it before uploading.",
     "504b0304": "Zip archive — extract the capture first.",
-    "d0cf11e0": "Legacy Microsoft Office document — not a capture.",
+    d0cf11e0: "Legacy Microsoft Office document — not a capture.",
   };
   return {
     kind: "unsupported",
