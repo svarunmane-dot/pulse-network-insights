@@ -307,9 +307,12 @@ export class CaptureParser {
     bufOffset: number,
   ): number {
     if (buf.length - pos < 12) return -1;
-    const blockType = view.getUint32(pos, false);
+    // SHB's magic is byte-order agnostic; every other block type must be read
+    // with the endianness the current section declared.
+    const isShb = view.getUint32(pos, false) === PCAPNG_SHB;
+    const blockType = isShb ? PCAPNG_SHB : view.getUint32(pos, this.section.le);
 
-    if (blockType === PCAPNG_SHB) {
+    if (isShb) {
       // Byte-order magic decides endianness for the whole new section.
       if (buf.length - pos < 28) return -1;
       let le: boolean;
