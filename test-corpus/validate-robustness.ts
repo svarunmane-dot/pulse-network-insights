@@ -107,8 +107,8 @@ const check = (name: string, ok: boolean, detail: string) => {
 // 6. Paged allocation is genuinely paged
 {
   const store = new PacketStore();
-  const pagesAt = (n: number) => (store as unknown as { pages: unknown[] }).pages.length;
-  const empty = pagesAt(0);
+  const pagesAt = () => Math.max(...store.allocationReport().map((r) => r.pages), 0);
+  const empty = pagesAt();
   const frame = {
     srcAddr32: 1,
     dstAddr32: 2,
@@ -119,9 +119,9 @@ const check = (name: string, ok: boolean, detail: string) => {
     fileOffset: 0,
   } as unknown as Parameters<PacketStore["push"]>[0];
   for (let i = 0; i < 65_536; i++) store.push(frame);
-  const onePage = pagesAt(0);
+  const onePage = pagesAt();
   store.push(frame);
-  const twoPages = pagesAt(0);
+  const twoPages = pagesAt();
   check(
     "paged allocation (65,536 frames/page)",
     empty === 0 && onePage === 1 && twoPages === 2,
