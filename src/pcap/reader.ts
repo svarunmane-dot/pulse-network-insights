@@ -603,9 +603,10 @@ export class CaptureParser {
   private scanForBlock(buf: Uint8Array, view: DataView, from: number): number {
     const start = from + 4 - ((from + 4) % 4 === 0 ? 0 : (from + 4) % 4);
     for (let p = Math.max(start, from + 4); p + 12 <= buf.length; p += 4) {
-      const type = view.getUint32(p, false);
-      const le = type === PCAPNG_SHB ? undefined : this.section.le;
-      if (type === PCAPNG_SHB) {
+      const isShb = view.getUint32(p, false) === PCAPNG_SHB;
+      const le = this.section.le;
+      const type = isShb ? PCAPNG_SHB : view.getUint32(p, le);
+      if (isShb) {
         if (p + 28 <= buf.length) {
           const beMagic = view.getUint32(p + 8, false) === BYTE_ORDER_MAGIC;
           const leMagic = view.getUint32(p + 8, true) === BYTE_ORDER_MAGIC;
