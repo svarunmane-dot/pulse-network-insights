@@ -428,15 +428,20 @@ export class CaptureParser {
     const globalId = this.section.interfaces[localIface] ?? 0;
     const iface = this.stats.interfaces[globalId];
     const ticks = tsHigh * 4294967296 + tsLow;
-    const totalNs = ticks * (iface?.tsResolNs ?? 1000);
+    // Split before scaling: ticks * resolution overflows Number's exact-integer
+    // range for epoch-scale microsecond timestamps.
+    const resolNs = iface?.tsResolNs ?? 1000;
+    const ticksPerSec = Math.round(1e9 / resolNs);
+    const tsSec = Math.floor(ticks / ticksPerSec);
+    const tsNsec = (ticks - tsSec * ticksPerSec) * resolNs;
     this.addFrame({
       buf,
       view,
       dataStart,
       capLen,
       origLen,
-      tsSec: Math.floor(totalNs / 1e9),
-      tsNsec: totalNs - Math.floor(totalNs / 1e9) * 1e9,
+      tsSec,
+      tsNsec,
       ifaceId: globalId,
       linkType: iface?.linkType ?? 1,
       fileOffset: bufOffset + pos,
