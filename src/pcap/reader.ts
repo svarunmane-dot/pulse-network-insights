@@ -168,12 +168,13 @@ export class CaptureParser {
       }
 
       let next: number;
-      if (this.mode === "init") next = this.parseHeader(buf, view, pos);
-      else if (this.mode === "libpcap") next = this.parseLibpcapRecord(buf, view, pos, bufOffset);
+      const mode: Mode = this.mode;
+      if (mode === "init") next = this.parseHeader(buf, view, pos);
+      else if (mode === "libpcap") next = this.parseLibpcapRecord(buf, view, pos, bufOffset);
       else next = this.parsePcapngBlock(buf, view, pos, bufOffset);
 
       if (next === -1) return pos; // need more bytes
-      if (this.mode === "dead") break;
+      if ((this.mode as Mode) === "dead") break;
       if (this.resyncing) {
         pos = next;
         continue;
@@ -306,9 +307,12 @@ export class CaptureParser {
     bufOffset: number,
   ): number {
     if (buf.length - pos < 12) return -1;
-    const blockType = view.getUint32(pos, false);
+    // SHB's magic is byte-order agnostic; every other block type must be read
+    // with the endianness the current section declared.
+    const isShb = view.getUint32(pos, false) === PCAPNG_SHB;
+    const blockType = isShb ? PCAPNG_SHB : view.getUint32(pos, this.section.le);
 
-    if (blockType === PCAPNG_SHB) {
+    if (isShb) {
       // Byte-order magic decides endianness for the whole new section.
       if (buf.length - pos < 28) return -1;
       let le: boolean;
@@ -424,15 +428,20 @@ export class CaptureParser {
     const globalId = this.section.interfaces[localIface] ?? 0;
     const iface = this.stats.interfaces[globalId];
     const ticks = tsHigh * 4294967296 + tsLow;
-    const totalNs = ticks * (iface?.tsResolNs ?? 1000);
+    // Split before scaling: ticks * resolution overflows Number's exact-integer
+    // range for epoch-scale microsecond timestamps.
+    const resolNs = iface?.tsResolNs ?? 1000;
+    const ticksPerSec = Math.round(1e9 / resolNs);
+    const tsSec = Math.floor(ticks / ticksPerSec);
+    const tsNsec = (ticks - tsSec * ticksPerSec) * resolNs;
     this.addFrame({
       buf,
       view,
       dataStart,
       capLen,
       origLen,
-      tsSec: Math.floor(totalNs / 1e9),
-      tsNsec: totalNs - Math.floor(totalNs / 1e9) * 1e9,
+      tsSec,
+      tsNsec,
       ifaceId: globalId,
       linkType: iface?.linkType ?? 1,
       fileOffset: bufOffset + pos,
@@ -529,16 +538,19 @@ export class CaptureParser {
     noTimestamp?: boolean;
   }): void {
     const { buf, view, dataStart, capLen, origLen, ifaceId, linkType, fileOffset } = args;
-    const absNs = args.tsSec * 1e9 + args.tsNsec;
-
     if (!args.noTimestamp) {
-      if (this.firstNs === null) {
-        this.firstNs = absNs;
+      if (this.firstAbs === null) {
+        this.firstNs = 0;
         this.firstAbs = { sec: args.tsSec, nsec: args.tsNsec };
       }
       this.stats.lastTimestamp = { sec: args.tsSec, nsec: args.tsNsec };
     }
-    const relNs = this.firstNs === null || args.noTimestamp ? 0 : absNs - this.firstNs;
+    // Relative nanoseconds, computed from the seconds/nanoseconds split so an
+    // epoch-scale absolute value never loses precision as a Number.
+    const relNs =
+      this.firstAbs === null || args.noTimestamp
+        ? 0
+        : (args.tsSec - this.firstAbs.sec) * 1e9 + (args.tsNsec - this.firstAbs.nsec);
     const hi = Math.floor(relNs / 4294967296);
     const lo = relNs - hi * 4294967296;
 
@@ -599,9 +611,10 @@ export class CaptureParser {
   private scanForBlock(buf: Uint8Array, view: DataView, from: number): number {
     const start = from + 4 - ((from + 4) % 4 === 0 ? 0 : (from + 4) % 4);
     for (let p = Math.max(start, from + 4); p + 12 <= buf.length; p += 4) {
-      const type = view.getUint32(p, false);
-      const le = type === PCAPNG_SHB ? undefined : this.section.le;
-      if (type === PCAPNG_SHB) {
+      const isShb = view.getUint32(p, false) === PCAPNG_SHB;
+      const le = this.section.le;
+      const type = isShb ? PCAPNG_SHB : view.getUint32(p, le);
+      if (isShb) {
         if (p + 28 <= buf.length) {
           const beMagic = view.getUint32(p + 8, false) === BYTE_ORDER_MAGIC;
           const leMagic = view.getUint32(p + 8, true) === BYTE_ORDER_MAGIC;
@@ -612,10 +625,10 @@ export class CaptureParser {
       if (type !== PCAPNG_IDB && type !== PCAPNG_SPB && type !== PCAPNG_NRB && type !== PCAPNG_ISB && type !== PCAPNG_EPB) {
         continue;
       }
-      const total = view.getUint32(p + 4, le!);
+      const total = view.getUint32(p + 4, le);
       if (total < 12 || total % 4 !== 0 || total > MAX_RECORD_BYTES) continue;
       if (p + total > buf.length) continue; // need more bytes to confirm
-      if (view.getUint32(p + total - 4, le!) !== total) continue;
+      if (view.getUint32(p + total - 4, le) !== total) continue;
       return p;
     }
     return -1;
