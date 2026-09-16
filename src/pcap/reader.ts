@@ -168,12 +168,13 @@ export class CaptureParser {
       }
 
       let next: number;
-      if (this.mode === "init") next = this.parseHeader(buf, view, pos);
-      else if (this.mode === "libpcap") next = this.parseLibpcapRecord(buf, view, pos, bufOffset);
+      const mode: Mode = this.mode;
+      if (mode === "init") next = this.parseHeader(buf, view, pos);
+      else if (mode === "libpcap") next = this.parseLibpcapRecord(buf, view, pos, bufOffset);
       else next = this.parsePcapngBlock(buf, view, pos, bufOffset);
 
       if (next === -1) return pos; // need more bytes
-      if (this.mode === "dead") break;
+      if ((this.mode as Mode) === "dead") break;
       if (this.resyncing) {
         pos = next;
         continue;
