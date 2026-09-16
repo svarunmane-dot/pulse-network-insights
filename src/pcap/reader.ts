@@ -538,16 +538,19 @@ export class CaptureParser {
     noTimestamp?: boolean;
   }): void {
     const { buf, view, dataStart, capLen, origLen, ifaceId, linkType, fileOffset } = args;
-    const absNs = args.tsSec * 1e9 + args.tsNsec;
-
     if (!args.noTimestamp) {
-      if (this.firstNs === null) {
-        this.firstNs = absNs;
+      if (this.firstAbs === null) {
+        this.firstNs = 0;
         this.firstAbs = { sec: args.tsSec, nsec: args.tsNsec };
       }
       this.stats.lastTimestamp = { sec: args.tsSec, nsec: args.tsNsec };
     }
-    const relNs = this.firstNs === null || args.noTimestamp ? 0 : absNs - this.firstNs;
+    // Relative nanoseconds, computed from the seconds/nanoseconds split so an
+    // epoch-scale absolute value never loses precision as a Number.
+    const relNs =
+      this.firstAbs === null || args.noTimestamp
+        ? 0
+        : (args.tsSec - this.firstAbs.sec) * 1e9 + (args.tsNsec - this.firstAbs.nsec);
     const hi = Math.floor(relNs / 4294967296);
     const lo = relNs - hi * 4294967296;
 
