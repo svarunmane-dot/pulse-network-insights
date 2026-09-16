@@ -617,10 +617,10 @@ export class CaptureParser {
       if (type !== PCAPNG_IDB && type !== PCAPNG_SPB && type !== PCAPNG_NRB && type !== PCAPNG_ISB && type !== PCAPNG_EPB) {
         continue;
       }
-      const total = view.getUint32(p + 4, le!);
+      const total = view.getUint32(p + 4, le);
       if (total < 12 || total % 4 !== 0 || total > MAX_RECORD_BYTES) continue;
       if (p + total > buf.length) continue; // need more bytes to confirm
-      if (view.getUint32(p + total - 4, le!) !== total) continue;
+      if (view.getUint32(p + total - 4, le) !== total) continue;
       return p;
     }
     return -1;
