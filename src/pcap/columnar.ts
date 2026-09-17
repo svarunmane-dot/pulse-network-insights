@@ -167,8 +167,11 @@ export class PacketStore {
   push(frame: Partial<Record<ColumnName, number>>): number {
     const i = this._count++;
     for (const [name, col] of this.u32) col.set(i, frame[name as ColumnName] ?? 0);
-    for (const [name, col] of this.u16) col.set(i, frame[name as ColumnName] ?? 0);
-    for (const [name, col] of this.u8) col.set(i, frame[name as ColumnName] ?? 0);
+    // Uint16/Uint8 columns clamp rather than wrap: a jumbo length or a 9-bit
+    // TCP flags word must never silently alias to a small value.
+    for (const [name, col] of this.u16)
+      col.set(i, Math.min(frame[name as ColumnName] ?? 0, U16_MAX));
+    for (const [name, col] of this.u8) col.set(i, Math.min(frame[name as ColumnName] ?? 0, 255));
     return i;
   }
 
