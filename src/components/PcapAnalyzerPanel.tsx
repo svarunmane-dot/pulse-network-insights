@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { DETECTION_MIN_BYTES } from "@/pcap/format-detect";
 import type { CaptureFormat } from "@/pcap/format-detect";
-import type { WorkerResponse } from "@/pcap/pcap.worker";
+import type { ParseSummary, WorkerResponse } from "@/pcap/pcap.worker";
 
 type IsolationRow = { name: string; value: string; redefinable: boolean };
 
@@ -18,6 +18,8 @@ export default function PcapAnalyzerPanel() {
   const idRef = useRef(1);
   const [isolation, setIsolation] = useState<IsolationRow[] | null>(null);
   const [format, setFormat] = useState<CaptureFormat | null>(null);
+  const [summary, setSummary] = useState<ParseSummary | null>(null);
+  const [parsing, setParsing] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +32,14 @@ export default function PcapAnalyzerPanel() {
       const msg = event.data;
       if (msg.type === "isolation-report") setIsolation(msg.sealed);
       if (msg.type === "format") setFormat(msg.result as CaptureFormat);
-      if (msg.type === "error") setError(msg.message);
+      if (msg.type === "parse-result") {
+        setSummary(msg.summary);
+        setParsing(false);
+      }
+      if (msg.type === "error") {
+        setError(msg.message);
+        setParsing(false);
+      }
     };
     worker.postMessage({ type: "verify-isolation", id: idRef.current++ });
     return () => worker.terminate();
@@ -40,10 +49,14 @@ export default function PcapAnalyzerPanel() {
     if (!file) return;
     setError(null);
     setFormat(null);
+    setSummary(null);
     setFileName(file.name);
     const head = await file.slice(0, Math.max(DETECTION_MIN_BYTES, 64)).arrayBuffer();
     workerRef.current?.postMessage({ type: "detect-format", id: idRef.current++, head }, [head]);
+    setParsing(true);
+    workerRef.current?.postMessage({ type: "parse-file", id: idRef.current++, file });
   };
+
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px", color: "#c8d0e0" }}>
