@@ -6,8 +6,9 @@
  * capture costs one page set and a 1.4M-frame capture costs 23 page sets
  * per column — never one giant contiguous array.
  *
- * Per-frame byte cost (sum of one element of every column):
- *   10 x Uint32 = 40 B, 7 x Uint16 = 14 B, 5 x Uint8 = 5 B  ->  59 B/frame.
+ * Per-frame byte cost (sum of one element of every column), matching the
+ * frozen Day-1 layout:
+ *   7 x Uint32 = 28 B, 9 x Uint16 = 18 B, 6 x Uint8 = 6 B  ->  52 B/frame.
  */
 
 export const PAGE_SIZE = 65536;
