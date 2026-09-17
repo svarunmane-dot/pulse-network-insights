@@ -372,13 +372,7 @@ export class CaptureParser {
     return pos + total;
   }
 
-  private parseIdb(
-    buf: Uint8Array,
-    view: DataView,
-    pos: number,
-    total: number,
-    le: boolean,
-  ): void {
+  private parseIdb(buf: Uint8Array, view: DataView, pos: number, total: number, le: boolean): void {
     const linkType = view.getUint16(pos + 8, le);
     const snaplen = view.getUint32(pos + 12, le);
     const info: InterfaceInfo = {
@@ -492,7 +486,9 @@ export class CaptureParser {
     let filterDrop = 0;
     this.eachOption(view, pos + 20, pos + total - 4, le, (code, optPos, optLen) => {
       if (optLen >= 8) {
-        const value = view.getUint32(optPos + (le ? 4 : 0), le) * 4294967296 + view.getUint32(optPos + (le ? 0 : 4), le);
+        const value =
+          view.getUint32(optPos + (le ? 4 : 0), le) * 4294967296 +
+          view.getUint32(optPos + (le ? 0 : 4), le);
         if (code === 5) ifDrop = value;
         if (code === 7) filterDrop = value;
       }
@@ -627,7 +623,13 @@ export class CaptureParser {
         }
         continue;
       }
-      if (type !== PCAPNG_IDB && type !== PCAPNG_SPB && type !== PCAPNG_NRB && type !== PCAPNG_ISB && type !== PCAPNG_EPB) {
+      if (
+        type !== PCAPNG_IDB &&
+        type !== PCAPNG_SPB &&
+        type !== PCAPNG_NRB &&
+        type !== PCAPNG_ISB &&
+        type !== PCAPNG_EPB
+      ) {
         continue;
       }
       const total = view.getUint32(p + 4, le);

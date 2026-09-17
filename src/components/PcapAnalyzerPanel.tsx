@@ -57,13 +57,12 @@ export default function PcapAnalyzerPanel() {
     workerRef.current?.postMessage({ type: "parse-file", id: idRef.current++, file });
   };
 
-
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px", color: "#c8d0e0" }}>
       <h1 style={{ color: "#fff", fontSize: 28, margin: 0 }}>PCAP Troubleshooter</h1>
       <p style={{ fontSize: 14, lineHeight: 1.6 }}>
-        Captures are read entirely inside your browser, in an isolated worker with all network
-        APIs removed. Nothing is uploaded. Phase 1a: format detection only.
+        Captures are read entirely inside your browser, in an isolated worker with all network APIs
+        removed. Nothing is uploaded. Phase 1a: format detection only.
       </p>
 
       <div style={{ ...card, marginTop: 20 }}>
@@ -124,7 +123,6 @@ export default function PcapAnalyzerPanel() {
           </pre>
         )}
       </div>
-
 
       <div style={{ ...card, marginTop: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 8 }}>

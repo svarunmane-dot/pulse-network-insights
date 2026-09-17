@@ -120,7 +120,8 @@ export function dissectFrame(
     case L2_NULL_LOOPBACK: {
       if (end - pos < 4) return out;
       const family = view.getUint32(pos, true);
-      etherType = family === 2 ? 0x0800 : family === 24 || family === 28 || family === 30 ? 0x86dd : -1;
+      etherType =
+        family === 2 ? 0x0800 : family === 24 || family === 28 || family === 30 ? 0x86dd : -1;
       pos += 4;
       break;
     }
