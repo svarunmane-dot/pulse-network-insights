@@ -62,7 +62,8 @@ export default function PcapAnalyzerPanel() {
       <h1 style={{ color: "#fff", fontSize: 28, margin: 0 }}>PCAP Troubleshooter</h1>
       <p style={{ fontSize: 14, lineHeight: 1.6 }}>
         Captures are read entirely inside your browser, in an isolated worker with all network APIs
-        removed. Nothing is uploaded. Phase 1a: format detection only.
+        removed. Nothing is uploaded. Phase 1b: format detection, streaming parse and capture
+        statistics.
       </p>
 
       <div style={{ ...card, marginTop: 20 }}>
