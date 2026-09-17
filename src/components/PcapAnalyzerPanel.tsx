@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { DETECTION_MIN_BYTES } from "@/pcap/format-detect";
 import type { CaptureFormat } from "@/pcap/format-detect";
-import type { WorkerResponse } from "@/pcap/pcap.worker";
+import type { ParseSummary, WorkerResponse } from "@/pcap/pcap.worker";
 
 type IsolationRow = { name: string; value: string; redefinable: boolean };
 
@@ -18,6 +18,8 @@ export default function PcapAnalyzerPanel() {
   const idRef = useRef(1);
   const [isolation, setIsolation] = useState<IsolationRow[] | null>(null);
   const [format, setFormat] = useState<CaptureFormat | null>(null);
+  const [summary, setSummary] = useState<ParseSummary | null>(null);
+  const [parsing, setParsing] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +32,14 @@ export default function PcapAnalyzerPanel() {
       const msg = event.data;
       if (msg.type === "isolation-report") setIsolation(msg.sealed);
       if (msg.type === "format") setFormat(msg.result as CaptureFormat);
-      if (msg.type === "error") setError(msg.message);
+      if (msg.type === "parse-result") {
+        setSummary(msg.summary);
+        setParsing(false);
+      }
+      if (msg.type === "error") {
+        setError(msg.message);
+        setParsing(false);
+      }
     };
     worker.postMessage({ type: "verify-isolation", id: idRef.current++ });
     return () => worker.terminate();
@@ -40,17 +49,21 @@ export default function PcapAnalyzerPanel() {
     if (!file) return;
     setError(null);
     setFormat(null);
+    setSummary(null);
     setFileName(file.name);
     const head = await file.slice(0, Math.max(DETECTION_MIN_BYTES, 64)).arrayBuffer();
     workerRef.current?.postMessage({ type: "detect-format", id: idRef.current++, head }, [head]);
+    setParsing(true);
+    workerRef.current?.postMessage({ type: "parse-file", id: idRef.current++, file });
   };
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 16px", color: "#c8d0e0" }}>
       <h1 style={{ color: "#fff", fontSize: 28, margin: 0 }}>PCAP Troubleshooter</h1>
       <p style={{ fontSize: 14, lineHeight: 1.6 }}>
-        Captures are read entirely inside your browser, in an isolated worker with all network
-        APIs removed. Nothing is uploaded. Phase 1a: format detection only.
+        Captures are read entirely inside your browser, in an isolated worker with all network APIs
+        removed. Nothing is uploaded. Phase 1b: format detection, streaming parse and capture
+        statistics.
       </p>
 
       <div style={{ ...card, marginTop: 20 }}>
@@ -82,6 +95,32 @@ export default function PcapAnalyzerPanel() {
             }}
           >
             {JSON.stringify(format, null, 2)}
+          </pre>
+        )}
+        {parsing && <p style={{ fontSize: 12, marginTop: 10 }}>Reading capture…</p>}
+        {summary && (
+          <pre
+            style={{
+              marginTop: 12,
+              padding: 12,
+              borderRadius: 10,
+              background: "#0a0e1a",
+              border: "1px solid #1f2740",
+              fontSize: 12,
+              overflowX: "auto",
+            }}
+          >
+            {JSON.stringify(
+              {
+                packetCount: summary.packetCount,
+                bytesPerFrame: summary.bytesPerFrame,
+                ipv6AddressCount: summary.ipv6AddressCount,
+                elapsedMs: summary.elapsedMs,
+                stats: summary.stats,
+              },
+              null,
+              2,
+            )}
           </pre>
         )}
       </div>

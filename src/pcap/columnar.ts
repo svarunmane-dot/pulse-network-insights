@@ -6,8 +6,9 @@
  * capture costs one page set and a 1.4M-frame capture costs 23 page sets
  * per column — never one giant contiguous array.
  *
- * Per-frame byte cost (sum of one element of every column):
- *   10 x Uint32 = 40 B, 7 x Uint16 = 14 B, 5 x Uint8 = 5 B  ->  59 B/frame.
+ * Per-frame byte cost (sum of one element of every column), matching the
+ * frozen Day-1 layout:
+ *   7 x Uint32 = 28 B, 9 x Uint16 = 18 B, 6 x Uint8 = 6 B  ->  52 B/frame.
  */
 
 export const PAGE_SIZE = 65536;
@@ -40,27 +41,26 @@ export type ColumnName =
 export const U32_COLUMNS = [
   "tsNanoLo",
   "tsNanoHi",
-  "capLen",
-  "origLen",
   "srcAddr32",
   "dstAddr32",
   "tcpSeq",
   "tcpAck",
-  "payloadLen",
   "fileOffset",
 ] as const;
 
 export const U16_COLUMNS = [
+  "capLen",
+  "origLen",
+  "payloadLen",
   "ifaceId",
   "frameFlags",
   "vlanId",
   "srcPort",
   "dstPort",
-  "tcpFlags",
   "tcpWindow",
 ] as const;
 
-export const U8_COLUMNS = ["l2Type", "l3Proto", "ipProto", "ipTtl", "l4Type"] as const;
+export const U8_COLUMNS = ["tcpFlags", "l2Type", "l3Proto", "ipProto", "ipTtl", "l4Type"] as const;
 
 export const COLUMN_NAMES: readonly ColumnName[] = [
   ...U32_COLUMNS,
@@ -71,12 +71,17 @@ export const COLUMN_NAMES: readonly ColumnName[] = [
 export const BYTES_PER_FRAME =
   U32_COLUMNS.length * 4 + U16_COLUMNS.length * 2 + U8_COLUMNS.length * 1;
 
+/** Largest value a Uint16 column can hold; bigger values are clamped. */
+export const U16_MAX = 65535;
+
 /** frameFlags bits. */
 export const FLAG_IPV6 = 1 << 0;
 export const FLAG_TRUNCATED = 1 << 1; // capLen < origLen
 export const FLAG_VLAN = 1 << 2;
 export const FLAG_SHORT_L3 = 1 << 3; // header cut off by snaplen
 export const FLAG_HAS_L4 = 1 << 4;
+/** A length column (capLen/origLen/payloadLen) exceeded 65535 and was clamped. */
+export const FLAG_LEN_CLAMPED = 1 << 5;
 
 /** l2Type values. */
 export const L2_UNKNOWN = 0;
@@ -154,8 +159,11 @@ export class PacketStore {
   push(frame: Partial<Record<ColumnName, number>>): number {
     const i = this._count++;
     for (const [name, col] of this.u32) col.set(i, frame[name as ColumnName] ?? 0);
-    for (const [name, col] of this.u16) col.set(i, frame[name as ColumnName] ?? 0);
-    for (const [name, col] of this.u8) col.set(i, frame[name as ColumnName] ?? 0);
+    // Uint16/Uint8 columns clamp rather than wrap: a jumbo length or a 9-bit
+    // TCP flags word must never silently alias to a small value.
+    for (const [name, col] of this.u16)
+      col.set(i, Math.min(frame[name as ColumnName] ?? 0, U16_MAX));
+    for (const [name, col] of this.u8) col.set(i, Math.min(frame[name as ColumnName] ?? 0, 255));
     return i;
   }
 

@@ -45,7 +45,17 @@
 export type WorkerRequest =
   | { type: "ping"; id: number }
   | { type: "verify-isolation"; id: number }
-  | { type: "detect-format"; id: number; head: ArrayBuffer };
+  | { type: "detect-format"; id: number; head: ArrayBuffer }
+  | { type: "parse-file"; id: number; file: Blob };
+
+export type ParseSummary = {
+  stats: unknown;
+  packetCount: number;
+  bytesPerFrame: number;
+  ipv6AddressCount: number;
+  allocation: { column: string; pages: number; bytesPerElement: number }[];
+  elapsedMs: number;
+};
 
 export type WorkerResponse =
   | { type: "pong"; id: number }
@@ -55,6 +65,7 @@ export type WorkerResponse =
       sealed: { name: string; value: "undefined" | "present"; redefinable: boolean }[];
     }
   | { type: "format"; id: number; result: unknown }
+  | { type: "parse-result"; id: number; summary: ParseSummary }
   | { type: "error"; id: number; message: string };
 
 const SEALED = [
@@ -101,6 +112,27 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         type: "format",
         id: msg.id,
         result: detectCaptureFormat(new Uint8Array(msg.head)),
+      });
+      return;
+    }
+    if (msg.type === "parse-file") {
+      const [{ parseCapture, fileChunkSource }, { BYTES_PER_FRAME }] = await Promise.all([
+        import("./reader"),
+        import("./columnar"),
+      ]);
+      const started = Date.now();
+      const { stats, store, ipv6Table } = await parseCapture(fileChunkSource(msg.file));
+      post({
+        type: "parse-result",
+        id: msg.id,
+        summary: {
+          stats,
+          packetCount: store.count,
+          bytesPerFrame: BYTES_PER_FRAME,
+          ipv6AddressCount: ipv6Table.size,
+          allocation: store.allocationReport(),
+          elapsedMs: Date.now() - started,
+        },
       });
       return;
     }
