@@ -562,6 +562,9 @@ export class CaptureParser {
       flags |= FLAG_TRUNCATED;
       this.stats.truncatedPacketCount++;
     }
+    if (capLen > U16_MAX || origLen > U16_MAX || (fields.payloadLen ?? 0) > U16_MAX) {
+      flags |= FLAG_LEN_CLAMPED;
+    }
 
     this.stats.capturedBytes += capLen;
     this.stats.originalBytes += origLen;
