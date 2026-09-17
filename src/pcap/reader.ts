@@ -12,8 +12,10 @@
  */
 
 import {
+  FLAG_LEN_CLAMPED,
   FLAG_TRUNCATED,
   Ipv6Table,
+  U16_MAX,
   L3_ARP,
   L3_IPV4,
   L3_IPV6,
