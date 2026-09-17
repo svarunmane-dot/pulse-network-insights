@@ -45,7 +45,17 @@
 export type WorkerRequest =
   | { type: "ping"; id: number }
   | { type: "verify-isolation"; id: number }
-  | { type: "detect-format"; id: number; head: ArrayBuffer };
+  | { type: "detect-format"; id: number; head: ArrayBuffer }
+  | { type: "parse-file"; id: number; file: Blob };
+
+export type ParseSummary = {
+  stats: unknown;
+  packetCount: number;
+  bytesPerFrame: number;
+  ipv6AddressCount: number;
+  allocation: { column: string; pages: number; bytesPerElement: number }[];
+  elapsedMs: number;
+};
 
 export type WorkerResponse =
   | { type: "pong"; id: number }
@@ -55,6 +65,7 @@ export type WorkerResponse =
       sealed: { name: string; value: "undefined" | "present"; redefinable: boolean }[];
     }
   | { type: "format"; id: number; result: unknown }
+  | { type: "parse-result"; id: number; summary: ParseSummary }
   | { type: "error"; id: number; message: string };
 
 const SEALED = [
