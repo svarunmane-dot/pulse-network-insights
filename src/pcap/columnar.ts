@@ -41,27 +41,33 @@ export type ColumnName =
 export const U32_COLUMNS = [
   "tsNanoLo",
   "tsNanoHi",
-  "capLen",
-  "origLen",
   "srcAddr32",
   "dstAddr32",
   "tcpSeq",
   "tcpAck",
-  "payloadLen",
   "fileOffset",
 ] as const;
 
 export const U16_COLUMNS = [
+  "capLen",
+  "origLen",
+  "payloadLen",
   "ifaceId",
   "frameFlags",
   "vlanId",
   "srcPort",
   "dstPort",
-  "tcpFlags",
   "tcpWindow",
 ] as const;
 
-export const U8_COLUMNS = ["l2Type", "l3Proto", "ipProto", "ipTtl", "l4Type"] as const;
+export const U8_COLUMNS = [
+  "tcpFlags",
+  "l2Type",
+  "l3Proto",
+  "ipProto",
+  "ipTtl",
+  "l4Type",
+] as const;
 
 export const COLUMN_NAMES: readonly ColumnName[] = [
   ...U32_COLUMNS,
@@ -72,12 +78,18 @@ export const COLUMN_NAMES: readonly ColumnName[] = [
 export const BYTES_PER_FRAME =
   U32_COLUMNS.length * 4 + U16_COLUMNS.length * 2 + U8_COLUMNS.length * 1;
 
+/** Largest value a Uint16 column can hold; bigger values are clamped. */
+export const U16_MAX = 65535;
+
 /** frameFlags bits. */
 export const FLAG_IPV6 = 1 << 0;
 export const FLAG_TRUNCATED = 1 << 1; // capLen < origLen
 export const FLAG_VLAN = 1 << 2;
 export const FLAG_SHORT_L3 = 1 << 3; // header cut off by snaplen
 export const FLAG_HAS_L4 = 1 << 4;
+/** A length column (capLen/origLen/payloadLen) exceeded 65535 and was clamped. */
+export const FLAG_LEN_CLAMPED = 1 << 5;
+
 
 /** l2Type values. */
 export const L2_UNKNOWN = 0;
