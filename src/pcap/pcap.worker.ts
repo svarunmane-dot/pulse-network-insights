@@ -115,6 +115,27 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       });
       return;
     }
+    if (msg.type === "parse-file") {
+      const [{ parseCapture, fileChunkSource }, { BYTES_PER_FRAME }] = await Promise.all([
+        import("./reader"),
+        import("./columnar"),
+      ]);
+      const started = Date.now();
+      const { stats, store, ipv6Table } = await parseCapture(fileChunkSource(msg.file));
+      post({
+        type: "parse-result",
+        id: msg.id,
+        summary: {
+          stats,
+          packetCount: store.count,
+          bytesPerFrame: BYTES_PER_FRAME,
+          ipv6AddressCount: ipv6Table.size,
+          allocation: store.allocationReport(),
+          elapsedMs: Date.now() - started,
+        },
+      });
+      return;
+    }
   } catch (error) {
     post({
       type: "error",
