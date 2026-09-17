@@ -97,7 +97,34 @@ export default function PcapAnalyzerPanel() {
             {JSON.stringify(format, null, 2)}
           </pre>
         )}
+        {parsing && <p style={{ fontSize: 12, marginTop: 10 }}>Reading capture…</p>}
+        {summary && (
+          <pre
+            style={{
+              marginTop: 12,
+              padding: 12,
+              borderRadius: 10,
+              background: "#0a0e1a",
+              border: "1px solid #1f2740",
+              fontSize: 12,
+              overflowX: "auto",
+            }}
+          >
+            {JSON.stringify(
+              {
+                packetCount: summary.packetCount,
+                bytesPerFrame: summary.bytesPerFrame,
+                ipv6AddressCount: summary.ipv6AddressCount,
+                elapsedMs: summary.elapsedMs,
+                stats: summary.stats,
+              },
+              null,
+              2,
+            )}
+          </pre>
+        )}
       </div>
+
 
       <div style={{ ...card, marginTop: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 8 }}>
