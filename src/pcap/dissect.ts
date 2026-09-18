@@ -141,8 +141,7 @@ export function dissectFrame(
       return out;
     }
     const ihl = (buf[pos] & 0x0f) * 4;
-    out.ipTtl = buf[pos + 8];
-    out.ipProto = buf[pos + 9];
+    out.l4Proto = buf[pos + 9];
     out.srcAddr32 = view.getUint32(pos + 12, false);
     out.dstAddr32 = view.getUint32(pos + 16, false);
     const totalLen = view.getUint16(pos + 2, false);
@@ -152,7 +151,7 @@ export function dissectFrame(
     }
     const l3PayloadLen = Math.max(0, totalLen - ihl);
     pos += ihl;
-    dissectL4(buf, view, pos, end, out.ipProto, l3PayloadLen, out);
+    dissectL4(buf, view, pos, end, out.l4Proto, l3PayloadLen, out, start);
     return out;
   }
 
