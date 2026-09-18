@@ -123,20 +123,22 @@ export const IPPROTO_ICMPV6 = 58;
 /** appHint values — reserved for protocol-hint dissection in a later phase. */
 export const APP_HINT_NONE = 0;
 
-type PagedU32 = Uint32Array[];
-type PagedU16 = Uint16Array[];
-type PagedU8 = Uint8Array[];
+type TypedColumn = Int32Array | Uint32Array | Uint16Array | Uint8Array;
 
 /** A single paged column. */
-class Column<T extends Uint32Array | Uint16Array | Uint8Array> {
+class Column<T extends TypedColumn> {
   readonly pages: T[] = [];
-  constructor(private readonly make: (n: number) => T) {}
+  constructor(
+    private readonly make: (n: number) => T,
+    private readonly fill = 0,
+  ) {}
 
   private page(index: number): T {
     const p = index >>> 16; // index / PAGE_SIZE
     let page = this.pages[p];
     if (!page) {
       page = this.make(PAGE_SIZE);
+      if (this.fill !== 0) page.fill(this.fill);
       this.pages[p] = page;
     }
     return page;
@@ -157,12 +159,17 @@ class Column<T extends Uint32Array | Uint16Array | Uint8Array> {
 }
 
 export class PacketStore {
+  private readonly i32 = new Map<string, Column<Int32Array>>();
   private readonly u32 = new Map<string, Column<Uint32Array>>();
   private readonly u16 = new Map<string, Column<Uint16Array>>();
   private readonly u8 = new Map<string, Column<Uint8Array>>();
   private _count = 0;
 
   constructor() {
+    // flowId pages are pre-filled with NO_FLOW so an unassigned frame never
+    // reads as flow 0.
+    for (const name of I32_COLUMNS)
+      this.i32.set(name, new Column((n) => new Int32Array(n), NO_FLOW));
     for (const name of U32_COLUMNS) this.u32.set(name, new Column((n) => new Uint32Array(n)));
     for (const name of U16_COLUMNS) this.u16.set(name, new Column((n) => new Uint16Array(n)));
     for (const name of U8_COLUMNS) this.u8.set(name, new Column((n) => new Uint8Array(n)));
@@ -175,33 +182,40 @@ export class PacketStore {
   /** Append one frame; returns its index. */
   push(frame: Partial<Record<ColumnName, number>>): number {
     const i = this._count++;
+    for (const [name, col] of this.i32) col.set(i, frame[name as ColumnName] ?? NO_FLOW);
     for (const [name, col] of this.u32) col.set(i, frame[name as ColumnName] ?? 0);
-    // Uint16/Uint8 columns clamp rather than wrap: a jumbo length or a 9-bit
-    // TCP flags word must never silently alias to a small value.
+    // Uint16/Uint8 columns clamp rather than wrap: a jumbo length or an
+    // interface index above 255 must never silently alias to a small value.
     for (const [name, col] of this.u16)
       col.set(i, Math.min(frame[name as ColumnName] ?? 0, U16_MAX));
-    for (const [name, col] of this.u8) col.set(i, Math.min(frame[name as ColumnName] ?? 0, 255));
+    for (const [name, col] of this.u8)
+      col.set(i, Math.min(frame[name as ColumnName] ?? 0, U8_MAX));
     return i;
   }
 
   get(index: number, name: ColumnName): number {
-    return (
-      this.u32.get(name)?.get(index) ??
-      this.u16.get(name)?.get(index) ??
-      this.u8.get(name)?.get(index) ??
-      0
-    );
+    const col =
+      this.i32.get(name) ?? this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
+    return col ? col.get(index) : 0;
+  }
+
+  /** Assign a flow index to an already-appended frame. */
+  setFlowId(index: number, flowId: number): void {
+    this.i32.get("flowId")?.set(index, flowId);
   }
 
   /** Raw paged backing arrays, for transfer or inspection. */
-  pagesOf(name: ColumnName): (Uint32Array | Uint16Array | Uint8Array)[] {
-    const col = this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
-    return (col?.pages ?? []) as PagedU32 | PagedU16 | PagedU8;
+  pagesOf(name: ColumnName): TypedColumn[] {
+    const col =
+      this.i32.get(name) ?? this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
+    return (col?.pages ?? []) as TypedColumn[];
   }
 
   /** Allocation report — proves paging rather than one upfront array. */
   allocationReport(): { column: ColumnName; pages: number; bytesPerElement: number }[] {
     const rows: { column: ColumnName; pages: number; bytesPerElement: number }[] = [];
+    for (const [name, col] of this.i32)
+      rows.push({ column: name as ColumnName, pages: col.pageCount, bytesPerElement: 4 });
     for (const [name, col] of this.u32)
       rows.push({ column: name as ColumnName, pages: col.pageCount, bytesPerElement: 4 });
     for (const [name, col] of this.u16)
