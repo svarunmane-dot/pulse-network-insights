@@ -80,7 +80,8 @@ export function dissectFrame(
   const out: DissectFields = {
     l2Type: l2TypeOf(linkType),
     l3Proto: L3_NONE,
-    l4Type: L4_NONE,
+    l4Proto: IPPROTO_NONE,
+    appHint: APP_HINT_NONE,
     frameFlags: 0,
   };
   const end = start + capLen;
