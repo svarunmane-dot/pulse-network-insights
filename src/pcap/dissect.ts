@@ -8,10 +8,14 @@
  */
 
 import {
+  APP_HINT_NONE,
   FLAG_HAS_L4,
   FLAG_IPV6,
   FLAG_SHORT_L3,
   FLAG_VLAN,
+  IPPROTO_NONE,
+  IPPROTO_TCP,
+  IPPROTO_UDP,
   L2_ETHERNET,
   L2_IEEE802_11,
   L2_LINUX_SLL,
@@ -23,12 +27,6 @@ import {
   L3_IPV6,
   L3_NONE,
   L3_OTHER,
-  L4_ICMP,
-  L4_ICMPV6,
-  L4_NONE,
-  L4_OTHER,
-  L4_TCP,
-  L4_UDP,
   type ColumnName,
 } from "./columnar";
 import type { Ipv6Table } from "./columnar";
