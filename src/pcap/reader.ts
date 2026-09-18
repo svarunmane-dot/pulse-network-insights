@@ -19,10 +19,12 @@ import {
   L3_ARP,
   L3_IPV4,
   L3_IPV6,
-  L4_ICMP,
-  L4_ICMPV6,
-  L4_TCP,
-  L4_UDP,
+  IPPROTO_ICMP,
+  IPPROTO_ICMPV6,
+  IPPROTO_TCP,
+  IPPROTO_UDP,
+  FLAG_IFACE_CLAMPED,
+  U8_MAX,
   PacketStore,
 } from "./columnar";
 import { dissectFrame } from "./dissect";
