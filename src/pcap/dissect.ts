@@ -168,7 +168,7 @@ export function dissectFrame(
     out.dstAddr32 = ipv6Table.intern(buf, pos + 24);
     const payloadLen = view.getUint16(pos + 4, false);
     pos += 40;
-    dissectL4(buf, view, pos, end, nextHeader, payloadLen, out);
+    dissectL4(buf, view, pos, end, nextHeader, payloadLen, out, start);
     return out;
   }
 
@@ -184,9 +184,12 @@ function dissectL4(
   proto: number,
   l3PayloadLen: number,
   out: DissectFields,
+  frameStart: number,
 ): void {
-  if (proto === 6) {
-    out.l4Type = L4_TCP;
+  // Byte offset of the L4 header from the start of the frame, so a later
+  // phase can re-dissect without rescanning from L2.
+  out.l4Offset = Math.max(0, pos - frameStart);
+  if (proto === IPPROTO_TCP) {
     if (end - pos < 20) {
       out.frameFlags! |= FLAG_SHORT_L3;
       return;
@@ -202,8 +205,7 @@ function dissectL4(
     out.frameFlags! |= FLAG_HAS_L4;
     return;
   }
-  if (proto === 17) {
-    out.l4Type = L4_UDP;
+  if (proto === IPPROTO_UDP) {
     if (end - pos < 8) {
       out.frameFlags! |= FLAG_SHORT_L3;
       return;
@@ -214,16 +216,5 @@ function dissectL4(
     out.frameFlags! |= FLAG_HAS_L4;
     return;
   }
-  if (proto === 1) {
-    out.l4Type = L4_ICMP;
-    out.payloadLen = Math.max(0, l3PayloadLen - 8);
-    return;
-  }
-  if (proto === 58) {
-    out.l4Type = L4_ICMPV6;
-    out.payloadLen = Math.max(0, l3PayloadLen - 8);
-    return;
-  }
-  out.l4Type = L4_OTHER;
   out.payloadLen = l3PayloadLen;
 }
