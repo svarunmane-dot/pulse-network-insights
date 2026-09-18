@@ -162,9 +162,8 @@ export function dissectFrame(
       out.frameFlags! |= FLAG_SHORT_L3;
       return out;
     }
-    out.ipTtl = buf[pos + 7]; // hop limit
     const nextHeader = buf[pos + 6];
-    out.ipProto = nextHeader;
+    out.l4Proto = nextHeader;
     out.srcAddr32 = ipv6Table.intern(buf, pos + 8);
     out.dstAddr32 = ipv6Table.intern(buf, pos + 24);
     const payloadLen = view.getUint16(pos + 4, false);
