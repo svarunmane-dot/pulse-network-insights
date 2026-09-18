@@ -216,5 +216,9 @@ function dissectL4(
     out.frameFlags! |= FLAG_HAS_L4;
     return;
   }
+  if (proto === IPPROTO_ICMP || proto === IPPROTO_ICMPV6) {
+    out.payloadLen = Math.max(0, l3PayloadLen - 8);
+    return;
+  }
   out.payloadLen = l3PayloadLen;
 }
