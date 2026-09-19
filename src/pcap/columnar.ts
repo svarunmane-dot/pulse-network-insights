@@ -188,14 +188,12 @@ export class PacketStore {
     // interface index above 255 must never silently alias to a small value.
     for (const [name, col] of this.u16)
       col.set(i, Math.min(frame[name as ColumnName] ?? 0, U16_MAX));
-    for (const [name, col] of this.u8)
-      col.set(i, Math.min(frame[name as ColumnName] ?? 0, U8_MAX));
+    for (const [name, col] of this.u8) col.set(i, Math.min(frame[name as ColumnName] ?? 0, U8_MAX));
     return i;
   }
 
   get(index: number, name: ColumnName): number {
-    const col =
-      this.i32.get(name) ?? this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
+    const col = this.i32.get(name) ?? this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
     return col ? col.get(index) : 0;
   }
 
@@ -206,8 +204,7 @@ export class PacketStore {
 
   /** Raw paged backing arrays, for transfer or inspection. */
   pagesOf(name: ColumnName): TypedColumn[] {
-    const col =
-      this.i32.get(name) ?? this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
+    const col = this.i32.get(name) ?? this.u32.get(name) ?? this.u16.get(name) ?? this.u8.get(name);
     return (col?.pages ?? []) as TypedColumn[];
   }
 
