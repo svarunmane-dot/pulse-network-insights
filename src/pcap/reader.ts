@@ -295,7 +295,6 @@ export class CaptureParser {
       tsNsec: nsec,
       ifaceId: 0,
       linkType: this.linkType,
-      fileOffset: bufOffset + pos,
     });
     return pos + 16 + capLen;
   }
@@ -442,7 +441,6 @@ export class CaptureParser {
       tsNsec,
       ifaceId: globalId,
       linkType: iface?.linkType ?? 1,
-      fileOffset: bufOffset + pos,
     });
   }
 
@@ -476,7 +474,6 @@ export class CaptureParser {
       tsNsec: 0,
       ifaceId: globalId,
       linkType: iface?.linkType ?? 1,
-      fileOffset: bufOffset + pos,
       noTimestamp: true,
     });
   }
@@ -534,10 +531,9 @@ export class CaptureParser {
     tsNsec: number;
     ifaceId: number;
     linkType: number;
-    fileOffset: number;
     noTimestamp?: boolean;
   }): void {
-    const { buf, view, dataStart, capLen, origLen, ifaceId, linkType, fileOffset } = args;
+    const { buf, view, dataStart, capLen, origLen, ifaceId, linkType } = args;
     if (!args.noTimestamp) {
       if (this.firstAbs === null) {
         this.firstNs = 0;
@@ -579,20 +575,22 @@ export class CaptureParser {
       default:
         this.stats.otherPacketCount++;
     }
-    switch (fields.l4Type) {
-      case L4_TCP:
+    switch (fields.l4Proto) {
+      case IPPROTO_TCP:
         this.stats.tcpPacketCount++;
         break;
-      case L4_UDP:
+      case IPPROTO_UDP:
         this.stats.udpPacketCount++;
         break;
-      case L4_ICMP:
-      case L4_ICMPV6:
+      case IPPROTO_ICMP:
+      case IPPROTO_ICMPV6:
         this.stats.icmpPacketCount++;
         break;
       default:
         break;
     }
+
+    if (ifaceId > U8_MAX) flags |= FLAG_IFACE_CLAMPED;
 
     this.store.push({
       ...fields,
@@ -602,7 +600,6 @@ export class CaptureParser {
       capLen,
       origLen,
       ifaceId,
-      fileOffset: fileOffset >>> 0,
     });
   }
 
