@@ -534,10 +534,9 @@ export class CaptureParser {
     tsNsec: number;
     ifaceId: number;
     linkType: number;
-    fileOffset: number;
     noTimestamp?: boolean;
   }): void {
-    const { buf, view, dataStart, capLen, origLen, ifaceId, linkType, fileOffset } = args;
+    const { buf, view, dataStart, capLen, origLen, ifaceId, linkType } = args;
     if (!args.noTimestamp) {
       if (this.firstAbs === null) {
         this.firstNs = 0;
