@@ -654,17 +654,87 @@ export interface ChunkSource {
   slice(start: number, end: number): Promise<Uint8Array>;
 }
 
+export interface ParseProgress {
+  phase: "reading" | "finalising";
+  bytesRead: number;
+  totalBytes: number;
+  packetCount: number;
+  elapsedMs: number;
+}
+
+export interface ParseOptions {
+  chunkBytes?: number;
+  /** Coarse progress callback; fired at most once per progressIntervalMs. */
+  onProgress?: (p: ParseProgress) => void;
+  /** Minimum gap between progress callbacks. 2 Hz => 500 ms. */
+  progressIntervalMs?: number;
+  /** Checked between chunks; returning true aborts and releases state. */
+  shouldCancel?: () => boolean;
+}
+
+/** Thrown when shouldCancel() returns true between chunks. */
+export class ParseCancelled extends Error {
+  constructor() {
+    super("Parse cancelled");
+    this.name = "ParseCancelled";
+  }
+}
+
+/** Chunk buffers allocated during the most recent parseCapture() call. */
+export interface ParseMetrics {
+  chunkAllocations: number;
+}
+
 /** Parse a whole capture from a chunk source, ~8 MB at a time. */
 export async function parseCapture(
   source: ChunkSource,
-  chunkBytes: number = CHUNK_BYTES,
-): Promise<ParseResult> {
-  const parser = new CaptureParser(source.size);
-  for (let offset = 0; offset < source.size; offset += chunkBytes) {
-    const end = Math.min(source.size, offset + chunkBytes);
-    parser.feed(await source.slice(offset, end));
+  options: ParseOptions = {},
+): Promise<ParseResult & { metrics: ParseMetrics }> {
+  const chunkBytes = options.chunkBytes ?? CHUNK_BYTES;
+  const interval = options.progressIntervalMs ?? 400;
+  const started = Date.now();
+  let parser: CaptureParser | null = new CaptureParser(source.size);
+  let chunkAllocations = 0;
+  let lastReport = 0;
+
+  try {
+    for (let offset = 0; offset < source.size; offset += chunkBytes) {
+      if (options.shouldCancel?.()) throw new ParseCancelled();
+      const end = Math.min(source.size, offset + chunkBytes);
+      let chunk: Uint8Array | null = await source.slice(offset, end);
+      chunkAllocations++;
+      parser.feed(chunk);
+      // Drop the chunk reference immediately: only the parser's carry-over
+      // buffer (a few bytes to one record) survives into the next iteration.
+      chunk = null;
+      const now = Date.now();
+      if (options.onProgress && (now - lastReport >= interval || end >= source.size)) {
+        lastReport = now;
+        options.onProgress({
+          phase: "reading",
+          bytesRead: end,
+          totalBytes: source.size,
+          packetCount: parser.packetCount,
+          elapsedMs: now - started,
+        });
+      }
+    }
+    if (options.shouldCancel?.()) throw new ParseCancelled();
+    options.onProgress?.({
+      phase: "finalising",
+      bytesRead: source.size,
+      totalBytes: source.size,
+      packetCount: parser.packetCount,
+      elapsedMs: Date.now() - started,
+    });
+    return { ...parser.finish(), metrics: { chunkAllocations } };
+  } catch (error) {
+    // Release the columnar pages and all temporary parser state on cancel or
+    // failure, so nothing survives the rejected promise.
+    parser?.release();
+    parser = null;
+    throw error;
   }
-  return parser.finish();
 }
 
 /** ChunkSource backed by a browser File/Blob — never calls file.arrayBuffer(). */
