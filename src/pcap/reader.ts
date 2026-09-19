@@ -579,20 +579,22 @@ export class CaptureParser {
       default:
         this.stats.otherPacketCount++;
     }
-    switch (fields.l4Type) {
-      case L4_TCP:
+    switch (fields.l4Proto) {
+      case IPPROTO_TCP:
         this.stats.tcpPacketCount++;
         break;
-      case L4_UDP:
+      case IPPROTO_UDP:
         this.stats.udpPacketCount++;
         break;
-      case L4_ICMP:
-      case L4_ICMPV6:
+      case IPPROTO_ICMP:
+      case IPPROTO_ICMPV6:
         this.stats.icmpPacketCount++;
         break;
       default:
         break;
     }
+
+    if (ifaceId > U8_MAX) flags |= FLAG_IFACE_CLAMPED;
 
     this.store.push({
       ...fields,
@@ -602,7 +604,6 @@ export class CaptureParser {
       capLen,
       origLen,
       ifaceId,
-      fileOffset: fileOffset >>> 0,
     });
   }
 
