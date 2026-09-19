@@ -295,7 +295,6 @@ export class CaptureParser {
       tsNsec: nsec,
       ifaceId: 0,
       linkType: this.linkType,
-      fileOffset: bufOffset + pos,
     });
     return pos + 16 + capLen;
   }
@@ -442,7 +441,6 @@ export class CaptureParser {
       tsNsec,
       ifaceId: globalId,
       linkType: iface?.linkType ?? 1,
-      fileOffset: bufOffset + pos,
     });
   }
 
@@ -476,7 +474,6 @@ export class CaptureParser {
       tsNsec: 0,
       ifaceId: globalId,
       linkType: iface?.linkType ?? 1,
-      fileOffset: bufOffset + pos,
       noTimestamp: true,
     });
   }
