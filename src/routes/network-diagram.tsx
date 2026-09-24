@@ -199,8 +199,8 @@ function DeviceNode({ data, selected }: NodeProps) {
   const d = data as unknown as DeviceData;
   const meta = kindMeta(d.kind);
   const handleStyle = {
-    width: 9,
-    height: 9,
+    width: 14,
+    height: 14,
     background: SURFACE_DEEP,
     border: `2px solid ${meta.color}`,
   };
@@ -752,6 +752,8 @@ function Builder() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            connectionMode={ConnectionMode.Loose}
+            connectionRadius={30}
             nodeTypes={nodeTypes}
             snapToGrid
             snapGrid={[16, 16]}
