@@ -276,6 +276,5 @@ pre { overflow-x: auto; }
 .react-flow__edges svg,
 .react-flow__connectionline {
   overflow: visible !important;
-  width: 1px;
-  height: 1px;
+  max-width: none !important;
 }
