@@ -11,7 +11,7 @@ export const Route = createFileRoute("/practice/$track")({
   },
   head: ({ params }) => {
     const t = isTrack(params.track) ? TRACKS[params.track] : null;
-    const title = t ? `${t.title} Quiz – 10 Random Questions | Pulse Speed` : "Practice Quiz | Pulse Speed";
+    const title = t ? `${t.title} Quiz – 25 Random Questions | Pulse Speed` : "Practice Quiz | Pulse Speed";
     const description = t ? `${t.blurb} Instant feedback and explanations.` : "Network practice quiz.";
     return {
       meta: [
@@ -55,7 +55,7 @@ function Quiz() {
     setAnswers([]);
     const { data, error } = await supabase.rpc("get_random_practice_questions", {
       _category: meta.category,
-      _limit: 10,
+      _limit: 25,
     });
     if (error) return setError("Couldn't load questions. Please try again.");
     const qs = (data ?? []).map((r) => ({

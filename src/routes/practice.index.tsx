@@ -8,7 +8,7 @@ export const Route = createFileRoute("/practice/")({
       path: "/practice",
       title: "CCNA, CCNP & Network Interview Practice Tests | Pulse Speed",
       description:
-        "Free CCNA and CCNP practice questions plus network engineer interview prep. 10 randomized questions per session with instant feedback and explanations.",
+        "Free CCNA and CCNP practice questions plus network engineer interview prep. 25 randomized questions per session with instant feedback and explanations.",
       name: "Certification & Interview Practice",
       category: "EducationalApplication",
     }),
@@ -22,7 +22,7 @@ function Dashboard() {
         <p className="text-xs font-semibold uppercase tracking-widest text-practice-accent">Certification & Interview Practice</p>
         <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Sharpen your networking skills</h1>
         <p className="mt-3 max-w-2xl text-practice-dim">
-          Pick a track. Every session pulls 10 freshly shuffled questions, locks your answer on submit and explains
+          Pick a track. Every session pulls 25 freshly shuffled questions, locks your answer on submit and explains
           anything you miss.
         </p>
       </header>
@@ -39,7 +39,7 @@ function Dashboard() {
               <span className="text-3xl">{t.icon}</span>
               <h2 className="mt-3 text-lg font-semibold">{t.title}</h2>
               <p className="mt-2 flex-1 text-sm text-practice-dim">{t.blurb}</p>
-              <span className="mt-4 text-sm font-semibold text-practice-accent">Start 10 questions →</span>
+              <span className="mt-4 text-sm font-semibold text-practice-accent">Start 25 questions →</span>
             </Link>
           );
         })}
