@@ -278,3 +278,7 @@ pre { overflow-x: auto; }
   overflow: visible !important;
   max-width: none !important;
 }
+/* Own compositing layer so cables repaint as soon as they are added. */
+.react-flow__edges svg {
+  will-change: transform;
+}
