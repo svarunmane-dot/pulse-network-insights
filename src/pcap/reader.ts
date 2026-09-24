@@ -665,6 +665,13 @@ export interface ChunkSource {
   slice(start: number, end: number): Promise<Uint8Array>;
 }
 
+/** Parse granularity inside one read chunk (cancel/progress checkpoints). */
+export const PARSE_SLICE_BYTES = 1024 * 1024;
+
+function yieldMacrotask(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 export interface ParseProgress {
   phase: "reading" | "finalising";
   bytesRead: number;
@@ -714,21 +721,30 @@ export async function parseCapture(
       const end = Math.min(source.size, offset + chunkBytes);
       let chunk: Uint8Array | null = await source.slice(offset, end);
       chunkAllocations++;
-      parser.feed(chunk);
-      // Drop the chunk reference immediately: only the parser's carry-over
-      // buffer (a few bytes to one record) survives into the next iteration.
-      chunk = null;
-      const now = Date.now();
-      if (options.onProgress && (now - lastReport >= interval || end >= source.size)) {
-        lastReport = now;
-        options.onProgress({
-          phase: "reading",
-          bytesRead: end,
-          totalBytes: source.size,
-          packetCount: parser.packetCount,
-          elapsedMs: now - started,
-        });
+      // One ~8 MB read is parsed in PARSE_SLICE_BYTES views (no copies). Between
+      // slices we check cancellation, emit progress and yield a macrotask so a
+      // "cancel" message can be delivered — bounding both cancel latency and
+      // the progress gap to roughly one slice of parse work.
+      for (let s = 0; s < chunk.length; s += PARSE_SLICE_BYTES) {
+        if (options.shouldCancel?.()) throw new ParseCancelled();
+        parser.feed(chunk.subarray(s, Math.min(chunk.length, s + PARSE_SLICE_BYTES)));
+        const now = Date.now();
+        const read = offset + Math.min(chunk.length, s + PARSE_SLICE_BYTES);
+        if (options.onProgress && (now - lastReport >= interval || read >= source.size)) {
+          lastReport = now;
+          options.onProgress({
+            phase: "reading",
+            bytesRead: read,
+            totalBytes: source.size,
+            packetCount: parser.packetCount,
+            elapsedMs: now - started,
+          });
+        }
+        await yieldMacrotask();
       }
+      // Drop the chunk reference: only the parser's carry-over buffer (a few
+      // bytes to one record) survives into the next iteration.
+      chunk = null;
     }
     if (options.shouldCancel?.()) throw new ParseCancelled();
     options.onProgress?.({
