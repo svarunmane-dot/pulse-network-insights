@@ -53,21 +53,23 @@ function Quiz() {
     setSelected(null);
     setSubmitted(false);
     setAnswers([]);
-    const { data, error } = await supabase.rpc("get_random_practice_questions", {
-      _category: meta.category,
-      _limit: 25,
-    });
+    const { data, error } =
+      track === "interview"
+        ? await supabase.rpc("get_interview_exam", { _per_topic: 5 })
+        : await supabase.rpc("get_random_practice_questions", { _category: meta.category, _limit: 25 });
     if (error) return setError("Couldn't load questions. Please try again.");
     const qs = (data ?? []).map((r) => ({
       id: r.id,
       question_text: r.question_text,
       correct_option: r.correct_option,
       explanation: r.explanation,
+      topic: r.topic ?? null,
       options: shuffle(Array.isArray(r.options) ? (r.options as string[]) : []),
     }));
     // Extra client-side Fisher–Yates on top of the random DB order.
-    setQuestions(shuffle(qs));
-  }, [meta.category]);
+    // Interview keeps topic order (Fundamentals → Cloud); other tracks are fully shuffled.
+    setQuestions(track === "interview" ? qs : shuffle(qs));
+  }, [meta.category, track]);
 
   useEffect(() => {
     void load();
@@ -124,6 +126,9 @@ function Quiz() {
       </div>
 
       <div className="rounded-2xl border border-practice-line bg-practice-surface p-5 sm:p-6">
+        {q.topic && (
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-practice-accent">{q.topic}</p>
+        )}
         <h1 className="text-lg font-semibold leading-snug sm:text-xl">{q.question_text}</h1>
         <div className="mt-5 grid gap-3" role="radiogroup">
           {q.options.map((opt) => {

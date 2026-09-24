@@ -17,6 +17,7 @@ export type Question = {
   options: string[];
   correct_option: string;
   explanation: string;
+  topic?: string | null;
 };
 
 export type Answer = { question: Question; selected: string; correct: boolean };
