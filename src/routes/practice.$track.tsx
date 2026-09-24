@@ -143,6 +143,13 @@ function Quiz() {
                 disabled={submitted}
                 onClick={() => setSelected(opt)}
                 className={`rounded-xl border px-4 py-3 text-left text-sm transition disabled:cursor-default sm:text-base ${cls}`}
+                style={
+                  submitted && opt === q.correct_option
+                    ? { borderColor: "var(--practice-ok)", background: "color-mix(in oklab, var(--practice-ok) 18%, transparent)" }
+                    : submitted && chosen
+                      ? { borderColor: "var(--practice-bad)", background: "color-mix(in oklab, var(--practice-bad) 18%, transparent)" }
+                      : undefined
+                }
               >
                 {opt}
                 {submitted && opt === q.correct_option && <span className="ml-2 text-practice-ok">✓</span>}
