@@ -155,21 +155,18 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       let lastProgressAt = started;
       let maxProgressGapMs = 0;
       try {
-        const { stats, store, ipv6Table, metrics } = await parseCapture(
-          fileChunkSource(msg.file),
-          {
-            progressIntervalMs: 400,
-            shouldCancel: () => cancelRequestedAt !== null,
-            onProgress: (p) => {
-              const now = performance.now();
-              maxProgressGapMs = Math.max(maxProgressGapMs, now - lastProgressAt);
-              lastProgressAt = now;
-              progressEvents++;
-              lastBytesRead = p.bytesRead;
-              post({ type: "progress", id: msg.id, ...p });
-            },
+        const { stats, store, ipv6Table, metrics } = await parseCapture(fileChunkSource(msg.file), {
+          progressIntervalMs: 400,
+          shouldCancel: () => cancelRequestedAt !== null,
+          onProgress: (p) => {
+            const now = performance.now();
+            maxProgressGapMs = Math.max(maxProgressGapMs, now - lastProgressAt);
+            lastProgressAt = now;
+            progressEvents++;
+            lastBytesRead = p.bytesRead;
+            post({ type: "progress", id: msg.id, ...p });
           },
-        );
+        });
         const elapsedMs = performance.now() - started;
         post({
           type: "parse-result",
