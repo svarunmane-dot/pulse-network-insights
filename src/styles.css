@@ -271,3 +271,9 @@ pre { overflow-x: auto; }
     padding-top: 10px;
   }
 }
+
+/* Diagram builder: the cable layer is a 0x0 SVG that must not clip its lines. */
+.react-flow__edges svg,
+.react-flow__connectionline {
+  overflow: visible !important;
+}
