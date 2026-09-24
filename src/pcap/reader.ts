@@ -95,6 +95,17 @@ export class CaptureParser {
     this.stats = emptyStats("libpcap", fileSize);
   }
 
+  get packetCount(): number {
+    return this.store.count;
+  }
+
+  /** Drop all parser state and columnar pages (used on cancel/failure). */
+  release(): void {
+    this.mode = "dead";
+    this.carry = EMPTY;
+    this.store.release();
+  }
+
   /** Feed the next sequential chunk of the file. */
   feed(chunk: Uint8Array): void {
     if (this.mode === "dead" || chunk.length === 0) return;

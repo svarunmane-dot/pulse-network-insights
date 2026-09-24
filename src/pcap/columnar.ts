@@ -197,6 +197,20 @@ export class PacketStore {
     return col ? col.get(index) : 0;
   }
 
+  /** Release every page of every column so the GC can reclaim them. */
+  release(): void {
+    for (const m of [this.i32, this.u32, this.u16, this.u8])
+      for (const col of m.values()) (col.pages as unknown[]).length = 0;
+    this._count = 0;
+  }
+
+  /** Total bytes of typed-array pages currently allocated. */
+  allocatedBytes(): number {
+    let total = 0;
+    for (const r of this.allocationReport()) total += r.pages * PAGE_SIZE * r.bytesPerElement;
+    return total;
+  }
+
   /** Assign a flow index to an already-appended frame. */
   setFlowId(index: number, flowId: number): void {
     this.i32.get("flowId")?.set(index, flowId);
