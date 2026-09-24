@@ -217,10 +217,18 @@ function DeviceNode({ data, selected }: NodeProps) {
         color: TEXT,
       }}
     >
-      <Handle type="source" position={Position.Top} id="t" style={handleStyle} />
-      <Handle type="source" position={Position.Left} id="l" style={handleStyle} />
-      <Handle type="source" position={Position.Right} id="r" style={handleStyle} />
-      <Handle type="source" position={Position.Bottom} id="b" style={handleStyle} />
+      <Handle type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
+      <Handle type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
+      <Handle type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
+      <Handle type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
+      <Handle type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
+      <Handle type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
+      <Handle type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
+      <Handle type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
+      <Handle type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
+      <Handle type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
+      <Handle type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
+      <Handle type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span
           aria-hidden
