@@ -217,8 +217,8 @@ function DeviceNode({ data, selected }: NodeProps) {
         color: TEXT,
       }}
     >
-      <Handle type="target" position={Position.Top} id="t" style={handleStyle} />
-      <Handle type="target" position={Position.Left} id="l" style={handleStyle} />
+      <Handle type="source" position={Position.Top} id="t" style={handleStyle} />
+      <Handle type="source" position={Position.Left} id="l" style={handleStyle} />
       <Handle type="source" position={Position.Right} id="r" style={handleStyle} />
       <Handle type="source" position={Position.Bottom} id="b" style={handleStyle} />
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
