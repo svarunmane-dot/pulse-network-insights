@@ -84,7 +84,8 @@
     "purpose": "the memory-stress gate for item 24",
     "frameCountFloor": 1400000,
     "fileSizeFloorBytes": 100000000,
-    "peakHeapCeilingMB": 350,
+    "peakHeapCeilingMB": 200,
+    "peakHeapCeilingBasis": "Frozen Day-1 acceptance criterion: <=200 MB steady-state JS heap, measured manually via a DevTools heap snapshot on a production build. The earlier 350 MB value was an error and is superseded.",
     "framesPerSecondFloor": 40000,
     "maxFindingsEmitted": 0,
     "note": "1,450,000 frames at 54.5 B average in 102.2 MB - the highest frame-count-per-byte case the engine will see. The columnar SoA store must hold this without exceeding the heap ceiling and without falling back to per-frame object allocation. A run that completes but emits any finding fails the fixture."
