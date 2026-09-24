@@ -30,6 +30,7 @@ import { Route as PingIpRouteImport } from './routes/ping-ip'
 import { Route as PingipRouteImport } from './routes/pingip'
 import { Route as PortCheckRouteImport } from './routes/port-check'
 import { Route as PortcheckRouteImport } from './routes/portcheck'
+import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StabilityTestRouteImport } from './routes/stability-test'
@@ -74,6 +75,9 @@ import { Route as AcademyWhatIsAComputerNetworkRouteImport } from './routes/acad
 import { Route as AcademyWhatIsADefaultGatewayRouteImport } from './routes/academy.what-is-a-default-gateway'
 import { Route as AcademyWhatIsDhcpRouteImport } from './routes/academy.what-is-dhcp'
 import { Route as AcademyWhatIsDnsRouteImport } from './routes/academy.what-is-dns'
+import { Route as PracticeIndexRouteImport } from './routes/practice.index'
+import { Route as PracticeTrackRouteImport } from './routes/practice.$track'
+import { Route as PracticeResultsRouteImport } from './routes/practice.results'
 import { Route as ApiPublicUploadRouteImport } from './routes/api/public/upload'
 import { Route as ApiPublicHooksMonitorTickRouteImport } from './routes/api/public/hooks/monitor-tick'
 
@@ -180,6 +184,11 @@ const PortCheckRoute = PortCheckRouteImport.update({
 const PortcheckRoute = PortcheckRouteImport.update({
   id: '/portcheck',
   path: '/portcheck',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PracticeRoute = PracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -408,6 +417,21 @@ const AcademyWhatIsDnsRoute = AcademyWhatIsDnsRouteImport.update({
   path: '/what-is-dns',
   getParentRoute: () => AcademyRoute,
 } as any)
+const PracticeIndexRoute = PracticeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PracticeRoute,
+} as any)
+const PracticeTrackRoute = PracticeTrackRouteImport.update({
+  id: '/$track',
+  path: '/$track',
+  getParentRoute: () => PracticeRoute,
+} as any)
+const PracticeResultsRoute = PracticeResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => PracticeRoute,
+} as any)
 const ApiPublicUploadRoute = ApiPublicUploadRouteImport.update({
   id: '/api/public/upload',
   path: '/api/public/upload',
@@ -442,6 +466,7 @@ export interface FileRoutesByFullPath {
   '/pingip': typeof PingipRoute
   '/port-check': typeof PortCheckRoute
   '/portcheck': typeof PortcheckRoute
+  '/practice': typeof PracticeRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stability-test': typeof StabilityTestRoute
@@ -485,7 +510,10 @@ export interface FileRoutesByFullPath {
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
   '/academy/what-is-dns': typeof AcademyWhatIsDnsRoute
+  '/practice/$track': typeof PracticeTrackRoute
+  '/practice/results': typeof PracticeResultsRoute
   '/academy/': typeof AcademyIndexRoute
+  '/practice/': typeof PracticeIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -553,7 +581,10 @@ export interface FileRoutesByTo {
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
   '/academy/what-is-dns': typeof AcademyWhatIsDnsRoute
+  '/practice/$track': typeof PracticeTrackRoute
+  '/practice/results': typeof PracticeResultsRoute
   '/academy': typeof AcademyIndexRoute
+  '/practice': typeof PracticeIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -580,6 +611,7 @@ export interface FileRoutesById {
   '/pingip': typeof PingipRoute
   '/port-check': typeof PortCheckRoute
   '/portcheck': typeof PortcheckRoute
+  '/practice': typeof PracticeRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stability-test': typeof StabilityTestRoute
@@ -623,7 +655,10 @@ export interface FileRoutesById {
   '/academy/what-is-a-default-gateway': typeof AcademyWhatIsADefaultGatewayRoute
   '/academy/what-is-dhcp': typeof AcademyWhatIsDhcpRoute
   '/academy/what-is-dns': typeof AcademyWhatIsDnsRoute
+  '/practice/$track': typeof PracticeTrackRoute
+  '/practice/results': typeof PracticeResultsRoute
   '/academy/': typeof AcademyIndexRoute
+  '/practice/': typeof PracticeIndexRoute
   '/api/public/upload': typeof ApiPublicUploadRoute
   '/api/public/hooks/monitor-tick': typeof ApiPublicHooksMonitorTickRoute
 }
@@ -651,6 +686,7 @@ export interface FileRouteTypes {
     | '/pingip'
     | '/port-check'
     | '/portcheck'
+    | '/practice'
     | '/privacy'
     | '/sitemap.xml'
     | '/stability-test'
@@ -694,7 +730,10 @@ export interface FileRouteTypes {
     | '/academy/what-is-a-default-gateway'
     | '/academy/what-is-dhcp'
     | '/academy/what-is-dns'
+    | '/practice/$track'
+    | '/practice/results'
     | '/academy/'
+    | '/practice/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   fileRoutesByTo: FileRoutesByTo
@@ -762,7 +801,10 @@ export interface FileRouteTypes {
     | '/academy/what-is-a-default-gateway'
     | '/academy/what-is-dhcp'
     | '/academy/what-is-dns'
+    | '/practice/$track'
+    | '/practice/results'
     | '/academy'
+    | '/practice'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   id:
@@ -788,6 +830,7 @@ export interface FileRouteTypes {
     | '/pingip'
     | '/port-check'
     | '/portcheck'
+    | '/practice'
     | '/privacy'
     | '/sitemap.xml'
     | '/stability-test'
@@ -831,7 +874,10 @@ export interface FileRouteTypes {
     | '/academy/what-is-a-default-gateway'
     | '/academy/what-is-dhcp'
     | '/academy/what-is-dns'
+    | '/practice/$track'
+    | '/practice/results'
     | '/academy/'
+    | '/practice/'
     | '/api/public/upload'
     | '/api/public/hooks/monitor-tick'
   fileRoutesById: FileRoutesById
@@ -858,6 +904,7 @@ export interface RootRouteChildren {
   PingipRoute: typeof PingipRoute
   PortCheckRoute: typeof PortCheckRoute
   PortcheckRoute: typeof PortcheckRoute
+  PracticeRoute: typeof PracticeRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StabilityTestRoute: typeof StabilityTestRoute
@@ -1018,6 +1065,13 @@ declare module '@tanstack/react-router' {
       path: '/portcheck'
       fullPath: '/portcheck'
       preLoaderRoute: typeof PortcheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -1328,6 +1382,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademyWhatIsDnsRouteImport
       parentRoute: typeof AcademyRoute
     }
+    '/practice/': {
+      id: '/practice/'
+      path: '/'
+      fullPath: '/practice/'
+      preLoaderRoute: typeof PracticeIndexRouteImport
+      parentRoute: typeof PracticeRoute
+    }
+    '/practice/$track': {
+      id: '/practice/$track'
+      path: '/$track'
+      fullPath: '/practice/$track'
+      preLoaderRoute: typeof PracticeTrackRouteImport
+      parentRoute: typeof PracticeRoute
+    }
+    '/practice/results': {
+      id: '/practice/results'
+      path: '/results'
+      fullPath: '/practice/results'
+      preLoaderRoute: typeof PracticeResultsRouteImport
+      parentRoute: typeof PracticeRoute
+    }
     '/api/public/upload': {
       id: '/api/public/upload'
       path: '/api/public/upload'
@@ -1424,6 +1499,22 @@ const AcademyRouteChildren: AcademyRouteChildren = {
 const AcademyRouteWithChildren =
   AcademyRoute._addFileChildren(AcademyRouteChildren)
 
+interface PracticeRouteChildren {
+  PracticeTrackRoute: typeof PracticeTrackRoute
+  PracticeResultsRoute: typeof PracticeResultsRoute
+  PracticeIndexRoute: typeof PracticeIndexRoute
+}
+
+const PracticeRouteChildren: PracticeRouteChildren = {
+  PracticeTrackRoute: PracticeTrackRoute,
+  PracticeResultsRoute: PracticeResultsRoute,
+  PracticeIndexRoute: PracticeIndexRoute,
+}
+
+const PracticeRouteWithChildren = PracticeRoute._addFileChildren(
+  PracticeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -1446,6 +1537,7 @@ const rootRouteChildren: RootRouteChildren = {
   PingipRoute: PingipRoute,
   PortCheckRoute: PortCheckRoute,
   PortcheckRoute: PortcheckRoute,
+  PracticeRoute: PracticeRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StabilityTestRoute: StabilityTestRoute,

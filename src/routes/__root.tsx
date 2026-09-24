@@ -244,6 +244,7 @@ function SiteHeader() {
             { to: "/network-diagram", label: "Diagram Builder" },
             { to: "/cyber-news", label: "📰 Cyber News" },
             { to: "/academy", label: "Academy" },
+            { to: "/practice", label: "🎓 Cert Practice" },
             { to: "/about", label: "About" },
             { to: "/contact", label: "Contact" },
           ].map((l) => (

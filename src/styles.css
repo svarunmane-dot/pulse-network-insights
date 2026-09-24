@@ -282,3 +282,23 @@ pre { overflow-x: auto; }
 .react-flow__edges svg {
   will-change: transform;
 }
+
+/* Practice (certification & interview) palette */
+:root {
+  --practice-surface: #0f1422;
+  --practice-line: #1f2740;
+  --practice-accent: #00d4aa;
+  --practice-ok: #22c55e;
+  --practice-bad: #ef4444;
+  --practice-text: #e6ebf5;
+  --practice-dim: #8a96b3;
+}
+@theme inline {
+  --color-practice-surface: var(--practice-surface);
+  --color-practice-line: var(--practice-line);
+  --color-practice-accent: var(--practice-accent);
+  --color-practice-ok: var(--practice-ok);
+  --color-practice-bad: var(--practice-bad);
+  --color-practice-text: var(--practice-text);
+  --color-practice-dim: var(--practice-dim);
+}

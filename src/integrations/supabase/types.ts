@@ -87,6 +87,36 @@ export type Database = {
           },
         ]
       }
+      practice_questions: {
+        Row: {
+          category: string
+          correct_option: string
+          created_at: string
+          explanation: string
+          id: string
+          options: Json
+          question_text: string
+        }
+        Insert: {
+          category: string
+          correct_option: string
+          created_at?: string
+          explanation: string
+          id?: string
+          options: Json
+          question_text: string
+        }
+        Update: {
+          category?: string
+          correct_option?: string
+          created_at?: string
+          explanation?: string
+          id?: string
+          options?: Json
+          question_text?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -253,6 +283,24 @@ export type Database = {
           monitor_count: number
           retention_days: number
         }[]
+      }
+      get_random_practice_questions: {
+        Args: { _category: string; _limit?: number }
+        Returns: {
+          category: string
+          correct_option: string
+          created_at: string
+          explanation: string
+          id: string
+          options: Json
+          question_text: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "practice_questions"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_site_stats: { Args: never; Returns: Json }
       get_user_limits: {
