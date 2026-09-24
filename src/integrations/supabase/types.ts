@@ -96,6 +96,8 @@ export type Database = {
           id: string
           options: Json
           question_text: string
+          topic: string | null
+          topic_order: number | null
         }
         Insert: {
           category: string
@@ -105,6 +107,8 @@ export type Database = {
           id?: string
           options: Json
           question_text: string
+          topic?: string | null
+          topic_order?: number | null
         }
         Update: {
           category?: string
@@ -114,6 +118,8 @@ export type Database = {
           id?: string
           options?: Json
           question_text?: string
+          topic?: string | null
+          topic_order?: number | null
         }
         Relationships: []
       }
@@ -284,6 +290,26 @@ export type Database = {
           retention_days: number
         }[]
       }
+      get_interview_exam: {
+        Args: { _per_topic?: number }
+        Returns: {
+          category: string
+          correct_option: string
+          created_at: string
+          explanation: string
+          id: string
+          options: Json
+          question_text: string
+          topic: string | null
+          topic_order: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "practice_questions"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_random_practice_questions: {
         Args: { _category: string; _limit?: number }
         Returns: {
@@ -294,6 +320,8 @@ export type Database = {
           id: string
           options: Json
           question_text: string
+          topic: string | null
+          topic_order: number | null
         }[]
         SetofOptions: {
           from: "*"
