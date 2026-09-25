@@ -39,6 +39,7 @@ import { Route as SubnetRouteImport } from './routes/subnet'
 import { Route as SubnetCalculatorRouteImport } from './routes/subnet-calculator'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TracerouteRouteImport } from './routes/traceroute'
+import { Route as TroubleshootingRouteImport } from './routes/troubleshooting'
 import { Route as WhoisipRouteImport } from './routes/whoisip'
 import { Route as WhoseIpRouteImport } from './routes/whose-ip'
 import { Route as AcademyIndexRouteImport } from './routes/academy.index'
@@ -230,6 +231,11 @@ const TermsRoute = TermsRouteImport.update({
 const TracerouteRoute = TracerouteRouteImport.update({
   id: '/traceroute',
   path: '/traceroute',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TroubleshootingRoute = TroubleshootingRouteImport.update({
+  id: '/troubleshooting',
+  path: '/troubleshooting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WhoisipRoute = WhoisipRouteImport.update({
@@ -481,6 +487,7 @@ export interface FileRoutesByFullPath {
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/troubleshooting': typeof TroubleshootingRoute
   '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
@@ -553,6 +560,7 @@ export interface FileRoutesByTo {
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/troubleshooting': typeof TroubleshootingRoute
   '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
@@ -628,6 +636,7 @@ export interface FileRoutesById {
   '/subnet-calculator': typeof SubnetCalculatorRoute
   '/terms': typeof TermsRoute
   '/traceroute': typeof TracerouteRoute
+  '/troubleshooting': typeof TroubleshootingRoute
   '/whoisip': typeof WhoisipRoute
   '/whose-ip': typeof WhoseIpRoute
   '/academy/cidr-notation': typeof AcademyCidrNotationRoute
@@ -704,6 +713,7 @@ export interface FileRouteTypes {
     | '/subnet-calculator'
     | '/terms'
     | '/traceroute'
+    | '/troubleshooting'
     | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
@@ -776,6 +786,7 @@ export interface FileRouteTypes {
     | '/subnet-calculator'
     | '/terms'
     | '/traceroute'
+    | '/troubleshooting'
     | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
@@ -850,6 +861,7 @@ export interface FileRouteTypes {
     | '/subnet-calculator'
     | '/terms'
     | '/traceroute'
+    | '/troubleshooting'
     | '/whoisip'
     | '/whose-ip'
     | '/academy/cidr-notation'
@@ -925,6 +937,7 @@ export interface RootRouteChildren {
   SubnetCalculatorRoute: typeof SubnetCalculatorRoute
   TermsRoute: typeof TermsRoute
   TracerouteRoute: typeof TracerouteRoute
+  TroubleshootingRoute: typeof TroubleshootingRoute
   WhoisipRoute: typeof WhoisipRoute
   WhoseIpRoute: typeof WhoseIpRoute
   ApiPublicUploadRoute: typeof ApiPublicUploadRoute
@@ -1141,6 +1154,13 @@ declare module '@tanstack/react-router' {
       path: '/traceroute'
       fullPath: '/traceroute'
       preLoaderRoute: typeof TracerouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/troubleshooting': {
+      id: '/troubleshooting'
+      path: '/troubleshooting'
+      fullPath: '/troubleshooting'
+      preLoaderRoute: typeof TroubleshootingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/whoisip': {
@@ -1566,6 +1586,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubnetCalculatorRoute: SubnetCalculatorRoute,
   TermsRoute: TermsRoute,
   TracerouteRoute: TracerouteRoute,
+  TroubleshootingRoute: TroubleshootingRoute,
   WhoisipRoute: WhoisipRoute,
   WhoseIpRoute: WhoseIpRoute,
   ApiPublicUploadRoute: ApiPublicUploadRoute,

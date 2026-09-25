@@ -243,6 +243,7 @@ function SiteHeader() {
             { to: "/app-monitoring", label: "App Monitoring" },
             { to: "/ap-planning", label: "AP Planning" },
             { to: "/network-diagram", label: "Diagram Builder" },
+            { to: "/troubleshooting", label: "🛠 Cookbook" },
             { to: "/cyber-news", label: "📰 Cyber News" },
             { to: "/academy", label: "Academy" },
             { to: "/practice", label: "🎓 Cert Practice" },
@@ -416,6 +417,7 @@ function SiteFooter() {
             { to: "/app-monitoring", label: "App Monitoring" },
             { to: "/ap-planning", label: "AP Planning" },
             { to: "/network-diagram", label: "Diagram Builder" },
+            { to: "/troubleshooting", label: "Troubleshooting Cookbook" },
             { to: "/academy", label: "Network Engineer Academy" },
           ]}
         />
