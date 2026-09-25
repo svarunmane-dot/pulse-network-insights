@@ -239,6 +239,7 @@ function SiteHeader() {
             { to: "/whose-ip", label: "Whose IP" },
             { to: "/port-check", label: "Port Check" },
             { to: "/blacklist-check", label: "Blacklist Check" },
+            { to: "/password-generator", label: "🔐 Password Gen" },
             { to: "/app-monitoring", label: "App Monitoring" },
             { to: "/ap-planning", label: "AP Planning" },
             { to: "/network-diagram", label: "Diagram Builder" },
