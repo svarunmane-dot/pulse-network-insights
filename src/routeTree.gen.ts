@@ -24,6 +24,7 @@ import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as GlobalRouteImport } from './routes/global'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as NetworkDiagramRouteImport } from './routes/network-diagram'
+import { Route as PasswordGeneratorRouteImport } from './routes/password-generator'
 import { Route as PcapAnalyzerRouteImport } from './routes/pcap-analyzer'
 import { Route as PingRouteImport } from './routes/ping'
 import { Route as PingIpRouteImport } from './routes/ping-ip'
@@ -154,6 +155,11 @@ const MonitoringRoute = MonitoringRouteImport.update({
 const NetworkDiagramRoute = NetworkDiagramRouteImport.update({
   id: '/network-diagram',
   path: '/network-diagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PasswordGeneratorRoute = PasswordGeneratorRouteImport.update({
+  id: '/password-generator',
+  path: '/password-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PcapAnalyzerRoute = PcapAnalyzerRouteImport.update({
@@ -460,6 +466,7 @@ export interface FileRoutesByFullPath {
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
+  '/password-generator': typeof PasswordGeneratorRoute
   '/pcap-analyzer': typeof PcapAnalyzerRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
@@ -532,6 +539,7 @@ export interface FileRoutesByTo {
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
+  '/password-generator': typeof PasswordGeneratorRoute
   '/pcap-analyzer': typeof PcapAnalyzerRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
@@ -605,6 +613,7 @@ export interface FileRoutesById {
   '/global': typeof GlobalRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
+  '/password-generator': typeof PasswordGeneratorRoute
   '/pcap-analyzer': typeof PcapAnalyzerRoute
   '/ping': typeof PingRoute
   '/ping-ip': typeof PingIpRoute
@@ -680,6 +689,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/monitoring'
     | '/network-diagram'
+    | '/password-generator'
     | '/pcap-analyzer'
     | '/ping'
     | '/ping-ip'
@@ -752,6 +762,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/monitoring'
     | '/network-diagram'
+    | '/password-generator'
     | '/pcap-analyzer'
     | '/ping'
     | '/ping-ip'
@@ -824,6 +835,7 @@ export interface FileRouteTypes {
     | '/global'
     | '/monitoring'
     | '/network-diagram'
+    | '/password-generator'
     | '/pcap-analyzer'
     | '/ping'
     | '/ping-ip'
@@ -898,6 +910,7 @@ export interface RootRouteChildren {
   GlobalRoute: typeof GlobalRoute
   MonitoringRoute: typeof MonitoringRoute
   NetworkDiagramRoute: typeof NetworkDiagramRoute
+  PasswordGeneratorRoute: typeof PasswordGeneratorRoute
   PcapAnalyzerRoute: typeof PcapAnalyzerRoute
   PingRoute: typeof PingRoute
   PingIpRoute: typeof PingIpRoute
@@ -1023,6 +1036,13 @@ declare module '@tanstack/react-router' {
       path: '/network-diagram'
       fullPath: '/network-diagram'
       preLoaderRoute: typeof NetworkDiagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/password-generator': {
+      id: '/password-generator'
+      path: '/password-generator'
+      fullPath: '/password-generator'
+      preLoaderRoute: typeof PasswordGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pcap-analyzer': {
@@ -1531,6 +1551,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlobalRoute: GlobalRoute,
   MonitoringRoute: MonitoringRoute,
   NetworkDiagramRoute: NetworkDiagramRoute,
+  PasswordGeneratorRoute: PasswordGeneratorRoute,
   PcapAnalyzerRoute: PcapAnalyzerRoute,
   PingRoute: PingRoute,
   PingIpRoute: PingIpRoute,
