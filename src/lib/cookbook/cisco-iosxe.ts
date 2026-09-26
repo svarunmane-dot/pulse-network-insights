@@ -22,6 +22,7 @@ export interface CookbookCommand {
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   tags: string;
   notes: string;
+  related_commands?: string[];
 }
 
 export const COOKBOOK_COMMANDS: CookbookCommand[] = [

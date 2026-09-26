@@ -30,7 +30,7 @@ export const Route = createFileRoute("/troubleshooting")({
         },
         {
           q: "Which vendors are covered?",
-          a: "The initial dataset covers Cisco IOS/IOS-XE with 100 commands. NX-OS, FortiGate, Palo Alto, Juniper, Aruba, F5, Arista, Ruckus and Linux datasets are planned next.",
+          a: "The dataset covers Cisco IOS/IOS-XE and Cisco NX-OS with 211 commands. FortiGate, Palo Alto, Juniper, Aruba, F5, Arista, Ruckus and Linux datasets are planned next.",
         },
         {
           q: "Are the commands safe to run in production?",
@@ -185,7 +185,32 @@ function CommandCard({ c, onSelect }: { c: CookbookCommand; onSelect: (id: strin
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.dim, textTransform: "uppercase" }}>
             Next command
           </div>
-          <code style={{ ...mono, fontSize: 12, color: "#9B8FE8" }}>{c.next_command}</code>
+          {(() => {
+            const next = related.find(
+              (r) => r.command.toLowerCase() === c.next_command.toLowerCase(),
+            );
+            return next ? (
+              <button
+                type="button"
+                onClick={() => onSelect(next.id)}
+                style={{
+                  ...mono,
+                  fontSize: 12,
+                  color: "#9B8FE8",
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  textUnderlineOffset: 3,
+                }}
+              >
+                {c.next_command}
+              </button>
+            ) : (
+              <code style={{ ...mono, fontSize: 12, color: "#9B8FE8" }}>{c.next_command}</code>
+            );
+          })()}
         </div>
       )}
 
@@ -274,8 +299,8 @@ function TroubleshootingPage() {
       </h1>
       <p style={{ color: C.dim, fontSize: 14, marginTop: 8, maxWidth: 720, lineHeight: 1.6 }}>
         What command to run, why to run it, what to check in the output, what red flags mean —
-        and what to run next. Currently covering {ALL_COMMANDS.length} Cisco IOS/IOS-XE commands,
-        with more vendors coming.
+        and what to run next. Currently covering {ALL_COMMANDS.length} commands across{" "}
+        {uniqueValues("platform").join(" and ")}, with more vendors coming.
       </p>
 
       {/* Tabs */}
