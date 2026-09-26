@@ -468,7 +468,9 @@ function Builder() {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed.nodes)) setNodes(parsed.nodes);
-        if (Array.isArray(parsed.edges)) setEdges(parsed.edges);
+        if (Array.isArray(parsed.edges)) {
+          setEdges(parsed.edges.map((edge: Edge) => ({ ...edge, type: "straight" })));
+        }
       }
     } catch {}
     setLoaded(true);
@@ -497,7 +499,13 @@ function Builder() {
     (params: Connection) =>
       setEdges((eds) =>
         addEdge(
-          { ...params, id: nextId("e"), data: { state: "active" }, ...edgeStyleFor("active", simulation) },
+          {
+            ...params,
+            id: nextId("e"),
+            type: "straight",
+            data: { state: "active" },
+            ...edgeStyleFor("active", simulation),
+          },
           eds,
         ),
       ),
