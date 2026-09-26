@@ -245,21 +245,27 @@ function DeviceNode({ data, selected }: NodeProps) {
   const d = data as unknown as DeviceData;
   const meta = kindMeta(d.kind);
   const handleStyle = {
-    width: 14,
-    height: 14,
-    background: SURFACE_DEEP,
-    border: `2px solid ${meta.color}`,
+    width: 7,
+    height: 7,
+    minWidth: 7,
+    minHeight: 7,
+    background: meta.color,
+    border: "none",
+    opacity: 0,
+    transition: "opacity 120ms ease",
   };
   return (
     <div
+      className="pulse-device-node"
       style={{
-        minWidth: 150,
-        borderRadius: 12,
-        background: SURFACE,
-        border: `1px solid ${selected ? meta.color : BORDER}`,
-        boxShadow: selected ? `0 0 0 3px ${meta.color}22` : "0 6px 20px rgba(0,0,0,0.35)",
-        padding: "10px 12px",
+        minWidth: 110,
+        borderRadius: 14,
+        background: "transparent",
+        border: selected ? `1.5px solid ${meta.color}` : "1.5px solid transparent",
+        boxShadow: selected ? `0 0 0 3px ${meta.color}22` : "none",
+        padding: "8px 10px",
         color: TEXT,
+        textAlign: "center",
       }}
     >
       <Handle type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
