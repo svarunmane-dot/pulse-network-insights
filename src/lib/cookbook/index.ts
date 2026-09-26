@@ -1,11 +1,15 @@
 import { COOKBOOK_COMMANDS, type CookbookCommand } from "./cisco-iosxe";
+import { NXOS_COMMANDS } from "./cisco-nxos";
 
 export type { CookbookCommand };
 
-// Data layer: future vendor datasets (NX-OS, FortiGate, Palo Alto, ...) are
+// Data layer: vendor datasets (NX-OS, FortiGate, Palo Alto, ...) are
 // imported as additional modules and concatenated here. The frontend only
 // ever reads ALL_COMMANDS, so new datasets need no UI changes.
-export const ALL_COMMANDS: CookbookCommand[] = [...COOKBOOK_COMMANDS];
+export const ALL_COMMANDS: CookbookCommand[] = [
+  ...COOKBOOK_COMMANDS,
+  ...NXOS_COMMANDS,
+];
 
 const norm = (s: string) => s.toLowerCase();
 
