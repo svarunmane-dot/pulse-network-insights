@@ -81,23 +81,31 @@ export function allTags(): string[] {
   return [...s].sort();
 }
 
-// Related commands: explicit next_command link plus same category/subcategory.
+// Related commands: explicit next_command + related_commands links, scoped to
+// the same platform, then same category/subcategory within that platform.
 export function relatedCommands(c: CookbookCommand): CookbookCommand[] {
   const out: CookbookCommand[] = [];
   const seen = new Set<string>([c.id]);
-  if (c.next_command) {
-    const next = ALL_COMMANDS.find(
-      (x) => norm(x.command) === norm(c.next_command),
+  const samePlatform = (x: CookbookCommand) =>
+    x.vendor === c.vendor && x.platform === c.platform;
+  const push = (cmd: string) => {
+    const hit = ALL_COMMANDS.find(
+      (x) => samePlatform(x) && norm(x.command) === norm(cmd),
     );
-    if (next && !seen.has(next.id)) {
-      out.push(next);
-      seen.add(next.id);
+    if (hit && !seen.has(hit.id)) {
+      out.push(hit);
+      seen.add(hit.id);
     }
+  };
+  if (c.next_command) push(c.next_command);
+  for (const r of c.related_commands ?? []) {
+    if (out.length >= 5) break;
+    push(r);
   }
   for (const x of ALL_COMMANDS) {
     if (out.length >= 5) break;
     if (seen.has(x.id)) continue;
-    if (x.vendor === c.vendor && x.platform === c.platform && x.category === c.category) {
+    if (samePlatform(x) && x.category === c.category) {
       out.push(x);
       seen.add(x.id);
     }
