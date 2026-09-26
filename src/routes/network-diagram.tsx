@@ -268,47 +268,45 @@ function DeviceNode({ data, selected }: NodeProps) {
         textAlign: "center",
       }}
     >
-      <Handle type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
-      <Handle type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
-      <Handle type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
-      <Handle type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
-      <Handle type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
-      <Handle type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
-      <Handle type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
-      <Handle type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
-      <Handle type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
-      <Handle type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
-      <Handle type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
-      <Handle type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span
-          aria-hidden
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            background: `${meta.color}1f`,
-            border: `1px solid ${meta.color}55`,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 15,
-          }}
-        >
-          {meta.icon}
-        </span>
-        <div style={{ lineHeight: 1.25 }}>
-          <div style={{ fontSize: 13, fontWeight: 700 }}>{d.name}</div>
-          <div style={{ fontSize: 10, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 0.6 }}>
-            {meta.label}
-          </div>
-        </div>
+      <Handle className="pulse-handle" type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
+      <div
+        aria-hidden
+        style={{
+          width: 52,
+          height: 52,
+          margin: "0 auto",
+          borderRadius: "50%",
+          background: `${meta.color}14`,
+          border: `1.5px solid ${meta.color}66`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {React.isValidElement(meta.icon)
+          ? React.cloneElement(meta.icon as React.ReactElement<{ size?: number }>, { size: 30 })
+          : meta.icon}
+      </div>
+      <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, lineHeight: 1.2 }}>{d.name}</div>
+      <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 0.6 }}>
+        {meta.label}
       </div>
       <div
         className="font-mono-pulse"
-        style={{ marginTop: 8, fontSize: 11, color: d.ip ? TEAL : TEXT_MUTED }}
+        style={{ marginTop: 3, fontSize: 10, color: d.ip ? TEAL : TEXT_MUTED }}
       >
-        {d.ip ? `${d.ip}${d.mask ? ` / ${d.mask}` : ""}` : "no IP set"}
+        {d.ip ? `${d.ip}${d.mask ? ` / ${d.mask}` : ""}` : ""}
       </div>
     </div>
   );
