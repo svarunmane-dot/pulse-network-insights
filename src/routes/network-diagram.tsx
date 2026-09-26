@@ -812,7 +812,7 @@ function Builder() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             connectionMode={ConnectionMode.Loose}
-            connectionRadius={30}
+            connectionRadius={80}
             nodeTypes={nodeTypes}
             snapToGrid
             snapGrid={[16, 16]}
