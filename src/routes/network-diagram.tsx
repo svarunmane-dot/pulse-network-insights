@@ -269,21 +269,10 @@ function DeviceNode({ data, selected }: NodeProps) {
         textAlign: "center",
       }}
     >
-      <Handle className="pulse-handle" type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
-      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
       <div
         aria-hidden
         style={{
+          position: "relative",
           width: 52,
           height: 52,
           margin: "0 auto",
@@ -295,6 +284,18 @@ function DeviceNode({ data, selected }: NodeProps) {
           justifyContent: "center",
         }}
       >
+        <Handle className="pulse-handle" type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
+        <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
         {isValidElement(meta.icon)
           ? cloneElement(meta.icon as React.ReactElement<{ size?: number }>, { size: 30 })
           : meta.icon}
@@ -387,6 +388,7 @@ function seedDiagram(): { nodes: Node[]; edges: Edge[] } {
     target,
     sourceHandle: "b",
     targetHandle: "t",
+    type: "straight",
     data: { state },
     ...edgeStyleFor(state, false),
   });
@@ -678,6 +680,7 @@ function Builder() {
         setEdges(
           (parsed.edges as Edge[]).map((e) => ({
             ...e,
+            type: "straight",
             ...linkLabelProps((e.data ?? {}) as Partial<LinkData>),
           })),
         );
