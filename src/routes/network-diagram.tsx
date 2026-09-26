@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toolHead } from "@/lib/seo";
 import {
   Background,
@@ -294,8 +294,8 @@ function DeviceNode({ data, selected }: NodeProps) {
           justifyContent: "center",
         }}
       >
-        {React.isValidElement(meta.icon)
-          ? React.cloneElement(meta.icon as React.ReactElement<{ size?: number }>, { size: 30 })
+        {isValidElement(meta.icon)
+          ? cloneElement(meta.icon as React.ReactElement<{ size?: number }>, { size: 30 })
           : meta.icon}
       </div>
       <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, lineHeight: 1.2 }}>{d.name}</div>
