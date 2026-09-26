@@ -191,6 +191,18 @@ html, body {
 
 .pulse-fadeUp { animation: pulse-fadeUp 0.5s ease both; }
 .pulse-pulseAnim { animation: pulse-pulse 1s infinite; }
+
+/* Diagram builder: connector dots stay invisible until the node is hovered,
+   so devices render as clean icons with plain lines between them. */
+.pulse-device-node:hover .pulse-handle,
+.pulse-device-node .pulse-handle.connecting,
+.pulse-device-node .pulse-handle.valid {
+  opacity: 1;
+}
+.pulse-device-node .pulse-handle:hover {
+  opacity: 1;
+  transform: scale(1.6);
+}
 .pulse-shimmerAnim { animation: pulse-shimmer 1.2s infinite; }
 .pulse-spinAnim { animation: pulse-spin 1s linear infinite; }
 

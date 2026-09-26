@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toolHead } from "@/lib/seo";
 import {
   Background,
@@ -124,11 +124,56 @@ const AwsIcon = ({ size = 16, color = "#FF9900" }: { size?: number; color?: stri
   </svg>
 );
 
+const RouterIcon = ({ size = 16, color = TEAL }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <circle cx="12" cy="12" r="8.5" stroke={color} strokeWidth="1.6" />
+    <path d="M7 9.5h6.2m0 0-1.8-1.8m1.8 1.8-1.8 1.8M17 14.5h-6.2m0 0 1.8-1.8m-1.8 1.8 1.8 1.8" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const SwitchIcon = ({ size = 16, color = "#9B8FE8" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="3" y="8" width="18" height="8" rx="1.8" stroke={color} strokeWidth="1.6" />
+    <path d="M6.5 11h4.4m0 0-1.4-1.4m1.4 1.4-1.4 1.4M17.5 13h-4.4m0 0 1.4-1.4m-1.4 1.4 1.4 1.4" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const FirewallIcon = ({ size = 16, color = RED }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="3" y="7" width="18" height="10" rx="1.6" stroke={color} strokeWidth="1.6" />
+    <path d="M3 10.3h18M3 13.7h18M9 7v3.3M15 7v3.3M6 10.3v3.4M12 10.3v3.4M18 10.3v3.4M9 13.7V17M15 13.7V17" stroke={color} strokeWidth="1.1" />
+  </svg>
+);
+
+const ServerIcon = ({ size = 16, color = "#38BDF8" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="4" y="4" width="16" height="6.4" rx="1.6" stroke={color} strokeWidth="1.5" />
+    <rect x="4" y="13.6" width="16" height="6.4" rx="1.6" stroke={color} strokeWidth="1.5" />
+    <circle cx="7.4" cy="7.2" r="0.9" fill={color} />
+    <circle cx="7.4" cy="16.8" r="0.9" fill={color} />
+    <path d="M11 7.2h6M11 16.8h6" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
+const DatabaseIcon = ({ size = 16, color = AMBER }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <ellipse cx="12" cy="6" rx="7.5" ry="2.8" stroke={color} strokeWidth="1.5" />
+    <path d="M4.5 6v12c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8V6" stroke={color} strokeWidth="1.5" />
+    <path d="M4.5 12c0 1.55 3.36 2.8 7.5 2.8s7.5-1.25 7.5-2.8" stroke={color} strokeWidth="1.3" />
+  </svg>
+);
+
+const CloudIcon = ({ size = 16, color = "#c8d0e0" }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path d="M7 18.5h10a4 4 0 0 0 .8-7.9A5.5 5.5 0 0 0 7.2 8.7 4.5 4.5 0 0 0 7 18.5z" stroke={color} strokeWidth="1.6" strokeLinejoin="round" />
+  </svg>
+);
+
 const KINDS: { kind: Kind; label: string; icon: React.ReactNode; color: string; hint: string }[] = [
-  { kind: "router", label: "Router", icon: "🛰️", color: TEAL, hint: "L3 gateway / WAN edge" },
+  { kind: "router", label: "Router", icon: <RouterIcon />, color: TEAL, hint: "L3 gateway / WAN edge" },
   { kind: "cisco", label: "Cisco", icon: <CiscoIcon />, color: "#049FD9", hint: "Cisco router / switch" },
-  { kind: "switch", label: "Switch", icon: "🔀", color: "#9B8FE8", hint: "L2 access / distribution" },
-  { kind: "firewall", label: "Firewall", icon: "🛡️", color: RED, hint: "Perimeter / DMZ policy" },
+  { kind: "switch", label: "Switch", icon: <SwitchIcon />, color: "#9B8FE8", hint: "L2 access / distribution" },
+  { kind: "firewall", label: "Firewall", icon: <FirewallIcon />, color: RED, hint: "Perimeter / DMZ policy" },
   { kind: "fortigate", label: "Fortigate", icon: <FortigateIcon />, color: "#EE3124", hint: "Fortinet NGFW appliance" },
   {
     kind: "accesspoint",
@@ -137,12 +182,12 @@ const KINDS: { kind: Kind; label: string; icon: React.ReactNode; color: string; 
     color: "#38BDF8",
     hint: "Wi-Fi AP / wireless edge",
   },
-  { kind: "server", label: "Server", icon: "🖥️", color: "#38BDF8", hint: "Application / host" },
+  { kind: "server", label: "Server", icon: <ServerIcon />, color: "#38BDF8", hint: "Application / host" },
   { kind: "vm", label: "VM", icon: <VmIcon />, color: "#60A5FA", hint: "Virtual machine / hypervisor guest" },
-  { kind: "database", label: "Database", icon: "🗄️", color: AMBER, hint: "SQL / NoSQL store" },
+  { kind: "database", label: "Database", icon: <DatabaseIcon />, color: AMBER, hint: "SQL / NoSQL store" },
   { kind: "azure", label: "Azure", icon: <AzureIcon />, color: "#0078D4", hint: "Microsoft Azure vNet / resource" },
   { kind: "aws", label: "AWS", icon: <AwsIcon />, color: "#FF9900", hint: "Amazon VPC / EC2 / S3" },
-  { kind: "cloud", label: "Cloud", icon: "☁️", color: "#c8d0e0", hint: "Internet / SaaS / VPC" },
+  { kind: "cloud", label: "Cloud", icon: <CloudIcon />, color: "#c8d0e0", hint: "Internet / SaaS / VPC" },
 ];
 
 const kindMeta = (k: Kind) => KINDS.find((x) => x.kind === k) ?? KINDS[0];
@@ -200,64 +245,68 @@ function DeviceNode({ data, selected }: NodeProps) {
   const d = data as unknown as DeviceData;
   const meta = kindMeta(d.kind);
   const handleStyle = {
-    width: 14,
-    height: 14,
-    background: SURFACE_DEEP,
-    border: `2px solid ${meta.color}`,
+    width: 7,
+    height: 7,
+    minWidth: 7,
+    minHeight: 7,
+    background: meta.color,
+    border: "none",
+    opacity: 0,
+    transition: "opacity 120ms ease",
   };
   return (
     <div
+      className="pulse-device-node"
       style={{
-        minWidth: 150,
-        borderRadius: 12,
-        background: SURFACE,
-        border: `1px solid ${selected ? meta.color : BORDER}`,
-        boxShadow: selected ? `0 0 0 3px ${meta.color}22` : "0 6px 20px rgba(0,0,0,0.35)",
-        padding: "10px 12px",
+        minWidth: 110,
+        borderRadius: 14,
+        background: "transparent",
+        border: selected ? `1.5px solid ${meta.color}` : "1.5px solid transparent",
+        boxShadow: selected ? `0 0 0 3px ${meta.color}22` : "none",
+        padding: "8px 10px",
         color: TEXT,
+        textAlign: "center",
       }}
     >
-      <Handle type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
-      <Handle type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
-      <Handle type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
-      <Handle type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
-      <Handle type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
-      <Handle type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
-      <Handle type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
-      <Handle type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
-      <Handle type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
-      <Handle type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
-      <Handle type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
-      <Handle type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span
-          aria-hidden
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            background: `${meta.color}1f`,
-            border: `1px solid ${meta.color}55`,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 15,
-          }}
-        >
-          {meta.icon}
-        </span>
-        <div style={{ lineHeight: 1.25 }}>
-          <div style={{ fontSize: 13, fontWeight: 700 }}>{d.name}</div>
-          <div style={{ fontSize: 10, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 0.6 }}>
-            {meta.label}
-          </div>
-        </div>
+      <Handle className="pulse-handle" type="source" position={Position.Top} id="t-1" style={{ ...handleStyle, left: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Top} id="t" style={{ ...handleStyle, left: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Top} id="t-3" style={{ ...handleStyle, left: "75%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Left} id="l-1" style={{ ...handleStyle, top: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Left} id="l" style={{ ...handleStyle, top: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Left} id="l-3" style={{ ...handleStyle, top: "75%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Right} id="r-1" style={{ ...handleStyle, top: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Right} id="r" style={{ ...handleStyle, top: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Right} id="r-3" style={{ ...handleStyle, top: "75%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-1" style={{ ...handleStyle, left: "25%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b" style={{ ...handleStyle, left: "50%" }} />
+      <Handle className="pulse-handle" type="source" position={Position.Bottom} id="b-3" style={{ ...handleStyle, left: "75%" }} />
+      <div
+        aria-hidden
+        style={{
+          width: 52,
+          height: 52,
+          margin: "0 auto",
+          borderRadius: "50%",
+          background: `${meta.color}14`,
+          border: `1.5px solid ${meta.color}66`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {isValidElement(meta.icon)
+          ? cloneElement(meta.icon as React.ReactElement<{ size?: number }>, { size: 30 })
+          : meta.icon}
+      </div>
+      <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, lineHeight: 1.2 }}>{d.name}</div>
+      <div style={{ fontSize: 9, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: 0.6 }}>
+        {meta.label}
       </div>
       <div
         className="font-mono-pulse"
-        style={{ marginTop: 8, fontSize: 11, color: d.ip ? TEAL : TEXT_MUTED }}
+        style={{ marginTop: 3, fontSize: 10, color: d.ip ? TEAL : TEXT_MUTED }}
       >
-        {d.ip ? `${d.ip}${d.mask ? ` / ${d.mask}` : ""}` : "no IP set"}
+        {d.ip ? `${d.ip}${d.mask ? ` / ${d.mask}` : ""}` : ""}
       </div>
     </div>
   );
