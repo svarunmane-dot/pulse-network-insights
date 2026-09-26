@@ -30,7 +30,7 @@ export const Route = createFileRoute("/troubleshooting")({
         },
         {
           q: "Which vendors are covered?",
-          a: "The initial dataset covers Cisco IOS/IOS-XE with 100 commands. NX-OS, FortiGate, Palo Alto, Juniper, Aruba, F5, Arista, Ruckus and Linux datasets are planned next.",
+          a: "The dataset covers Cisco IOS/IOS-XE and Cisco NX-OS with 211 commands. FortiGate, Palo Alto, Juniper, Aruba, F5, Arista, Ruckus and Linux datasets are planned next.",
         },
         {
           q: "Are the commands safe to run in production?",
