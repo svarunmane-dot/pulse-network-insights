@@ -244,15 +244,16 @@ const edgeStyleFor = (state: LinkState, simulation: boolean): Partial<Edge> => {
 function DeviceNode({ data, selected }: NodeProps) {
   const d = data as unknown as DeviceData;
   const meta = kindMeta(d.kind);
+  // Large invisible hit area (easy to grab); the visible dot is drawn by
+  // the .pulse-handle::after pseudo-element and only appears on hover.
   const handleStyle = {
-    width: 7,
-    height: 7,
-    minWidth: 7,
-    minHeight: 7,
-    background: meta.color,
+    width: 22,
+    height: 22,
+    minWidth: 22,
+    minHeight: 22,
+    background: "transparent",
     border: "none",
-    opacity: 0,
-    transition: "opacity 120ms ease",
+    color: meta.color,
   };
   return (
     <div
@@ -811,7 +812,7 @@ function Builder() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             connectionMode={ConnectionMode.Loose}
-            connectionRadius={30}
+            connectionRadius={80}
             nodeTypes={nodeTypes}
             snapToGrid
             snapGrid={[16, 16]}

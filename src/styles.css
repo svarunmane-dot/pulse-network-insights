@@ -193,15 +193,31 @@ html, body {
 .pulse-pulseAnim { animation: pulse-pulse 1s infinite; }
 
 /* Diagram builder: connector dots stay invisible until the node is hovered,
-   so devices render as clean icons with plain lines between them. */
-.pulse-device-node:hover .pulse-handle,
-.pulse-device-node .pulse-handle.connecting,
-.pulse-device-node .pulse-handle.valid {
+   so devices render as clean icons with plain lines between them. The handle
+   element itself is a large transparent hit area; the dot is the ::after. */
+.pulse-device-node .pulse-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+}
+.pulse-device-node .pulse-handle::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.pulse-device-node:hover .pulse-handle::after,
+.pulse-device-node .pulse-handle.connecting::after,
+.pulse-device-node .pulse-handle.valid::after {
   opacity: 1;
 }
-.pulse-device-node .pulse-handle:hover {
+.pulse-device-node .pulse-handle:hover::after {
   opacity: 1;
-  transform: scale(1.6);
+  transform: scale(1.5);
 }
 .pulse-shimmerAnim { animation: pulse-shimmer 1.2s infinite; }
 .pulse-spinAnim { animation: pulse-spin 1s linear infinite; }
