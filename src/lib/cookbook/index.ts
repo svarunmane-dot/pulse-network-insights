@@ -52,6 +52,7 @@ export interface CookbookFilters {
   difficulty?: string;
   risk?: string;
   tag?: string;
+  mode?: string;
 }
 
 export function applyFilters(
