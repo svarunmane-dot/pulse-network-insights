@@ -68,6 +68,7 @@ export function applyFilters(
       (!f.subcategory || c.subcategory === f.subcategory) &&
       (!f.difficulty || c.difficulty === f.difficulty) &&
       (!f.risk || c.risk === f.risk) &&
+      (!f.mode || c.command_mode === f.mode) &&
       (!f.tag || c.tags.toLowerCase().includes(f.tag.toLowerCase())),
   );
 }
