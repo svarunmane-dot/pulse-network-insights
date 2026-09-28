@@ -1,6 +1,7 @@
 import { COOKBOOK_COMMANDS, type CookbookCommand } from "./cisco-iosxe";
 import { NXOS_COMMANDS } from "./cisco-nxos";
 import { WIRELESS_COMMANDS } from "./cisco-wireless";
+import { ASA_FTD_COMMANDS } from "./cisco-asa-ftd";
 
 export type { CookbookCommand };
 
@@ -11,6 +12,7 @@ export const ALL_COMMANDS: CookbookCommand[] = [
   ...COOKBOOK_COMMANDS,
   ...NXOS_COMMANDS,
   ...WIRELESS_COMMANDS,
+  ...ASA_FTD_COMMANDS,
 ];
 
 const norm = (s: string) => s.toLowerCase();
@@ -50,6 +52,7 @@ export interface CookbookFilters {
   difficulty?: string;
   risk?: string;
   tag?: string;
+  mode?: string;
 }
 
 export function applyFilters(
@@ -65,6 +68,7 @@ export function applyFilters(
       (!f.subcategory || c.subcategory === f.subcategory) &&
       (!f.difficulty || c.difficulty === f.difficulty) &&
       (!f.risk || c.risk === f.risk) &&
+      (!f.mode || c.command_mode === f.mode) &&
       (!f.tag || c.tags.toLowerCase().includes(f.tag.toLowerCase())),
   );
 }
