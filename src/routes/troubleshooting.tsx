@@ -383,6 +383,10 @@ function TroubleshootingPage() {
               <option value="">Subcategory: all</option>
               {uniqueValues("subcategory").map((v) => <option key={v} value={v}>{v}</option>)}
             </select>
+            <select style={selectStyle} value={filters.mode ?? ""} onChange={(e) => setF("mode", e.target.value)} aria-label="Filter by mode">
+              <option value="">Mode: all</option>
+              {uniqueValues("command_mode").map((v) => <option key={v} value={v}>{v}</option>)}
+            </select>
             <select style={selectStyle} value={filters.difficulty ?? ""} onChange={(e) => setF("difficulty", e.target.value)} aria-label="Filter by difficulty">
               <option value="">Difficulty: all</option>
               {uniqueValues("difficulty").map((v) => <option key={v} value={v}>{v}</option>)}
