@@ -1,5 +1,6 @@
 import { COOKBOOK_COMMANDS, type CookbookCommand } from "./cisco-iosxe";
 import { NXOS_COMMANDS } from "./cisco-nxos";
+import { WIRELESS_COMMANDS } from "./cisco-wireless";
 
 export type { CookbookCommand };
 
@@ -9,6 +10,7 @@ export type { CookbookCommand };
 export const ALL_COMMANDS: CookbookCommand[] = [
   ...COOKBOOK_COMMANDS,
   ...NXOS_COMMANDS,
+  ...WIRELESS_COMMANDS,
 ];
 
 const norm = (s: string) => s.toLowerCase();
