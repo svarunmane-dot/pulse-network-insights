@@ -43,9 +43,9 @@ export const Route = createFileRoute("/network-diagram")({
     toolHead({
       path: "/network-diagram",
       name: "Network Diagram Builder",
-      title: "Network Diagram Builder — Draw Network Topology Online",
+      title: "Network Diagram Builder Online - Draw Topology | Pulse Speed",
       description:
-        "Free drag-and-drop network topology builder for engineers. Add routers, switches, firewalls, access points, servers and cloud nodes, label uplink interfaces and IPs, set link states, group VLAN zones and export a PNG.",
+        "Create and map network topologies online. Drag nodes for routers, switches, and firewalls, trace active links, and export your diagram as a PNG.",
       category: "DesignApplication",
       faqs: [
         {

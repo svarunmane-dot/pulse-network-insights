@@ -163,9 +163,9 @@ export const Route = createFileRoute("/subnet-calculator")({
     toolHead({
       path: "/subnet-calculator",
       name: "IP Subnet Calculator",
-      title: "IP Subnet Calculator (IPv4 & IPv6 CIDR) | Pulse Speed",
+      title: "IP Subnet Calculator & CIDR Notation Tool | Pulse Speed",
       description:
-        "Free network tool to calculate CIDR masks, network addresses, usable host ranges, broadcast addresses, and wildcards.",
+        "Free online IP subnet calculator for IPv4 and IPv6. Instantly calculate CIDR blocks, network addresses, broadcast ranges, and usable host masks.",
       faqs: [
         {
           q: "What does the subnet calculator return?",

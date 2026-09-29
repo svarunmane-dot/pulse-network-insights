@@ -2,6 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import ShareResult from "@/components/ShareResult";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import SpeedTestHistory, {
+  appendHistory,
+  readHistory,
+  type HistoryEntry,
+} from "@/components/SpeedTestHistory";
 
 /* ============================================================
    LIBRESPEED-BASED ENGINE
@@ -238,30 +243,32 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Internet Speed Test & Ping Checker | Pulse Speed" },
+      { title: "Free Network Tools & Internet Speed Test | Pulse Speed" },
       {
         name: "description",
         content:
-          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
+          "Get accurate, lightweight, and ad-free network diagnostics. Test internet speed, calculate IP subnets, look up DNS, and check port uptime online.",
       },
       {
         name: "keywords",
         content:
-          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns",
+          "free network tools, internet speed test, accurate ping checker, network diagnostic tools, latency checker, jitter test, ip subnet calculator, dns lookup, port checker",
       },
-      { property: "og:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
       {
         property: "og:description",
         content:
-          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
+          "Get accurate, lightweight, and ad-free network diagnostics. Test internet speed, calculate IP subnets, look up DNS, and check port uptime online.",
       },
       { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
       {
         name: "twitter:description",
         content:
-          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
+          "Get accurate, lightweight, and ad-free network diagnostics. Test internet speed, calculate IP subnets, look up DNS, and check port uptime online.",
       },
     ],
     links: [{ rel: "canonical", href: "https://pulse-speed.com/" }],
@@ -612,6 +619,13 @@ function Index() {
   );
   const [aiText, setAiText] = useState("");
   const aiTimerRef = useRef<number | null>(null);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const autoStartedRef = useRef(false);
+
+  // Load saved history after mount (browser storage only).
+  useEffect(() => {
+    setHistory(readHistory());
+  }, []);
 
   const dl = useCountUp(results?.download ?? 0, status === "done");
   const ul = useCountUp(results?.upload ?? 0, status === "done");
@@ -666,6 +680,7 @@ function Index() {
       setResults(r);
       setStatus("done");
       setPhase("");
+      setHistory(appendHistory({ ts: Date.now(), ...r }));
 
       const latencies = APPS.map(() =>
         Math.max(10, Math.round(pingRes.ping + rand(5, 80))),
@@ -713,6 +728,19 @@ function Index() {
     [],
   );
 
+  // Auto-start the test shortly after the page loads (Fast.com style).
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    autoStartedRef.current = true;
+    const t = window.setTimeout(() => {
+      void runTest();
+    }, 500);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+
   // Show live values during test, final values when done
   const displayDl = status === "testing" ? liveDl : dl;
   const displayUl = status === "testing" ? liveUl : ul;
@@ -734,33 +762,44 @@ function Index() {
         : "Run Speed Test";
 
   const ctaButton = (
-    <button
-      onClick={runTest}
-      disabled={status === "testing"}
+    <div
       style={{
-        padding: "14px 44px",
-        borderRadius: 50,
-        border: "none",
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 15,
-        fontWeight: 700,
-        letterSpacing: "0.3px",
-        cursor: status === "testing" ? "not-allowed" : "pointer",
-        background:
-          status === "testing"
-            ? BORDER
-            : `linear-gradient(135deg, ${TEAL}, #00b894)`,
-        color: status === "testing" ? TEXT_MUTED : "#04150f",
-        boxShadow:
-          status === "testing"
-            ? "none"
-            : `0 0 40px ${TEAL}55, 0 8px 24px ${TEAL}33`,
-        transition: "all 0.2s",
+        display: "flex",
+        gap: 12,
+        flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {status === "testing" ? "⏳ " : "▶ "}
-      {buttonLabel}
-    </button>
+      <button
+        onClick={runTest}
+        disabled={status === "testing"}
+        style={{
+          padding: "14px 44px",
+          borderRadius: 50,
+          border: "none",
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: 15,
+          fontWeight: 700,
+          letterSpacing: "0.3px",
+          cursor: status === "testing" ? "not-allowed" : "pointer",
+          background:
+            status === "testing"
+              ? BORDER
+              : `linear-gradient(135deg, ${TEAL}, #00b894)`,
+          color: status === "testing" ? TEXT_MUTED : "#04150f",
+          boxShadow:
+            status === "testing"
+              ? "none"
+              : `0 0 40px ${TEAL}55, 0 8px 24px ${TEAL}33`,
+          transition: "all 0.2s",
+        }}
+      >
+        {status === "testing" ? "⏳ " : "▶ "}
+        {buttonLabel}
+      </button>
+      <SpeedTestHistory history={history} onChange={setHistory} />
+    </div>
   );
 
   const progressBar =

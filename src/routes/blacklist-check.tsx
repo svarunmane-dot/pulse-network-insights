@@ -177,9 +177,9 @@ export const Route = createFileRoute("/blacklist-check")({
     toolHead({
       path: "/blacklist-check",
       name: "Blacklist Check",
-      title: "Blacklist Check — DNSBL & IP Reputation Lookup Tool",
+      title: "IP Blacklist Check - DNSBL & RBL Lookup Tool | Pulse Speed",
       description:
-        "Free blacklist check tool. Instantly test if an IP address or domain is listed on major DNSBL / RBL threat feeds like Spamhaus, Barracuda, SpamCop and more.",
+        "Free IP blacklist check against 70+ DNSBL and RBL feeds including Spamhaus, Barracuda and SpamCop. Find out if your IP or domain is blocked.",
       faqs: [
         {
           q: "What is a DNSBL blacklist check?",

@@ -19,9 +19,9 @@ export const Route = createFileRoute("/ping-ip")({
     toolHead({
       path: "/ping-ip",
       name: "Ping IP",
-      title: "Ping IP — Test Reachability & Latency of a Public IP",
+      title: "Online Ping Test - Accurate IP Latency Checker | Pulse Speed",
       description:
-        "Free online ping tool. Check if a public IPv4 or hostname is reachable from our edge and measure round-trip latency to it in milliseconds.",
+        "Free online ping test tool. Check if any public IP address or hostname is reachable and measure its round-trip latency in milliseconds instantly.",
       faqs: [
         {
           q: "How does the online ping work?",

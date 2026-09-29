@@ -110,9 +110,9 @@ export const Route = createFileRoute("/dns-lookup")({
     toolHead({
       path: "/dns-lookup",
       name: "DNS Lookup",
-      title: "DNS Lookup — Domain to IP & Reverse DNS Resolver Tool",
+      title: "DNS Lookup Tool - Domain to IP & Reverse DNS | Pulse Speed",
       description:
-        "Free DNS lookup tool. Resolve any domain to its A and AAAA records, or reverse-lookup a public IPv4 address to its hostname in seconds.",
+        "Free online DNS lookup tool. Resolve any domain to its A and AAAA records, or run a reverse DNS lookup on a public IP address to find its hostname.",
       faqs: [
         {
           q: "What record types does the DNS lookup support?",
