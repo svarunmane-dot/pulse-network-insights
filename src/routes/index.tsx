@@ -728,6 +728,19 @@ function Index() {
     [],
   );
 
+  // Auto-start the test shortly after the page loads (Fast.com style).
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    autoStartedRef.current = true;
+    const t = window.setTimeout(() => {
+      void runTest();
+    }, 500);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+
   // Show live values during test, final values when done
   const displayDl = status === "testing" ? liveDl : dl;
   const displayUl = status === "testing" ? liveUl : ul;
