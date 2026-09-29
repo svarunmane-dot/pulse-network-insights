@@ -238,30 +238,32 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Internet Speed Test & Ping Checker | Pulse Speed" },
+      { title: "Free Network Tools & Internet Speed Test | Pulse Speed" },
       {
         name: "description",
         content:
-          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
+          "Get accurate, lightweight, and ad-free network diagnostics. Test internet speed, calculate IP subnets, look up DNS, and check port uptime online.",
       },
       {
         name: "keywords",
         content:
-          "internet speed test, ping test, latency checker, jitter test, broadband speed, wifi speed, upload speed, download speed, Mbps test, network test, ip subnet calculator, dns lookup, reverse dns",
+          "free network tools, internet speed test, accurate ping checker, network diagnostic tools, latency checker, jitter test, ip subnet calculator, dns lookup, port checker",
       },
-      { property: "og:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
       {
         property: "og:description",
         content:
-          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
+          "Get accurate, lightweight, and ad-free network diagnostics. Test internet speed, calculate IP subnets, look up DNS, and check port uptime online.",
       },
       { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
-      { name: "twitter:title", content: "Internet Speed Test & Ping Checker | Pulse Speed" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
       {
         name: "twitter:description",
         content:
-          "Measure download speed, upload speed, ping, jitter, and latency instantly with a lightweight browser engine.",
+          "Get accurate, lightweight, and ad-free network diagnostics. Test internet speed, calculate IP subnets, look up DNS, and check port uptime online.",
       },
     ],
     links: [{ rel: "canonical", href: "https://pulse-speed.com/" }],
