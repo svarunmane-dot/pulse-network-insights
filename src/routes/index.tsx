@@ -762,33 +762,44 @@ function Index() {
         : "Run Speed Test";
 
   const ctaButton = (
-    <button
-      onClick={runTest}
-      disabled={status === "testing"}
+    <div
       style={{
-        padding: "14px 44px",
-        borderRadius: 50,
-        border: "none",
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: 15,
-        fontWeight: 700,
-        letterSpacing: "0.3px",
-        cursor: status === "testing" ? "not-allowed" : "pointer",
-        background:
-          status === "testing"
-            ? BORDER
-            : `linear-gradient(135deg, ${TEAL}, #00b894)`,
-        color: status === "testing" ? TEXT_MUTED : "#04150f",
-        boxShadow:
-          status === "testing"
-            ? "none"
-            : `0 0 40px ${TEAL}55, 0 8px 24px ${TEAL}33`,
-        transition: "all 0.2s",
+        display: "flex",
+        gap: 12,
+        flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {status === "testing" ? "⏳ " : "▶ "}
-      {buttonLabel}
-    </button>
+      <button
+        onClick={runTest}
+        disabled={status === "testing"}
+        style={{
+          padding: "14px 44px",
+          borderRadius: 50,
+          border: "none",
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: 15,
+          fontWeight: 700,
+          letterSpacing: "0.3px",
+          cursor: status === "testing" ? "not-allowed" : "pointer",
+          background:
+            status === "testing"
+              ? BORDER
+              : `linear-gradient(135deg, ${TEAL}, #00b894)`,
+          color: status === "testing" ? TEXT_MUTED : "#04150f",
+          boxShadow:
+            status === "testing"
+              ? "none"
+              : `0 0 40px ${TEAL}55, 0 8px 24px ${TEAL}33`,
+          transition: "all 0.2s",
+        }}
+      >
+        {status === "testing" ? "⏳ " : "▶ "}
+        {buttonLabel}
+      </button>
+      <SpeedTestHistory history={history} onChange={setHistory} />
+    </div>
   );
 
   const progressBar =
