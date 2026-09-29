@@ -619,6 +619,13 @@ function Index() {
   );
   const [aiText, setAiText] = useState("");
   const aiTimerRef = useRef<number | null>(null);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const autoStartedRef = useRef(false);
+
+  // Load saved history after mount (browser storage only).
+  useEffect(() => {
+    setHistory(readHistory());
+  }, []);
 
   const dl = useCountUp(results?.download ?? 0, status === "done");
   const ul = useCountUp(results?.upload ?? 0, status === "done");
