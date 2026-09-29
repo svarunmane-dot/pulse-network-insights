@@ -19,9 +19,9 @@ export const Route = createFileRoute("/ap-planning")({
     toolHead({
       path: "/ap-planning",
       name: "AP Planning Simulator",
-      title: "AP Planning Simulator — WiFi Access Point Placement",
+      title: "WiFi AP Placement Planner & Coverage Tool | Pulse Speed",
       description:
-        "Upload a floor plan and get ranked Wi-Fi access point placements with coverage overlays for Fortinet, Cisco Meraki, Ubiquiti, TP-Link and Aruba APs.",
+        "Free WiFi access point planner. Upload a floor plan, set the scale, and get ranked AP placements with coverage overlays for Cisco, Aruba and Ubiquiti.",
       category: "DesignApplication",
       faqs: [
         {

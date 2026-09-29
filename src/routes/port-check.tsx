@@ -31,9 +31,9 @@ export const Route = createFileRoute("/port-check")({
     toolHead({
       path: "/port-check",
       name: "Open Port Checker",
-      title: "Open Port Checker & TCP Tester | Pulse Speed",
+      title: "Open Port Checker - Free Online TCP Port Test | Pulse Speed",
       description:
-        "Check whether a specific TCP port on a public IP address or host is open and reachable through your firewall.",
+        "Free open port checker. Test whether any TCP port on a public IP or hostname is open, closed, or blocked by a firewall, with common port shortcuts.",
       faqs: [
         {
           q: "What is an open port checker?",

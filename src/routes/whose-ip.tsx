@@ -20,9 +20,9 @@ export const Route = createFileRoute("/whose-ip")({
     toolHead({
       path: "/whose-ip",
       name: "Whose IP",
-      title: "Whose IP — Free IP Geolocation, ISP & ASN Lookup Tool",
+      title: "IP Address Lookup - Geolocation, ISP & ASN | Pulse Speed",
       description:
-        "Free IP lookup tool. Find the country, city, ISP, organisation, ASN, reverse DNS and hosting flags behind any public IPv4 address instantly.",
+        "Free IP address lookup tool. Find the country, city, ISP, organisation, ASN and reverse DNS behind any public IP address in seconds.",
       faqs: [
         {
           q: "What does the Whose IP tool return?",

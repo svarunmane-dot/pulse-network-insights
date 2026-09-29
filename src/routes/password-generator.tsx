@@ -8,9 +8,9 @@ export const Route = createFileRoute("/password-generator")({
     toolHead({
       path: "/password-generator",
       name: "Password Generator",
-      title: "Password Generator — Strong, Random & Breach-Checked",
+      title: "Strong Random Password Generator Online | Pulse Speed",
       description:
-        "Free secure password generator. Custom length, character sets, live strength meter and a Have I Been Pwned breach check using k-anonymity — nothing leaves your browser.",
+        "Free strong password generator with custom length and character sets, a live strength meter, and a breach check. Everything runs in your browser.",
       category: "SecurityApplication",
       faqs: [
         {
