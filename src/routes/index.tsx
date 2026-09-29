@@ -680,6 +680,7 @@ function Index() {
       setResults(r);
       setStatus("done");
       setPhase("");
+      setHistory(appendHistory({ ts: Date.now(), ...r }));
 
       const latencies = APPS.map(() =>
         Math.max(10, Math.round(pingRes.ping + rand(5, 80))),
