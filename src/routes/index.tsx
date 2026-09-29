@@ -2,6 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import ShareResult from "@/components/ShareResult";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import SpeedTestHistory, {
+  appendHistory,
+  readHistory,
+  type HistoryEntry,
+} from "@/components/SpeedTestHistory";
 
 /* ============================================================
    LIBRESPEED-BASED ENGINE
