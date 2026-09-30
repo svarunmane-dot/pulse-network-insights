@@ -264,7 +264,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
+      { name: "twitter:title", content: "Pulse Speed – Free Network Tools & Speed Test" },
       {
         name: "twitter:description",
         content:
