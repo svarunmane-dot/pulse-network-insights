@@ -255,7 +255,7 @@ export const Route = createFileRoute("/")({
           "free network tools, internet speed test, accurate ping checker, network diagnostic tools, latency checker, jitter test, ip subnet calculator, dns lookup, port checker",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
+      { property: "og:title", content: "Pulse Speed – Free Network Tools & Speed Test" },
       {
         property: "og:description",
         content:
