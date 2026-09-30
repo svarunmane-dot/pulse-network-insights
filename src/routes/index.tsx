@@ -243,7 +243,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Free Network Tools & Internet Speed Test | Pulse Speed" },
+      { title: "Pulse Speed – Free Network Tools & Speed Test" },
       {
         name: "description",
         content:
