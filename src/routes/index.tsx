@@ -243,7 +243,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Free Network Tools & Internet Speed Test | Pulse Speed" },
+      { title: "Pulse Speed – Free Network Tools & Speed Test" },
       {
         name: "description",
         content:
@@ -255,7 +255,7 @@ export const Route = createFileRoute("/")({
           "free network tools, internet speed test, accurate ping checker, network diagnostic tools, latency checker, jitter test, ip subnet calculator, dns lookup, port checker",
       },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
+      { property: "og:title", content: "Pulse Speed – Free Network Tools & Speed Test" },
       {
         property: "og:description",
         content:
@@ -264,7 +264,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://pulse-speed.com/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Free Network Tools & Internet Speed Test | Pulse Speed" },
+      { name: "twitter:title", content: "Pulse Speed – Free Network Tools & Speed Test" },
       {
         name: "twitter:description",
         content:
