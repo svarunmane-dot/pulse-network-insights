@@ -1625,6 +1625,34 @@ function SeoContent() {
       </section>
 
       <section
+        aria-labelledby="gaming-ping-heading"
+        style={{ padding: "50px 24px 0", maxWidth: 900, margin: "0 auto" }}
+      >
+        <div
+          style={{
+            borderTop: `1px dashed ${BORDER}`,
+            padding: "25px 0 0",
+          }}
+        >
+          <h2
+            id="gaming-ping-heading"
+            style={{ fontSize: 22, fontWeight: 600, margin: "0 0 12px", color: "#fff" }}
+          >
+            Advanced Jitter and Ping Checker for Gamers
+          </h2>
+          <p style={{ fontSize: 15, lineHeight: 1.7, margin: 0, color: TEXT_SEC }}>
+            When hunting for the best <strong>internet speed test for gaming</strong>, standard
+            download and upload speeds don&apos;t tell the full story. Online matchmaking
+            requires an ultra-stable connection. Pulse Speed works as a real-time{" "}
+            <strong>gaming ping test</strong> and <strong>jitter checker</strong>, calculating your
+            packet stability to identify lag spikes before you jump into a match. If your
+            network suffers from high jitter or sudden ping drops, our Cloudflare-backed test
+            engine will pinpoint the exact bottleneck.
+          </p>
+        </div>
+      </section>
+
+      <section
         aria-labelledby="faq-heading"
         style={{ padding: "60px 24px 0", maxWidth: 900, margin: "0 auto" }}
       >
