@@ -100,7 +100,7 @@ function PingIpPage() {
                 cursor: "pointer",
               }}
             >
-              {m === "tcp" ? "TCP handshake (edge)" : "ICMP (via private tunnel)"}
+              {m === "tcp" ? "TCP handshake" : "ICMP"}
             </button>
           ))}
         </div>
