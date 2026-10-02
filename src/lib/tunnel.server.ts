@@ -13,10 +13,15 @@ function probeSecret(): string {
 }
 
 export function tunnelConfigStatus() {
+  const secret = probeSecret();
   return {
     hostname: probeBase(),
-    hasSecret: !!probeSecret(),
-    configured: !!probeBase() && !!probeSecret(),
+    hasSecret: !!secret,
+    hasAccessId: true,
+    hasAccessSecret: !!secret,
+    accessIdSuffix: null as string | null,
+    accessSecretLength: secret.length,
+    configured: !!probeBase() && !!secret,
   };
 }
 
