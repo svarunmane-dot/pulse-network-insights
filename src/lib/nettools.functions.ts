@@ -77,29 +77,24 @@ export const pingHost = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     if (data.mode === "icmp") {
       const { icmpPing } = await import("@/lib/tunnel.server");
-      const probes: Array<{ ok: boolean; ms?: number; error?: string }> = [];
-      for (let i = 0; i < 4; i++) {
-        const r = await icmpPing(data.target, 6000);
-        const up = r.ok && r.status === "UP";
-        probes.push(
-          up
-            ? { ok: true, ms: r.latency ?? 0 }
-            : { ok: false, error: r.error ?? "down" },
-        );
-      }
-      const successes = probes.filter((p) => p.ok && typeof p.ms === "number");
-      const times = successes.map((p) => p.ms!);
+      const r = await icmpPing(data.target);
+      if (!r.ok) throw new Error(r.error ?? "Probe unavailable");
+      const loss = r.packetLoss != null ? Math.round(r.packetLoss <= 1 ? r.packetLoss * 100 : r.packetLoss) : r.status === "UP" ? 0 : 100;
+      const up = r.status === "UP";
+      const round = (v: number | null | undefined) => (v != null ? Math.round(v * 10) / 10 : null);
       return {
         target: data.target,
         port: data.port,
         mode: "icmp" as const,
-        sent: probes.length,
-        received: successes.length,
-        loss: Math.round(((probes.length - successes.length) / probes.length) * 100),
-        min: times.length ? Math.min(...times) : null,
-        max: times.length ? Math.max(...times) : null,
-        avg: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : null,
-        probes,
+        sent: 4,
+        received: Math.round(4 * (1 - loss / 100)),
+        loss,
+        min: round(r.minRtt),
+        max: round(r.maxRtt),
+        avg: round(r.latency),
+        jitter: round(r.jitter),
+        status: up ? "UP" : "DOWN",
+        probes: [] as Array<{ ok: boolean; ms?: number; error?: string }>,
       };
     }
     const probes: Array<{ ok: boolean; ms?: number; error?: string }> = [];
@@ -146,19 +141,19 @@ export const traceHost = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     if (data.mode === "icmp") {
       const { icmpTraceroute } = await import("@/lib/tunnel.server");
-      const r = await icmpTraceroute(data.target, 30000);
+      const r = await icmpTraceroute(data.target);
       if (!r.ok) return { target: data.target, ok: false, error: r.error };
       const lines = (r.hops ?? []).map((h, i) => {
-        const obj = h as Record<string, unknown>;
-        const ip = obj.ip ?? obj.host ?? obj.address ?? "*";
-        const rtt = obj.rtt ?? obj.latency ?? obj.time ?? "";
-        return `${String(i + 1).padStart(2, " ")}  ${ip}  ${rtt ? `${rtt} ms` : ""}`.trimEnd();
+        const n = String(h.distance ?? i + 1).padStart(2, " ");
+        const rtt = h.avg_rtt != null ? `${h.avg_rtt.toFixed(1)} ms` : "*";
+        const loss = h.packetLoss != null ? `  loss ${Math.round(h.packetLoss <= 1 ? h.packetLoss * 100 : h.packetLoss)}%` : "";
+        return `${n}  ${h.address.padEnd(40, " ")}  ${rtt}${loss}`;
       });
       return {
         target: data.target,
         ok: true,
         output: lines.join("\n") || "no hops returned",
-        provider: "tunnel (ICMP)",
+        provider: "ICMP probe",
       };
     }
     try {
