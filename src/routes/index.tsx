@@ -1831,6 +1831,13 @@ const TOOLS: {
     cta: "Ping an IP",
   },
   {
+    to: "/traceroute",
+    icon: "🛰",
+    title: "Traceroute",
+    desc: "Follow the hop-by-hop path to any public host with per-hop latency and packet loss — spot where routing breaks.",
+    cta: "Trace a route",
+  },
+  {
     to: "/whose-ip",
     icon: "🕵",
     title: "Whose IP – WHOIS & Geolocation",
