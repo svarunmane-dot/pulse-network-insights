@@ -2,7 +2,8 @@
 // Auth: X-Probe-Secret header. Endpoints: POST /ping, POST /traceroute, GET /health.
 
 function probeBase(): string | null {
-  const h = (process.env.PROBE_HOSTNAME ?? process.env.TUNNEL_HOSTNAME ?? "https://probe.pulse-speed.com").trim();
+  // Do NOT fall back to TUNNEL_HOSTNAME — on the Cloudflare deployment it points at the old laptop tunnel.
+  const h = (process.env.PROBE_HOSTNAME || "https://probe.pulse-speed.com").trim();
   if (!h) return null;
   const clean = h.replace(/\/+$/, "");
   return clean.startsWith("http") ? clean : `https://${clean}`;
