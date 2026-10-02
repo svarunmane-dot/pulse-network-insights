@@ -153,7 +153,7 @@ export const traceHost = createServerFn({ method: "POST" })
         target: data.target,
         ok: true,
         output: lines.join("\n") || "no hops returned",
-        provider: "ICMP probe",
+        provider: "ICMP",
       };
     }
     try {

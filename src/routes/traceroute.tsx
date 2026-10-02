@@ -20,11 +20,11 @@ export const Route = createFileRoute("/traceroute")({
       name: "Traceroute",
       title: "Traceroute — Trace the Network Path to a Public IP",
       description:
-        "Trace every network hop between our edge and any public IP or hostname. Choose a TCP traceroute from the edge or a real ICMP trace via tunnel.",
+        "Trace every network hop to any public IP or hostname. Choose a TCP traceroute or a real ICMP trace.",
       faqs: [
         {
           q: "What is the difference between TCP and ICMP traceroute?",
-          a: "TCP traceroute uses TCP SYN packets and runs from our edge network. ICMP traceroute uses classic ICMP echo probes through a private tunnel.",
+          a: "TCP traceroute uses TCP SYN packets. ICMP traceroute uses classic ICMP echo probes, like the traceroute command.",
         },
       ],
     }),
@@ -70,8 +70,7 @@ function TraceroutePage() {
           Traceroute
         </h1>
         <p style={{ color: TEXT_MUTED, fontSize: 15, maxWidth: 560, margin: "0 auto", lineHeight: 1.6 }}>
-          See every hop between us and a public IP. TCP mode runs from our edge.
-          ICMP mode runs a real traceroute through the private tunnel.
+          See every hop between us and a public IP using TCP or real ICMP probes.
         </p>
       </div>
 
@@ -94,7 +93,7 @@ function TraceroutePage() {
                 cursor: "pointer",
               }}
             >
-              {m === "tcp" ? "TCP (edge)" : "ICMP (tunnel)"}
+              {m === "tcp" ? "TCP" : "ICMP"}
             </button>
           ))}
         </div>

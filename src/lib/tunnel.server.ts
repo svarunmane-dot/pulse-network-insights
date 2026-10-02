@@ -29,12 +29,12 @@ function headers(): Record<string, string> {
   return { "Content-Type": "application/json", "X-Probe-Secret": probeSecret() };
 }
 
-function statusError(status: number, body: string): string {
-  if (status === 401) return "Probe configuration error: authentication rejected.";
+// Never echo upstream bodies/hosts to users — keeps the probe origin private.
+function statusError(status: number, _body: string): string {
+  if (status === 401) return "Probe configuration error.";
   if (status === 429) return "Too many requests, try again shortly.";
   if (status === 400) return "Invalid or private target.";
-  const text = body.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
-  return `Probe unavailable (HTTP ${status}${text ? `: ${text}` : ""})`;
+  return "Probe unavailable";
 }
 
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : null);

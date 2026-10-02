@@ -100,7 +100,7 @@ function PingIpPage() {
                 cursor: "pointer",
               }}
             >
-              {m === "tcp" ? "TCP handshake (edge)" : "ICMP (via private tunnel)"}
+              {m === "tcp" ? "TCP handshake" : "ICMP"}
             </button>
           ))}
         </div>
@@ -199,13 +199,13 @@ function PingIpPage() {
         body={
           <>
             <p style={{ marginBottom: 10 }}>
-              Traditional ICMP ping is not available from web browsers or most edge runtimes. Instead, we open a
-              <strong style={{ color: TEXT_SEC }}> TCP connection</strong> to the target IP on the chosen port (443 by
-              default) and measure the time it takes to complete the handshake.
+              <strong style={{ color: TEXT_SEC }}>TCP mode</strong> opens a connection to the target on the chosen port
+              (443 by default) and measures how long the handshake takes. A reply means the host is online and that port
+              is open.
             </p>
             <p>
-              A successful response means the host is online <em>and</em> accepting connections on that port. Use port
-              80 for plain HTTP, 22 for SSH, 25 for SMTP, etc.
+              <strong style={{ color: TEXT_SEC }}>ICMP mode</strong> sends real ICMP echo requests, just like the ping
+              command, and reports packet loss, min/avg/max latency and jitter.
             </p>
           </>
         }
