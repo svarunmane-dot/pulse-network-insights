@@ -143,15 +143,19 @@ function PingIpPage() {
       {result && (
         <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 24 }}>
           <div style={{ fontSize: 13, color: TEXT_MUTED, marginBottom: 12 }}>
-            Result for <span style={{ color: TEAL, fontFamily: "'DM Mono', monospace" }}>{result.target}:{result.port}</span>
+            Result for <span style={{ color: TEAL, fontFamily: "'DM Mono', monospace" }}>{result.mode === "icmp" ? result.target : `${result.target}:${result.port}`}</span>
+            {"status" in result && result.status && (
+              <span style={{ marginLeft: 10, color: result.status === "UP" ? TEAL : "#ff4d6d", fontWeight: 700 }}>{result.status}</span>
+            )}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(110px,1fr))", gap: 10, marginBottom: 16 }}>
-            <Stat label="Sent" value={String(result.sent)} />
-            <Stat label="Received" value={String(result.received)} />
+            {result.mode !== "icmp" && <Stat label="Sent" value={String(result.sent)} />}
+            {result.mode !== "icmp" && <Stat label="Received" value={String(result.received)} />}
             <Stat label="Loss" value={`${result.loss}%`} />
             <Stat label="Min" value={result.min != null ? `${result.min} ms` : "—"} />
             <Stat label="Avg" value={result.avg != null ? `${result.avg} ms` : "—"} />
             <Stat label="Max" value={result.max != null ? `${result.max} ms` : "—"} />
+            {"jitter" in result && <Stat label="Jitter" value={result.jitter != null ? `${result.jitter} ms` : "—"} />}
           </div>
           <div style={{ display: "grid", gap: 6 }}>
             {result.probes.map((p, i) => (
