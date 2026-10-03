@@ -23,6 +23,7 @@ import { Route as CyberNewsRouteImport } from './routes/cyber-news'
 import { Route as DnsLookupRouteImport } from './routes/dns-lookup'
 import { Route as DnslookupRouteImport } from './routes/dnslookup'
 import { Route as GlobalRouteImport } from './routes/global'
+import { Route as HomeWifiRouteImport } from './routes/home-wifi'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as NetworkDiagramRouteImport } from './routes/network-diagram'
 import { Route as PasswordGeneratorRouteImport } from './routes/password-generator'
@@ -152,6 +153,11 @@ const DnslookupRoute = DnslookupRouteImport.update({
 const GlobalRoute = GlobalRouteImport.update({
   id: '/global',
   path: '/global',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeWifiRoute = HomeWifiRouteImport.update({
+  id: '/home-wifi',
+  path: '/home-wifi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MonitoringRoute = MonitoringRouteImport.update({
@@ -477,6 +483,7 @@ export interface FileRoutesByFullPath {
   '/dns-lookup': typeof DnsLookupRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/home-wifi': typeof HomeWifiRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
   '/password-generator': typeof PasswordGeneratorRoute
@@ -552,6 +559,7 @@ export interface FileRoutesByTo {
   '/dns-lookup': typeof DnsLookupRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/home-wifi': typeof HomeWifiRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
   '/password-generator': typeof PasswordGeneratorRoute
@@ -628,6 +636,7 @@ export interface FileRoutesById {
   '/dns-lookup': typeof DnsLookupRoute
   '/dnslookup': typeof DnslookupRoute
   '/global': typeof GlobalRoute
+  '/home-wifi': typeof HomeWifiRoute
   '/monitoring': typeof MonitoringRoute
   '/network-diagram': typeof NetworkDiagramRoute
   '/password-generator': typeof PasswordGeneratorRoute
@@ -706,6 +715,7 @@ export interface FileRouteTypes {
     | '/dns-lookup'
     | '/dnslookup'
     | '/global'
+    | '/home-wifi'
     | '/monitoring'
     | '/network-diagram'
     | '/password-generator'
@@ -781,6 +791,7 @@ export interface FileRouteTypes {
     | '/dns-lookup'
     | '/dnslookup'
     | '/global'
+    | '/home-wifi'
     | '/monitoring'
     | '/network-diagram'
     | '/password-generator'
@@ -856,6 +867,7 @@ export interface FileRouteTypes {
     | '/dns-lookup'
     | '/dnslookup'
     | '/global'
+    | '/home-wifi'
     | '/monitoring'
     | '/network-diagram'
     | '/password-generator'
@@ -933,6 +945,7 @@ export interface RootRouteChildren {
   DnsLookupRoute: typeof DnsLookupRoute
   DnslookupRoute: typeof DnslookupRoute
   GlobalRoute: typeof GlobalRoute
+  HomeWifiRoute: typeof HomeWifiRoute
   MonitoringRoute: typeof MonitoringRoute
   NetworkDiagramRoute: typeof NetworkDiagramRoute
   PasswordGeneratorRoute: typeof PasswordGeneratorRoute
@@ -1055,6 +1068,13 @@ declare module '@tanstack/react-router' {
       path: '/global'
       fullPath: '/global'
       preLoaderRoute: typeof GlobalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home-wifi': {
+      id: '/home-wifi'
+      path: '/home-wifi'
+      fullPath: '/home-wifi'
+      preLoaderRoute: typeof HomeWifiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/monitoring': {
@@ -1590,6 +1610,7 @@ const rootRouteChildren: RootRouteChildren = {
   DnsLookupRoute: DnsLookupRoute,
   DnslookupRoute: DnslookupRoute,
   GlobalRoute: GlobalRoute,
+  HomeWifiRoute: HomeWifiRoute,
   MonitoringRoute: MonitoringRoute,
   NetworkDiagramRoute: NetworkDiagramRoute,
   PasswordGeneratorRoute: PasswordGeneratorRoute,
