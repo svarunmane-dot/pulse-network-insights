@@ -20,6 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/ping-ip", changefreq: "monthly", priority: "0.8" },
           { path: "/global", changefreq: "monthly", priority: "0.8" },
           { path: "/traceroute", changefreq: "monthly", priority: "0.8" },
+          { path: "/home-wifi", changefreq: "monthly", priority: "0.8" },
           { path: "/subnet-calculator", changefreq: "monthly", priority: "0.8" },
           { path: "/dns-lookup", changefreq: "monthly", priority: "0.8" },
           { path: "/whose-ip", changefreq: "monthly", priority: "0.8" },
