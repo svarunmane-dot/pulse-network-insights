@@ -15,6 +15,10 @@ const AMBER = "#ffb547";
 
 const FAQS = [
   {
+    q: "Why is my Wi-Fi so slow all of a sudden?",
+    a: "Sudden slowness is usually interference from neighbours' networks, too many devices streaming or downloading at once, an overheating router, or a provider issue. Restart the router, test near it with a speed test, and switch to the 5 GHz band or a less crowded channel.",
+  },
+  {
     q: "Why does my Wi-Fi say connected but no internet?",
     a: "Your device reached the router, but the router can't reach your provider. Restart the modem and router (unplug 30 seconds), check the provider's outage page, and test with a cable to rule out Wi-Fi.",
   },
@@ -27,8 +31,20 @@ const FAQS = [
     a: "5 GHz (and 6 GHz) is much faster and less crowded but has shorter range. 2.4 GHz reaches further through walls but is slower and busier. Use 5 GHz near the router, 2.4 GHz for far rooms and smart-home gadgets.",
   },
   {
-    q: "Why does my Wi-Fi keep dropping?",
+    q: "Why does my Wi-Fi keep dropping or disconnecting?",
     a: "The usual causes are weak signal, interference from neighbours or microwaves, an overheating or outdated router, or power-saving on the device. Move closer, change channel, update firmware, and restart the router.",
+  },
+  {
+    q: "How do I fix Wi-Fi dead zones in my house?",
+    a: "Move the router to a central, high, open spot away from walls, metal and fish tanks. If dead zones remain, add a mesh Wi-Fi system or a wired access point — a single router rarely covers a whole multi-floor home.",
+  },
+  {
+    q: "Why is my internet slow at night?",
+    a: "Evening congestion on your provider's network and neighbours' Wi-Fi channels is common. Run a speed test at different times, switch to a less busy Wi-Fi channel, and use 5 GHz or an Ethernet cable for important devices.",
+  },
+  {
+    q: "What is a good Wi-Fi signal strength in dBm?",
+    a: "-30 to -50 dBm is excellent, -50 to -60 is good, -60 to -70 is okay for browsing, and below -70 dBm causes drops and slow speeds. Check the signal guide on this page to see your exact reading on Windows or Mac.",
   },
 ];
 
@@ -38,9 +54,9 @@ export const Route = createFileRoute("/home-wifi")({
     toolHead({
       path: "/home-wifi",
       name: "Home Wi-Fi Troubleshooter",
-      title: "Home Wi-Fi Troubleshooter — Fix Slow & Dropping Wi-Fi | Pulse Speed",
+      title: "Home WiFi Troubleshooter: Fix Slow WiFi, Drops & No Internet | Pulse Speed",
       description:
-        "Fix slow, dropping or 'connected but no internet' Wi-Fi step by step. Live checks, a symptom wizard, router placement tips and the best Wi-Fi channel guide.",
+        "Free step-by-step home WiFi troubleshooting. Fix slow WiFi, WiFi connected but no internet, WiFi keeps disconnecting, dead zones and lag — with live speed, ping and jitter tests.",
       faqs: FAQS,
     }),
 });
@@ -246,15 +262,15 @@ function HomeWifiPage() {
         >
           Home Wi-Fi Troubleshooter
         </h1>
-        <p style={{ color: MUTED, fontSize: 15, maxWidth: 620, margin: "0 auto", lineHeight: 1.6 }}>
-          Slow, dropping or "connected but no internet"? Run a quick check, pick what you're seeing, and follow simple steps — no tech skills needed.
+        <p style={{ color: MUTED, fontSize: 15, maxWidth: 680, margin: "0 auto", lineHeight: 1.6 }}>
+           Fix slow Wi-Fi, "connected but no internet", constant drop-outs and dead zones at home. Run a free live health check, pick your symptom below, and follow simple step-by-step fixes — no tech skills needed.
         </p>
       </header>
 
       {/* Live check */}
       <section style={card}>
-        <h2 style={h2}>1. Quick health check</h2>
-        <p style={sub}>Tests your connection from this browser in a few seconds.</p>
+<h2 style={h2}>1. Quick Wi-Fi health check</h2>
+        <p style={sub}>Free internet speed, ping and jitter test — checks your connection from this browser in a few seconds.</p>
         <button
           onClick={run}
           disabled={running}
@@ -293,7 +309,7 @@ function HomeWifiPage() {
 
       {/* Symptom picker */}
       <section style={card}>
-        <h2 style={h2}>2. What's the problem?</h2>
+        <h2 style={h2}>2. What's wrong with your Wi-Fi? Pick a symptom</h2>
         <p style={sub}>Pick the one that sounds most like yours.</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 12 }}>
           {SYMPTOMS.map((s) => {
@@ -388,7 +404,7 @@ function HomeWifiPage() {
 
       {/* Placement */}
       <section style={card}>
-        <h2 style={h2}>Router placement: do's and don'ts</h2>
+        <h2 style={h2}>Best router placement for better Wi-Fi signal: do's and don'ts</h2>
         <p style={sub}>Where the router sits matters more than most settings.</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 14 }}>
           <List color={TEAL} title="✅ Do" items={["Put it in the middle of the home", "Raise it high — a shelf, not the floor", "Keep it in open air", "Point antennas up and sideways", "Restart it once a month"]} />
@@ -398,7 +414,7 @@ function HomeWifiPage() {
 
       {/* Bands & channels */}
       <section style={card}>
-        <h2 style={h2}>2.4 GHz vs 5 GHz vs 6 GHz & best channels</h2>
+        <h2 style={h2}>2.4 GHz vs 5 GHz vs 6 GHz: which Wi-Fi band and channel is best?</h2>
         <p style={sub}>Most routers do this automatically. If you have trouble, set it by hand in the router app.</p>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -428,7 +444,7 @@ function HomeWifiPage() {
 
       {/* Signal guide */}
       <section style={card}>
-        <h2 style={h2}>What do the Wi-Fi bars mean?</h2>
+        <h2 style={h2}>Wi-Fi signal strength explained: what the bars and dBm numbers mean</h2>
         <p style={sub}>On laptops you can see the exact signal (in dBm). Closer to 0 is better.</p>
         <div style={{ display: "grid", gap: 8 }}>
           {[
@@ -452,7 +468,7 @@ function HomeWifiPage() {
 
       {/* FAQ */}
       <section style={card}>
-        <h2 style={h2}>Common questions</h2>
+        <h2 style={h2}>Home Wi-Fi troubleshooting: frequently asked questions</h2>
         <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
           {FAQS.map((f) => (
             <details key={f.q} style={{ background: INNER, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "12px 16px" }}>
