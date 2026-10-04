@@ -7,6 +7,7 @@ import {
   QUICK_GROUPS,
   allTags,
   applyFilters,
+  SEQUENCE_CATEGORIES,
   relatedCommands,
   searchCommands,
   uniqueValues,
@@ -130,7 +131,7 @@ function Field({ label, value, warn }: { label: string; value: string; warn?: bo
   );
 }
 
-function CommandCard({ c, onSelect }: { c: CookbookCommand; onSelect: (id: string) => void }) {
+function CommandCard({ c, onSelect, step }: { c: CookbookCommand; onSelect: (id: string) => void; step?: number }) {
   const related = relatedCommands(c);
   return (
     <article
@@ -146,6 +147,7 @@ function CommandCard({ c, onSelect }: { c: CookbookCommand; onSelect: (id: strin
       }}
     >
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+        {step !== undefined && <Badge label={`Step ${step}`} color="#22C55E" />}
         <Badge label={c.vendor} color="#9B8FE8" />
         <Badge label={c.platform} />
         <Badge label={c.device_type} />
@@ -273,10 +275,25 @@ function TroubleshootingPage() {
   const [filters, setFilters] = useState<CookbookFilters>({});
   const [openProblem, setOpenProblem] = useState<string | null>(null);
 
-  const results = useMemo(
-    () => applyFilters(searchCommands(query), filters),
-    [query, filters],
-  );
+  const isSequence = !!filters.category && SEQUENCE_CATEGORIES.has(filters.category);
+  const results = useMemo(() => {
+    const list = applyFilters(searchCommands(query), filters);
+    if (!isSequence) return list;
+    return [...list].sort((a, b) =>
+      a.platform === b.platform ? a.id.localeCompare(b.id, undefined, { numeric: true }) : a.platform.localeCompare(b.platform),
+    );
+  }, [query, filters, isSequence]);
+  const stepOf = useMemo(() => {
+    const m = new Map<string, number>();
+    if (!isSequence) return m;
+    const per = new Map<string, number>();
+    for (const c of ALL_COMMANDS.filter((x) => x.category === filters.category).sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }))) {
+      const n = (per.get(c.platform) ?? 0) + 1;
+      per.set(c.platform, n);
+      m.set(c.id, n);
+    }
+    return m;
+  }, [isSequence, filters.category]);
 
   const tags = useMemo(() => allTags(), []);
 
@@ -414,7 +431,7 @@ function TroubleshootingPage() {
             }}
           >
             {results.map((c) => (
-              <CommandCard key={c.id} c={c} onSelect={scrollTo} />
+              <CommandCard key={c.id} c={c} onSelect={scrollTo} step={stepOf.get(c.id)} />
             ))}
             {results.length === 0 && (
               <p style={{ color: C.dim, fontSize: 14 }}>
