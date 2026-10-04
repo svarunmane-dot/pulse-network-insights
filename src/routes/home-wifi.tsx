@@ -54,9 +54,9 @@ export const Route = createFileRoute("/home-wifi")({
     toolHead({
       path: "/home-wifi",
       name: "Home Wi-Fi Troubleshooter",
-      title: "Home Wi-Fi Troubleshooter — Fix Slow & Dropping Wi-Fi | Pulse Speed",
+      title: "Home WiFi Troubleshooter: Fix Slow WiFi, Drops & No Internet | Pulse Speed",
       description:
-        "Fix slow, dropping or 'connected but no internet' Wi-Fi step by step. Live checks, a symptom wizard, router placement tips and the best Wi-Fi channel guide.",
+        "Free step-by-step home WiFi troubleshooting. Fix slow WiFi, WiFi connected but no internet, WiFi keeps disconnecting, dead zones and lag — with live speed, ping and jitter tests.",
       faqs: FAQS,
     }),
 });
@@ -262,8 +262,8 @@ function HomeWifiPage() {
         >
           Home Wi-Fi Troubleshooter
         </h1>
-        <p style={{ color: MUTED, fontSize: 15, maxWidth: 620, margin: "0 auto", lineHeight: 1.6 }}>
-          Slow, dropping or "connected but no internet"? Run a quick check, pick what you're seeing, and follow simple steps — no tech skills needed.
+        <p style={{ color: MUTED, fontSize: 15, maxWidth: 680, margin: "0 auto", lineHeight: 1.6 }}>
+           Fix slow Wi-Fi, "connected but no internet", constant drop-outs and dead zones at home. Run a free live health check, pick your symptom below, and follow simple step-by-step fixes — no tech skills needed.
         </p>
       </header>
 
