@@ -15,6 +15,10 @@ const AMBER = "#ffb547";
 
 const FAQS = [
   {
+    q: "Why is my Wi-Fi so slow all of a sudden?",
+    a: "Sudden slowness is usually interference from neighbours' networks, too many devices streaming or downloading at once, an overheating router, or a provider issue. Restart the router, test near it with a speed test, and switch to the 5 GHz band or a less crowded channel.",
+  },
+  {
     q: "Why does my Wi-Fi say connected but no internet?",
     a: "Your device reached the router, but the router can't reach your provider. Restart the modem and router (unplug 30 seconds), check the provider's outage page, and test with a cable to rule out Wi-Fi.",
   },
@@ -27,8 +31,20 @@ const FAQS = [
     a: "5 GHz (and 6 GHz) is much faster and less crowded but has shorter range. 2.4 GHz reaches further through walls but is slower and busier. Use 5 GHz near the router, 2.4 GHz for far rooms and smart-home gadgets.",
   },
   {
-    q: "Why does my Wi-Fi keep dropping?",
+    q: "Why does my Wi-Fi keep dropping or disconnecting?",
     a: "The usual causes are weak signal, interference from neighbours or microwaves, an overheating or outdated router, or power-saving on the device. Move closer, change channel, update firmware, and restart the router.",
+  },
+  {
+    q: "How do I fix Wi-Fi dead zones in my house?",
+    a: "Move the router to a central, high, open spot away from walls, metal and fish tanks. If dead zones remain, add a mesh Wi-Fi system or a wired access point — a single router rarely covers a whole multi-floor home.",
+  },
+  {
+    q: "Why is my internet slow at night?",
+    a: "Evening congestion on your provider's network and neighbours' Wi-Fi channels is common. Run a speed test at different times, switch to a less busy Wi-Fi channel, and use 5 GHz or an Ethernet cable for important devices.",
+  },
+  {
+    q: "What is a good Wi-Fi signal strength in dBm?",
+    a: "-30 to -50 dBm is excellent, -50 to -60 is good, -60 to -70 is okay for browsing, and below -70 dBm causes drops and slow speeds. Check the signal guide on this page to see your exact reading on Windows or Mac.",
   },
 ];
 
