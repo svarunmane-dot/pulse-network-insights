@@ -269,8 +269,8 @@ function HomeWifiPage() {
 
       {/* Live check */}
       <section style={card}>
-        <h2 style={h2}>1. Quick health check</h2>
-        <p style={sub}>Tests your connection from this browser in a few seconds.</p>
+<h2 style={h2}>1. Quick Wi-Fi health check</h2>
+        <p style={sub}>Free internet speed, ping and jitter test — checks your connection from this browser in a few seconds.</p>
         <button
           onClick={run}
           disabled={running}
@@ -309,7 +309,7 @@ function HomeWifiPage() {
 
       {/* Symptom picker */}
       <section style={card}>
-        <h2 style={h2}>2. What's the problem?</h2>
+        <h2 style={h2}>2. What's wrong with your Wi-Fi? Pick a symptom</h2>
         <p style={sub}>Pick the one that sounds most like yours.</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 12 }}>
           {SYMPTOMS.map((s) => {
@@ -404,7 +404,7 @@ function HomeWifiPage() {
 
       {/* Placement */}
       <section style={card}>
-        <h2 style={h2}>Router placement: do's and don'ts</h2>
+        <h2 style={h2}>Best router placement for better Wi-Fi signal: do's and don'ts</h2>
         <p style={sub}>Where the router sits matters more than most settings.</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 14 }}>
           <List color={TEAL} title="✅ Do" items={["Put it in the middle of the home", "Raise it high — a shelf, not the floor", "Keep it in open air", "Point antennas up and sideways", "Restart it once a month"]} />
@@ -414,7 +414,7 @@ function HomeWifiPage() {
 
       {/* Bands & channels */}
       <section style={card}>
-        <h2 style={h2}>2.4 GHz vs 5 GHz vs 6 GHz & best channels</h2>
+        <h2 style={h2}>2.4 GHz vs 5 GHz vs 6 GHz: which Wi-Fi band and channel is best?</h2>
         <p style={sub}>Most routers do this automatically. If you have trouble, set it by hand in the router app.</p>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -444,7 +444,7 @@ function HomeWifiPage() {
 
       {/* Signal guide */}
       <section style={card}>
-        <h2 style={h2}>What do the Wi-Fi bars mean?</h2>
+        <h2 style={h2}>Wi-Fi signal strength explained: what the bars and dBm numbers mean</h2>
         <p style={sub}>On laptops you can see the exact signal (in dBm). Closer to 0 is better.</p>
         <div style={{ display: "grid", gap: 8 }}>
           {[
@@ -468,7 +468,7 @@ function HomeWifiPage() {
 
       {/* FAQ */}
       <section style={card}>
-        <h2 style={h2}>Common questions</h2>
+        <h2 style={h2}>Home Wi-Fi troubleshooting: frequently asked questions</h2>
         <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
           {FAQS.map((f) => (
             <details key={f.q} style={{ background: INNER, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "12px 16px" }}>
