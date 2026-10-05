@@ -284,20 +284,144 @@ pre { overflow-x: auto; }
   main table { display: block; overflow-x: auto; white-space: nowrap; }
 }
 
-/* Header: mobile menu */
-.pulse-nav-desktop { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-.pulse-menu-btn { display: none; }
-@media (max-width: 1100px) {
+/* Header navigation */
+.pulse-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--pulse-border);
+  background: color-mix(in srgb, var(--pulse-bg) 88%, transparent);
+  backdrop-filter: blur(14px);
+}
+.pulse-header-inner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 1180px;
+  min-height: 64px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.pulse-brand {
+  display: inline-flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  color: var(--pulse-text);
+  text-decoration: none;
+}
+.pulse-brand-mark {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--pulse-green), var(--pulse-blue));
+  color: var(--pulse-bg);
+  font-weight: 800;
+}
+.pulse-brand-name { font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+.pulse-nav-desktop { display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+.pulse-nav-link,
+.pulse-nav-trigger {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 6px;
+  color: var(--pulse-text-sec);
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.pulse-nav-link { display: inline-flex; align-items: center; font-weight: 600; }
+.pulse-nav-link:hover,
+.pulse-nav-trigger:hover,
+.pulse-nav-link-active { background: var(--pulse-surface); color: var(--pulse-green); }
+.pulse-nav-trigger { gap: 5px; background: transparent; }
+.pulse-nav-trigger svg,
+.pulse-mobile-section-trigger svg { width: 15px; height: 15px; transition: transform 160ms ease; }
+.pulse-chevron-open { transform: rotate(180deg); }
+.pulse-nav-group { position: relative; }
+.pulse-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: 320px;
+  max-height: min(70vh, 540px);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--pulse-border);
+  border-radius: 8px;
+  background: var(--pulse-surface-deep);
+  box-shadow: 0 18px 48px color-mix(in srgb, var(--pulse-bg) 72%, transparent);
+}
+.pulse-dropdown-item {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.pulse-dropdown-item:hover,
+.pulse-dropdown-item:focus-visible { background: var(--pulse-surface); outline: none; }
+.pulse-dropdown-label { color: var(--pulse-text); font-size: 13px; font-weight: 650; }
+.pulse-dropdown-description { color: var(--pulse-text-muted); font-size: 11px; line-height: 1.45; }
+.pulse-menu-btn,
+.pulse-mobile-menu { display: none; }
+
+@media (max-width: 1023px) {
+  .pulse-header-inner { min-height: 60px; flex-wrap: wrap; gap: 10px; }
   .pulse-nav-desktop { display: none; }
-  .pulse-menu-btn { display: inline-flex; }
-  .pulse-nav-desktop.pulse-nav-open {
+  .pulse-menu-btn {
+    display: inline-flex;
+    flex: 0 0 auto;
+    border-color: var(--pulse-border);
+    background: var(--pulse-surface-deep);
+    color: var(--pulse-text-sec);
+  }
+  .pulse-mobile-menu {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     width: 100%;
     order: 3;
-    gap: 2px;
-    padding-top: 10px;
+    max-height: calc(100vh - 76px);
+    overflow-y: auto;
+    padding: 6px 0 10px;
+    border-top: 1px solid var(--pulse-border);
   }
+  .pulse-mobile-speed-link {
+    display: flex;
+    min-height: 46px;
+    align-items: center;
+    padding: 0 12px;
+    color: var(--pulse-green);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .pulse-mobile-section { border-top: 1px solid var(--pulse-border); }
+  .pulse-mobile-section-trigger {
+    width: 100%;
+    min-height: 46px;
+    justify-content: space-between;
+    padding: 0 12px;
+    color: var(--pulse-text);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .pulse-mobile-section-trigger:hover { background: var(--pulse-surface); color: var(--pulse-text); }
+  .pulse-mobile-section-items { display: grid; padding: 0 0 6px 10px; }
+}
+
+@media (min-width: 1024px) and (max-width: 1100px) {
+  .pulse-header-inner { gap: 10px; }
+  .pulse-nav-link,
+  .pulse-nav-trigger { padding-right: 9px; padding-left: 9px; }
 }
 
 /* Diagram builder: the cable layer is a 0x0 SVG that must not clip its lines. */
