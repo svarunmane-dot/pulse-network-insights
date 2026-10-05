@@ -7,6 +7,13 @@ import SpeedTestHistory, {
   readHistory,
   type HistoryEntry,
 } from "@/components/SpeedTestHistory";
+import { calculatePingStats } from "@/lib/speed-test";
+import {
+  SPEED_FAQS,
+  USE_CASE_REQUIREMENTS,
+  buildSpeedAnalysis,
+  isUseCaseReady,
+} from "@/lib/thresholds";
 
 /* ============================================================
    LIBRESPEED-BASED ENGINE
@@ -16,32 +23,17 @@ const CF = "https://speed.cloudflare.com";
 
 async function pingTest(): Promise<{ ping: number; jitter: number }> {
   const samples: number[] = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 11; i++) {
     const t0 = performance.now();
     try {
-      await fetch(`${CF}/__down?bytes=0&_=${i}-${Date.now()}`, {
+      await fetch(`${CF}/__down?bytes=32&_=${i}-${Date.now()}`, {
         cache: "no-store",
       });
-      samples.push(performance.now() - t0);
+      const elapsed = performance.now() - t0;
+      if (i > 0) samples.push(elapsed);
     } catch {}
   }
-  if (!samples.length) return { ping: 0, jitter: 0 };
-
-  const sorted = [...samples].sort((a, b) => a - b);
-  const trimmed = sorted.slice(0, Math.max(1, sorted.length - 1));
-
-  const ping = trimmed[Math.floor(trimmed.length / 2)];
-
-  let jitter = 0;
-  for (let i = 1; i < trimmed.length; i++) {
-    jitter += Math.abs(trimmed[i] - trimmed[i - 1]);
-  }
-  jitter = trimmed.length > 1 ? jitter / (trimmed.length - 1) : 0;
-
-  return {
-    ping: Math.max(1, Math.round(ping)),
-    jitter: Math.round(jitter),
-  };
+  return calculatePingStats(samples);
 }
 
 async function downloadTest(
@@ -288,14 +280,11 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "FAQPage",
           mainEntity: [
-            {
+            ...SPEED_FAQS.map((faq) => ({
               "@type": "Question",
-              name: "What is a good internet speed?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "For most households, 100 Mbps download and 10 Mbps upload comfortably handles 4K streaming, video calls and multiple devices. Gamers benefit from low ping (under 60 ms) more than raw bandwidth.",
-              },
-            },
+              name: faq.q,
+              acceptedAnswer: { "@type": "Answer", text: faq.a },
+            })),
             {
               "@type": "Question",
               name: "Why is my ping high?",
@@ -328,22 +317,6 @@ export const Route = createFileRoute("/")({
                 text: "Pulse Speed measures real network performance from your browser using lightweight probes. Results closely match ISP-grade tools for everyday diagnostics.",
               },
             },
-            {
-              "@type": "Question",
-              name: "What speed is good for gaming?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Online gaming needs only 15–25 Mbps, but ping below 60 ms and jitter below 10 ms matter far more than raw bandwidth.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "How much speed do I need for streaming?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "HD video needs ~5 Mbps, 4K streaming needs ~25 Mbps per device. For multiple simultaneous 4K streams aim for 100 Mbps or more.",
-              },
-            },
           ],
         }),
       },
@@ -355,7 +328,6 @@ export const Route = createFileRoute("/")({
    DESIGN TOKENS
    ============================================================ */
 type Status = "idle" | "testing" | "done";
-type ViewMode = "web" | "mobile";
 
 const TEAL = "#00D4AA";
 const PURPLE = "#9B8FE8";
@@ -378,14 +350,7 @@ const APPS = [
   { name: "Cloudflare", ideal: 50, accent: "#F48120" },
 ];
 
-const USE_CASES = [
-  { icon: "📺", label: "4K Streaming", d: 25, u: 5, p: 150, j: 30 },
-  { icon: "📹", label: "Video Calls", d: 10, u: 5, p: 100, j: 20 },
-  { icon: "🎮", label: "Gaming", d: 15, u: 5, p: 60, j: 10 },
-  { icon: "💼", label: "Remote Work", d: 20, u: 10, p: 100, j: 25 },
-  { icon: "🎬", label: "HD Streaming", d: 5, u: 2, p: 150, j: 40 },
-  { icon: "☁️", label: "Large Uploads", d: 5, u: 50, p: 200, j: 50 },
-];
+const USE_CASES = Object.values(USE_CASE_REQUIREMENTS);
 
 const rand = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -448,10 +413,10 @@ function Gauge({
   const filled = dash * Math.min(value / max, 1);
   return (
     <div
-      className="relative flex flex-col items-center"
-      style={{ width: size, height: size }}
+      className="pulse-speed-gauge relative flex flex-col items-center"
+      style={{ width: size, aspectRatio: "1" }}
     >
-      <svg width={size} height={size} style={{ transform: "rotate(-135deg)" }}>
+      <svg viewBox={`0 0 ${size} ${size}`} width="100%" height="100%" style={{ transform: "rotate(-135deg)" }}>
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -539,66 +504,6 @@ function useCountUp(target: number, run: boolean, duration = 1200) {
   return val;
 }
 
-function buildAiText(r: {
-  download: number;
-  upload: number;
-  ping: number;
-  jitter: number;
-  poorApps: string[];
-}) {
-  const parts: string[] = [];
-  if (r.download > 100)
-    parts.push(
-      `Your download speed of ${r.download.toFixed(1)} Mbps is fast and comfortably handles 4K streaming, large downloads, and multiple devices at once.`,
-    );
-  else if (r.download > 25)
-    parts.push(
-      `Your download speed of ${r.download.toFixed(1)} Mbps is decent for HD streaming and everyday browsing, though 4K on multiple devices may stutter.`,
-    );
-  else
-    parts.push(
-      `Your download speed of ${r.download.toFixed(1)} Mbps is slow and will struggle with HD video and modern web apps.`,
-    );
-
-  if (r.upload < 10)
-    parts.push(
-      `Upload at ${r.upload.toFixed(1)} Mbps is limited — video calls and screen sharing may degrade under load.`,
-    );
-  else
-    parts.push(
-      `Upload of ${r.upload.toFixed(1)} Mbps is solid for video conferencing and cloud sync.`,
-    );
-
-  if (r.ping > 100)
-    parts.push(
-      `Ping of ${r.ping} ms is high and will introduce noticeable lag in real-time apps.`,
-    );
-  else if (r.ping > 60)
-    parts.push(
-      `Ping of ${r.ping} ms is moderate — fine for most uses, less ideal for competitive gaming.`,
-    );
-  else
-    parts.push(
-      `Ping of ${r.ping} ms is responsive and great for interactive use.`,
-    );
-
-  if (r.jitter > 20)
-    parts.push(
-      `Jitter of ${r.jitter} ms is unstable — consider a wired connection or moving closer to your router.`,
-    );
-  else
-    parts.push(
-      `Jitter of ${r.jitter} ms is stable, keeping calls and streams smooth.`,
-    );
-
-  if (r.poorApps.length)
-    parts.push(
-      `Reachability is poor for ${r.poorApps.join(", ")} — you may experience slow loads on those services.`,
-    );
-
-  return parts.join(" ");
-}
-
 /* ============================================================
    MAIN INDEX COMPONENT
    ============================================================ */
@@ -620,7 +525,6 @@ function Index() {
   const [aiText, setAiText] = useState("");
   const aiTimerRef = useRef<number | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const autoStartedRef = useRef(false);
 
   // Load saved history after mount (browser storage only).
   useEffect(() => {
@@ -660,7 +564,7 @@ function Index() {
         setProgress(5 + frac * 50);
       });
       setProgress(55);
-      setLiveDl(0);
+      setLiveDl(dlMbps);
 
       // Phase 3: Upload (55–100%)
       setPhase("upload");
@@ -702,7 +606,10 @@ function Index() {
             return s === "poor" || s === "critical";
           },
         ).map((a) => a.name);
-        const full = buildAiText({ ...r, poorApps });
+        const appNote = poorApps.length
+          ? ` HTTPS response time is poor for ${poorApps.join(", ")}; those services may load slowly.`
+          : "";
+        const full = `${buildSpeedAnalysis(r)}${appNote}`;
         let i = 0;
         aiTimerRef.current = window.setInterval(() => {
           i++;
@@ -727,19 +634,6 @@ function Index() {
     },
     [],
   );
-
-  // Auto-start the test shortly after the page loads (Fast.com style).
-  useEffect(() => {
-    if (autoStartedRef.current) return;
-    autoStartedRef.current = true;
-    const t = window.setTimeout(() => {
-      void runTest();
-    }, 500);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
 
   // Show live values during test, final values when done
   const displayDl = status === "testing" ? liveDl : dl;
@@ -1165,11 +1059,7 @@ function UseCases({
       <SectionHeader label="USE CASE READINESS" />
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
         {USE_CASES.map((uc) => {
-          const ok =
-            results.download >= uc.d &&
-            results.upload >= uc.u &&
-            results.ping <= uc.p &&
-            results.jitter <= uc.j;
+          const ok = isUseCaseReady(results, uc);
           return (
             <div
               key={uc.label}
@@ -1219,7 +1109,10 @@ function AppGrid({
 }) {
   return (
     <div>
-      <SectionHeader label="APP REACHABILITY" right="latency to service endpoints" />
+      <SectionHeader label="APP REACHABILITY" right="HTTPS response time" />
+      <p style={{ color: TEXT_MUTED, fontSize: 12, lineHeight: 1.5, margin: "-8px 0 14px" }}>
+        Includes connection setup, so these response times are normally higher than ping.
+      </p>
       <div
         style={{
           display: "grid",
@@ -1549,10 +1442,7 @@ const SEO_SECTIONS = [
 ];
 
 const FAQS = [
-  {
-    q: "What is a good internet speed?",
-    a: "For most households, 100 Mbps download and 10 Mbps upload comfortably handles 4K streaming, video calls and multiple devices. Gamers benefit from low ping (under 60 ms) more than raw bandwidth.",
-  },
+  ...SPEED_FAQS,
   {
     q: "Why is my ping high?",
     a: "High ping is usually caused by long network paths, congested ISPs, weak Wi-Fi or VPN routing. Switching to Ethernet and choosing a closer server typically reduces ping.",
@@ -1568,14 +1458,6 @@ const FAQS = [
   {
     q: "How accurate is Pulse Speed?",
     a: "Pulse Speed measures real network performance from your browser using lightweight probes. Results closely match ISP-grade tools for everyday diagnostics.",
-  },
-  {
-    q: "What speed is good for gaming?",
-    a: "Online gaming needs only 15–25 Mbps, but ping below 60 ms and jitter below 10 ms matter far more than raw bandwidth.",
-  },
-  {
-    q: "How much speed do I need for streaming?",
-    a: "HD video needs ~5 Mbps, 4K streaming needs ~25 Mbps per device. For multiple simultaneous 4K streams aim for 100 Mbps or more.",
   },
 ];
 
@@ -2033,12 +1915,13 @@ function WebLayout(p: PanelProps) {
         }}
       >
         <div
+          className="pulse-speed-gauges"
           style={{
-            display: "flex",
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 260px))",
             gap: 48,
             justifyContent: "center",
             alignItems: "center",
-            flexWrap: "wrap",
             marginBottom: 24,
           }}
         >
@@ -2069,7 +1952,7 @@ function WebLayout(p: PanelProps) {
           style={{
             marginTop: 24,
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
             gap: 12,
           }}
         >
@@ -2086,20 +1969,6 @@ function WebLayout(p: PanelProps) {
             value={results ? results.jitter.toString() : "—"}
             unit="ms"
             color={RED}
-          />
-          <MetricCard
-            icon="↓"
-            label="Download"
-            value={results ? results.download.toFixed(1) : "—"}
-            unit="Mbps"
-            color={TEAL}
-          />
-          <MetricCard
-            icon="↑"
-            label="Upload"
-            value={results ? results.upload.toFixed(1) : "—"}
-            unit="Mbps"
-            color={PURPLE}
           />
         </div>
         {status === "done" && results && (
