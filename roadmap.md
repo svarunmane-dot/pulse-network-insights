@@ -4,3 +4,4 @@
 - [x] User: focus on diagram cable issue only; analyzer handled elsewhere
 - [x] Troubleshooting Cookbook (/troubleshooting): 100 Cisco IOS/IOS-XE records imported, search/filters/problem/quick views verified; NOT published — awaiting user approval per handover
 - [x] Header navigation: grouped desktop dropdowns and matching mobile collapsible sections
+- [ ] Homepage speed test: shared thresholds, corrected ping/jitter, manual start, and compact results
