@@ -7,10 +7,12 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { Button } from "@/components/ui/button";
 
 function NotFoundComponent() {
   return (
@@ -172,213 +174,282 @@ function RootComponent() {
   );
 }
 
+const HEADER_NAV_GROUPS = [
+  {
+    label: "Test",
+    items: [
+      {
+        to: "/stability-test",
+        label: "24h Stability",
+        description: "Track connection quality and dropouts over 24 hours.",
+      },
+      {
+        to: "/global",
+        label: "Global Latency",
+        description: "Compare network response times around the world.",
+      },
+      {
+        to: "/ping",
+        label: "Ping a Friend",
+        description: "Compare latency with another person in real time.",
+      },
+    ],
+  },
+  {
+    label: "Tools",
+    items: [
+      {
+        to: "/ping-ip",
+        label: "Ping IP",
+        description: "Check whether a public IP responds and measure delay.",
+      },
+      {
+        to: "/traceroute",
+        label: "Traceroute",
+        description: "Follow the network path to a host, hop by hop.",
+      },
+      {
+        to: "/dns-lookup",
+        label: "DNS Lookup",
+        description: "Inspect DNS records for any domain name.",
+      },
+      {
+        to: "/subnet-calculator",
+        label: "Subnet Calculator",
+        description: "Calculate network ranges, masks, and usable addresses.",
+      },
+      {
+        to: "/whose-ip",
+        label: "Whose IP",
+        description: "Identify an IP address owner and approximate location.",
+      },
+      {
+        to: "/port-check",
+        label: "Port Check",
+        description: "Test whether a public TCP port is reachable.",
+      },
+      {
+        to: "/blacklist-check",
+        label: "Blacklist Check",
+        description: "Check an IP against common reputation blocklists.",
+      },
+    ],
+  },
+  {
+    label: "Plan",
+    items: [
+      {
+        to: "/ap-planning",
+        label: "AP Planning",
+        description: "Estimate Wi-Fi access point coverage and placement.",
+      },
+      {
+        to: "/network-diagram",
+        label: "Diagram Builder",
+        description: "Map a network with devices, links, and labels.",
+      },
+      {
+        to: "/app-monitoring",
+        label: "App Monitoring",
+        description: "Watch website availability and response performance.",
+      },
+      {
+        to: "/home-wifi",
+        label: "Home Wi-Fi Fix",
+        description: "Diagnose slow Wi-Fi, dropouts, and dead zones.",
+      },
+    ],
+  },
+  {
+    label: "Learn",
+    items: [
+      {
+        to: "/troubleshooting",
+        label: "Troubleshooting Cookbook",
+        description: "Find practical network commands and diagnostic steps.",
+      },
+      {
+        to: "/academy",
+        label: "Academy",
+        description: "Build networking knowledge with guided lessons.",
+      },
+      {
+        to: "/practice",
+        label: "Cert Practice",
+        description: "Prepare for certifications and technical interviews.",
+      },
+      {
+        to: "/cyber-news",
+        label: "Cyber News",
+        description: "Follow current security and infrastructure stories.",
+      },
+      {
+        to: "/password-generator",
+        label: "Password Generator",
+        description: "Create strong passwords and check breach exposure.",
+      },
+    ],
+  },
+] as const;
+
 function SiteHeader() {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <header
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-        backdropFilter: "blur(10px)",
-        background: "rgba(10,14,26,0.7)",
-        borderBottom: "1px solid #1f2740",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1180,
-          margin: "0 auto",
-          padding: "14px 16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <Link
-          to="/"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            textDecoration: "none",
-            color: "#fff",
-            minWidth: 0,
-          }}
-          aria-label="Pulse Speed home"
-        >
-          <span
-            aria-hidden
-            style={{
-              width: 32,
-              height: 32,
-              flexShrink: 0,
-              borderRadius: 9,
-              background: "linear-gradient(135deg,#00D4AA,#9B8FE8)",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 800,
-              color: "#04150f",
-            }}
-          >
-            ⚡
-          </span>
-          <span style={{ fontWeight: 700, letterSpacing: "-0.3px" }}>Pulse Speed</span>
-        </Link>
-        <nav
-          aria-label="Primary"
-          className={`pulse-nav-desktop${open ? " pulse-nav-open" : ""}`}
-        >
-          {[
-            { to: "/", label: "Speed Test" },
-            { to: "/stability-test", label: "24h Stability" },
-            { to: "/ping", label: "Ping a Friend" },
-            { to: "/global", label: "Global Latency" },
-            { to: "/subnet-calculator", label: "Subnet Calculator" },
-            { to: "/dns-lookup", label: "DNS Lookup" },
-            { to: "/ping-ip", label: "Ping IP" },
-            { to: "/traceroute", label: "Traceroute" },
-            { to: "/home-wifi", label: "Home Wi-Fi Fix" },
-            { to: "/whose-ip", label: "Whose IP" },
-            { to: "/port-check", label: "Port Check" },
-            { to: "/blacklist-check", label: "Blacklist Check" },
-            { to: "/password-generator", label: "🔐 Password Gen" },
-            { to: "/app-monitoring", label: "App Monitoring" },
-            { to: "/ap-planning", label: "AP Planning" },
-            { to: "/network-diagram", label: "Diagram Builder" },
-            { to: "/troubleshooting", label: "🛠 Cookbook" },
-            { to: "/cyber-news", label: "📰 Cyber News" },
-            { to: "/academy", label: "Academy" },
-            { to: "/practice", label: "🎓 Cert Practice" },
-            { to: "/about", label: "About" },
-            { to: "/contact", label: "Contact" },
-          ].map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              onClick={() => setOpen(false)}
-              activeOptions={{ exact: true }}
-              activeProps={{ style: { color: "#00D4AA" } }}
-              style={{
-                padding: "8px 12px",
-                borderRadius: 10,
-                color: "#c8d0e0",
-                fontSize: 13,
-                textDecoration: "none",
-              }}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
-          <button
-            type="button"
-            className="pulse-menu-btn"
-            onClick={() => setOpen((o) => !o)}
-            aria-expanded={open}
-            aria-label={open ? "Close menu" : "Open menu"}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 10,
-              border: "1px solid #1f2740",
-              background: "#0f1422",
-              color: "#c8d0e0",
-              cursor: "pointer",
-              fontSize: 16,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {open ? "✕" : "☰"}
-          </button>
-          <BookmarkButton />
-        </span>
-      </div>
-    </header>
-  );
-}
-
-function BookmarkButton() {
-  const [saved, setSaved] = useState(false);
-  const [hint, setHint] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState<string | null>(null);
+  const [mobileSection, setMobileSection] = useState<string | null>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    try {
-      const key = "pulse-speed:bookmarks";
-      const list: string[] = JSON.parse(window.localStorage.getItem(key) || "[]");
-      setSaved(list.includes(window.location.pathname));
-    } catch {}
+    const closeMenus = (event: MouseEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) {
+        setDesktopOpen(null);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setDesktopOpen(null);
+        setMobileOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeMenus);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeMenus);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
   }, []);
 
-  const onClick = () => {
-    // Browsers block programmatic bookmarking; guide the user instead and
-    // remember their favourite pages locally.
-    try {
-      const key = "pulse-speed:bookmarks";
-      const list: string[] = JSON.parse(window.localStorage.getItem(key) || "[]");
-      const path = window.location.pathname;
-      const next = list.includes(path) ? list.filter((p) => p !== path) : [...list, path];
-      window.localStorage.setItem(key, JSON.stringify(next));
-      setSaved(next.includes(path));
-    } catch {}
-    setHint(true);
-    window.setTimeout(() => setHint(false), 4000);
+  const closeAll = () => {
+    setDesktopOpen(null);
+    setMobileOpen(false);
   };
 
   return (
-    <span style={{ position: "relative", display: "inline-flex" }}>
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label={saved ? "Remove this page from your bookmarks" : "Bookmark this page"}
-        title={saved ? "Remove bookmark" : "Bookmark this page"}
-        style={{
-          marginLeft: 8,
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          border: "1px solid #1f2740",
-          background: "#0f1422",
-          color: saved ? "#00D4AA" : "#c8d0e0",
-          cursor: "pointer",
-          fontSize: 16,
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {saved ? "★" : "☆"}
-      </button>
-      {hint && (
-        <span
-          role="status"
-          style={{
-            position: "absolute",
-            top: 44,
-            right: 0,
-            whiteSpace: "nowrap",
-            background: "#131829",
-            border: "1px solid #1f2740",
-            borderRadius: 8,
-            padding: "8px 12px",
-            fontSize: 12,
-            color: "#c8d0e0",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-            zIndex: 60,
-          }}
+    <header ref={headerRef} className="pulse-site-header">
+      <div className="pulse-header-inner">
+        <Link
+          to="/"
+          className="pulse-brand"
+          aria-label="Pulse Speed home"
+          onClick={closeAll}
         >
-          Press <strong style={{ color: "#00D4AA" }}>Ctrl+D</strong> (Windows) or{" "}
-          <strong style={{ color: "#00D4AA" }}>⌘+D</strong> (Mac) to save this page to your
-          browser bookmarks.
-        </span>
-      )}
-    </span>
+          <span aria-hidden className="pulse-brand-mark">
+            ⚡
+          </span>
+          <span className="pulse-brand-name">Pulse Speed</span>
+        </Link>
+
+        <nav aria-label="Primary" className="pulse-nav-desktop">
+          <Link
+            to="/"
+            onClick={closeAll}
+            activeOptions={{ exact: true }}
+            className="pulse-nav-link"
+            activeProps={{ className: "pulse-nav-link pulse-nav-link-active" }}
+          >
+            Speed Test
+          </Link>
+          {HEADER_NAV_GROUPS.map((group) => {
+            const isOpen = desktopOpen === group.label;
+            return (
+              <div className="pulse-nav-group" key={group.label}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="pulse-nav-trigger"
+                  aria-expanded={isOpen}
+                  aria-controls={`desktop-${group.label.toLowerCase()}-menu`}
+                  onClick={() => setDesktopOpen(isOpen ? null : group.label)}
+                >
+                  {group.label}
+                  <ChevronDown aria-hidden className={isOpen ? "pulse-chevron-open" : ""} />
+                </Button>
+                {isOpen && (
+                  <div
+                    id={`desktop-${group.label.toLowerCase()}-menu`}
+                    className="pulse-dropdown"
+                  >
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className="pulse-dropdown-item"
+                        onClick={closeAll}
+                      >
+                        <span className="pulse-dropdown-label">{item.label}</span>
+                        <span className="pulse-dropdown-description">{item.description}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="pulse-menu-btn"
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-expanded={mobileOpen}
+          aria-controls="pulse-mobile-menu"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+        >
+          {mobileOpen ? <X aria-hidden /> : <Menu aria-hidden />}
+        </Button>
+
+        {mobileOpen && (
+          <nav id="pulse-mobile-menu" aria-label="Mobile primary" className="pulse-mobile-menu">
+            <Link
+              to="/"
+              onClick={closeAll}
+              activeOptions={{ exact: true }}
+              className="pulse-mobile-speed-link"
+            >
+              Speed Test
+            </Link>
+            {HEADER_NAV_GROUPS.map((group) => {
+              const isOpen = mobileSection === group.label;
+              return (
+                <div className="pulse-mobile-section" key={group.label}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="pulse-mobile-section-trigger"
+                    aria-expanded={isOpen}
+                    aria-controls={`mobile-${group.label.toLowerCase()}-menu`}
+                    onClick={() => setMobileSection(isOpen ? null : group.label)}
+                  >
+                    {group.label}
+                    <ChevronDown aria-hidden className={isOpen ? "pulse-chevron-open" : ""} />
+                  </Button>
+                  {isOpen && (
+                    <div
+                      id={`mobile-${group.label.toLowerCase()}-menu`}
+                      className="pulse-mobile-section-items"
+                    >
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className="pulse-dropdown-item"
+                          onClick={closeAll}
+                        >
+                          <span className="pulse-dropdown-label">{item.label}</span>
+                          <span className="pulse-dropdown-description">{item.description}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+        )}
+      </div>
+    </header>
   );
 }
 
