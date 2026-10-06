@@ -1916,6 +1916,7 @@ function WebLayout(p: PanelProps) {
       >
         <div
           className="pulse-speed-gauges"
+          data-keep-grid
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(2, minmax(0, 260px))",
@@ -1949,6 +1950,7 @@ function WebLayout(p: PanelProps) {
         {progressBar}
         <div
           className="pulse-fadeUp"
+          data-keep-grid
           style={{
             marginTop: 24,
             display: "grid",

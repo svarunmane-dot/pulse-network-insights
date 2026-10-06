@@ -284,7 +284,7 @@ pre { overflow-x: auto; }
   }
 
   .pulse-speed-gauge {
-    width: min(100%, 150px) !important;
+    width: min(100%, 140px) !important;
     justify-self: center;
   }
 
