@@ -1950,6 +1950,7 @@ function WebLayout(p: PanelProps) {
         {progressBar}
         <div
           className="pulse-fadeUp"
+          data-keep-grid
           style={{
             marginTop: 24,
             display: "grid",
