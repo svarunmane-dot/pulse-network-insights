@@ -788,7 +788,7 @@ function Hero({ centered }: { centered: boolean }) {
           color: "#fff",
         }}
       >
-        Internet Speed Test &{" "}
+        Free Network Tools for{" "}
         <span
           style={{
             background: `linear-gradient(90deg, ${TEAL}, ${PURPLE})`,
@@ -797,7 +797,7 @@ function Hero({ centered }: { centered: boolean }) {
             backgroundClip: "text",
           }}
         >
-          Ping Checker
+          Testing &amp; Troubleshooting
         </span>
       </h1>
       <p
@@ -808,8 +808,8 @@ function Hero({ centered }: { centered: boolean }) {
           lineHeight: 1.6,
         }}
       >
-        Measure download speed, upload speed, ping, jitter and latency
-        instantly.
+        Test your internet speed, latency, DNS, connectivity and network
+        performance — all in your browser.
       </p>
       <TrustBadges centered={centered} />
     </div>
@@ -1472,10 +1472,10 @@ function SeoContent() {
           id="learn-heading"
           style={{ fontSize: 28, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}
         >
-          Understand your connection
+          More than a speed test
         </h2>
         <p style={{ color: TEXT_MUTED, marginTop: 8, fontSize: 14 }}>
-          A quick primer on the numbers behind your speed test.
+          Pulse Speed gives you practical network tools to test, troubleshoot and understand your connection.
         </p>
         <div style={{ display: "grid", gap: 16, marginTop: 24 }}>
           {SEO_SECTIONS.map((s) => (
