@@ -176,7 +176,7 @@ function RootComponent() {
 
 const HEADER_NAV_GROUPS = [
   {
-    label: "Test",
+    label: "Network Tools",
     items: [
       {
         to: "/stability-test",
@@ -193,11 +193,6 @@ const HEADER_NAV_GROUPS = [
         label: "Ping a Friend",
         description: "Compare latency with another person in real time.",
       },
-    ],
-  },
-  {
-    label: "Tools",
-    items: [
       {
         to: "/ping-ip",
         label: "Ping IP",
@@ -236,7 +231,42 @@ const HEADER_NAV_GROUPS = [
     ],
   },
   {
-    label: "Plan",
+    label: "Troubleshoot",
+    items: [
+      {
+        to: "/troubleshooting",
+        label: "Troubleshooting Cookbook",
+        description: "Find practical network commands and diagnostic steps.",
+      },
+      {
+        to: "/home-wifi",
+        label: "Home Wi-Fi Fix",
+        description: "Diagnose slow Wi-Fi, dropouts, and dead zones.",
+      },
+    ],
+  },
+  {
+    label: "Learn",
+    items: [
+      {
+        to: "/academy",
+        label: "Academy",
+        description: "Build networking knowledge with guided lessons.",
+      },
+      {
+        to: "/practice",
+        label: "Cert Practice",
+        description: "Prepare for certifications and technical interviews.",
+      },
+      {
+        to: "/cyber-news",
+        label: "Cyber News",
+        description: "Follow current security and infrastructure stories.",
+      },
+    ],
+  },
+  {
+    label: "More",
     items: [
       {
         to: "/ap-planning",
@@ -252,36 +282,6 @@ const HEADER_NAV_GROUPS = [
         to: "/app-monitoring",
         label: "App Monitoring",
         description: "Watch website availability and response performance.",
-      },
-      {
-        to: "/home-wifi",
-        label: "Home Wi-Fi Fix",
-        description: "Diagnose slow Wi-Fi, dropouts, and dead zones.",
-      },
-    ],
-  },
-  {
-    label: "Learn",
-    items: [
-      {
-        to: "/troubleshooting",
-        label: "Troubleshooting Cookbook",
-        description: "Find practical network commands and diagnostic steps.",
-      },
-      {
-        to: "/academy",
-        label: "Academy",
-        description: "Build networking knowledge with guided lessons.",
-      },
-      {
-        to: "/practice",
-        label: "Cert Practice",
-        description: "Prepare for certifications and technical interviews.",
-      },
-      {
-        to: "/cyber-news",
-        label: "Cyber News",
-        description: "Follow current security and infrastructure stories.",
       },
       {
         to: "/password-generator",
