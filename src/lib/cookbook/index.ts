@@ -3,6 +3,7 @@ import { NXOS_COMMANDS } from "./cisco-nxos";
 import { WIRELESS_COMMANDS } from "./cisco-wireless";
 import { ASA_FTD_COMMANDS } from "./cisco-asa-ftd";
 import { FORTIGATE_COMMANDS } from "./fortinet-fortios";
+import { PALOALTO_COMMANDS } from "./paloalto-panos";
 
 export type { CookbookCommand };
 
@@ -15,10 +16,11 @@ export const ALL_COMMANDS: CookbookCommand[] = [
   ...WIRELESS_COMMANDS,
   ...ASA_FTD_COMMANDS,
   ...FORTIGATE_COMMANDS,
+  ...PALOALTO_COMMANDS,
 ];
 
 // Categories whose cards form an ordered procedure (shown in ID order with step numbers).
-export const SEQUENCE_CATEGORIES = new Set(["Debug Flow"]);
+export const SEQUENCE_CATEGORIES = new Set(["Debug Flow", "Packet Diag"]);
 
 const norm = (s: string) => s.toLowerCase();
 
