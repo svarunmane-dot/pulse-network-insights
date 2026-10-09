@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useState } from "react";
 import { traceHost } from "@/lib/nettools.functions";
 import { toolHead } from "@/lib/seo";
+import ShareResult from "@/components/ShareResult";
 
 const TEAL = "#00D4AA";
 const SURFACE = "#131829";
@@ -183,6 +184,18 @@ function TraceroutePage() {
             >
               {result.output}
             </pre>
+          )}
+          {result.ok && "output" in result && (
+            <ShareResult
+              title="Traceroute"
+              subtitle={result.target}
+              stats={[
+                { label: "Mode", value: mode.toUpperCase() },
+                { label: "Hops", value: String(String(result.output).split("\n").filter((l) => /^\s*\d+/.test(l)).length || "—") },
+              ]}
+              note={String(result.output).split("\n").slice(0, 2).join(" ").slice(0, 180)}
+              fileName={`traceroute-${result.target}`}
+            />
           )}
         </div>
       )}
