@@ -1,3 +1,4 @@
+import ShareResult from "@/components/ShareResult";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toolHead } from "@/lib/seo";
@@ -172,6 +173,10 @@ export function GlobalLatencySection() {
     }
     setRunning(false);
   };
+
+  const done = EDGES.map((e) => ({ e, r: results[e.code] })).filter((x) => x.r?.ms != null && !x.r.loading);
+  const sorted = [...done].sort((a, b) => (a.r.ms ?? 0) - (b.r.ms ?? 0));
+  const showShare = !running && done.length === EDGES.length;
 
   const userPos = useMemo(() => (user ? project(user.lat, user.lon) : project(20, 0)), [user]);
 
@@ -418,6 +423,15 @@ export function GlobalLatencySection() {
         Per-edge values are estimated using your nearest colo plus great-circle distance
         as a propagation reference.
       </p>
+      {showShare && (
+        <ShareResult
+          title="Global Latency Map"
+          subtitle={`From ${user?.city ?? "my location"}`}
+          stats={sorted.slice(0, 3).map((x) => ({ label: x.e.code, value: `${x.r.ms} ms` }))}
+          rows={sorted.slice(3, 11).map((x) => ({ label: x.e.code, value: `${x.r.ms} ms` }))}
+          fileName="global-latency"
+        />
+      )}
     </section>
   );
 }
