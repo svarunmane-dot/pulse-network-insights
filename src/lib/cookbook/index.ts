@@ -4,10 +4,11 @@ import { WIRELESS_COMMANDS } from "./cisco-wireless";
 import { ASA_FTD_COMMANDS } from "./cisco-asa-ftd";
 import { FORTIGATE_COMMANDS } from "./fortinet-fortios";
 import { PALOALTO_COMMANDS } from "./paloalto-panos";
+import { JUNIPER_COMMANDS } from "./juniper-junos";
 
 export type { CookbookCommand };
 
-// Data layer: vendor datasets (NX-OS, FortiGate, Palo Alto, ...) are
+// Data layer: vendor datasets (NX-OS, FortiGate, Palo Alto, Junos, ...) are
 // imported as additional modules and concatenated here. The frontend only
 // ever reads ALL_COMMANDS, so new datasets need no UI changes.
 export const ALL_COMMANDS: CookbookCommand[] = [
@@ -17,6 +18,7 @@ export const ALL_COMMANDS: CookbookCommand[] = [
   ...ASA_FTD_COMMANDS,
   ...FORTIGATE_COMMANDS,
   ...PALOALTO_COMMANDS,
+  ...JUNIPER_COMMANDS,
 ];
 
 // Categories whose cards form an ordered procedure (shown in ID order with step numbers).
