@@ -5,6 +5,7 @@ import { ASA_FTD_COMMANDS } from "./cisco-asa-ftd";
 import { FORTIGATE_COMMANDS } from "./fortinet-fortios";
 import { PALOALTO_COMMANDS } from "./paloalto-panos";
 import { JUNIPER_COMMANDS } from "./juniper-junos";
+import { ARUBA_COMMANDS } from "./hpe-aruba";
 
 export type { CookbookCommand };
 
@@ -19,6 +20,7 @@ export const ALL_COMMANDS: CookbookCommand[] = [
   ...FORTIGATE_COMMANDS,
   ...PALOALTO_COMMANDS,
   ...JUNIPER_COMMANDS,
+  ...ARUBA_COMMANDS,
 ];
 
 // Categories whose cards form an ordered procedure (shown in ID order with step numbers).
