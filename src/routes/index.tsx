@@ -271,7 +271,30 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Pulse Speed",
-          url: "/",
+          url: "https://pulse-speed.com/",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "Pulse Speed Internet Speed Test",
+          url: "https://pulse-speed.com/",
+          applicationCategory: "UtilitiesApplication",
+          operatingSystem: "Any (web browser)",
+          browserRequirements: "Requires JavaScript",
+          isAccessibleForFree: true,
+          offers: { "@type": "Offer", price: 0, priceCurrency: "USD" },
+          description:
+            "Free, ad-free browser-based internet speed test measuring download, upload, ping and jitter, with use-case readiness for gaming, video calls, 4K streaming and large uploads. No signup or install.",
+          featureList: [
+            "Download and upload speed test",
+            "Ping and jitter measurement",
+            "Use-case readiness (gaming, video calls, 4K streaming)",
+            "Shareable result image",
+            "Free network tools: ping, traceroute, DNS lookup, port check, subnet calculator",
+          ],
         }),
       },
       {
