@@ -31,7 +31,7 @@ export const Route = createFileRoute("/troubleshooting")({
         },
         {
           q: "Which vendors are covered?",
-          a: "The dataset covers Cisco IOS/IOS-XE and Cisco NX-OS with 211 commands. FortiGate, Palo Alto, Juniper, Aruba, F5, Arista, Ruckus and Linux datasets are planned next.",
+          a: "The dataset covers Cisco IOS/IOS-XE, Cisco NX-OS, Cisco Wireless, Cisco ASA/FTD, Fortinet FortiOS, Palo Alto PAN-OS, Juniper Junos, HPE Aruba (AOS-CX and AOS 8) and F5 BIG-IP. Arista, Ruckus and Linux datasets are planned next.",
         },
         {
           q: "Are the commands safe to run in production?",
@@ -152,6 +152,7 @@ function CommandCard({ c, onSelect, step }: { c: CookbookCommand; onSelect: (id:
         <Badge label={c.platform} />
         <Badge label={c.device_type} />
         <Badge label={`${c.category} · ${c.subcategory}`} />
+        <Badge label={c.command_mode} color="#4CC9F0" />
         <span style={{ flex: 1 }} />
         <Badge label={c.risk.toUpperCase()} color={RISK_COLOR[c.risk]} />
         <Badge label={c.difficulty} />
@@ -317,7 +318,13 @@ function TroubleshootingPage() {
       <p style={{ color: C.dim, fontSize: 14, marginTop: 8, maxWidth: 720, lineHeight: 1.6 }}>
         What command to run, why to run it, what to check in the output, what red flags mean —
         and what to run next. Currently covering {ALL_COMMANDS.length} commands across{" "}
-        {uniqueValues("platform").join(" and ")}, with more vendors coming.
+        {(() => {
+          const vendors = uniqueValues("vendor");
+          return vendors.length <= 1
+            ? vendors.join("")
+            : `${vendors.slice(0, -1).join(", ")} and ${vendors[vendors.length - 1]}`;
+        })()}
+        , with more vendors coming.
       </p>
 
       {/* Tabs */}

@@ -6,6 +6,7 @@ import { FORTIGATE_COMMANDS } from "./fortinet-fortios";
 import { PALOALTO_COMMANDS } from "./paloalto-panos";
 import { JUNIPER_COMMANDS } from "./juniper-junos";
 import { ARUBA_COMMANDS } from "./hpe-aruba";
+import { F5_COMMANDS } from "./f5-bigip";
 
 export type { CookbookCommand };
 
@@ -21,6 +22,7 @@ export const ALL_COMMANDS: CookbookCommand[] = [
   ...PALOALTO_COMMANDS,
   ...JUNIPER_COMMANDS,
   ...ARUBA_COMMANDS,
+  ...F5_COMMANDS,
 ];
 
 // Categories whose cards form an ordered procedure (shown in ID order with step numbers).
