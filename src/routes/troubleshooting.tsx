@@ -31,7 +31,7 @@ export const Route = createFileRoute("/troubleshooting")({
         },
         {
           q: "Which vendors are covered?",
-          a: "The dataset covers Cisco IOS/IOS-XE, Cisco NX-OS, Cisco Wireless, Cisco ASA/FTD, Fortinet FortiOS, Palo Alto PAN-OS, Juniper Junos, HPE Aruba (AOS-CX and AOS 8) and F5 BIG-IP. Arista, Ruckus and Linux datasets are planned next.",
+          a: "The dataset covers Cisco IOS/IOS-XE, Cisco NX-OS, Cisco Wireless, Cisco ASA/FTD, Fortinet FortiOS, Palo Alto PAN-OS, Juniper Junos, HPE Aruba (AOS-CX and AOS 8), F5 BIG-IP, Arista EOS, Ruckus ICX, HPE ArubaOS-Switch, HPE Comware and Dell OS10. A Linux dataset is planned next.",
         },
         {
           q: "Are the commands safe to run in production?",
