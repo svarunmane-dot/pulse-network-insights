@@ -323,7 +323,7 @@ function TroubleshootingPage() {
           return vendors.length <= 1
             ? vendors.join("")
             : `${vendors.slice(0, -1).join(", ")} and ${vendors[vendors.length - 1]}`;
-        })}
+        })()}
         , with more vendors coming.
       </p>
 
