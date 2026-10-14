@@ -7,6 +7,7 @@ import { PALOALTO_COMMANDS } from "./paloalto-panos";
 import { JUNIPER_COMMANDS } from "./juniper-junos";
 import { ARUBA_COMMANDS } from "./hpe-aruba";
 import { F5_COMMANDS } from "./f5-bigip";
+import { MULTIVENDOR_COMMANDS } from "./multivendor-phase10";
 
 export type { CookbookCommand };
 
@@ -23,6 +24,7 @@ export const ALL_COMMANDS: CookbookCommand[] = [
   ...JUNIPER_COMMANDS,
   ...ARUBA_COMMANDS,
   ...F5_COMMANDS,
+  ...MULTIVENDOR_COMMANDS,
 ];
 
 // Categories whose cards form an ordered procedure (shown in ID order with step numbers).
