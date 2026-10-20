@@ -17,7 +17,13 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 /** One sample per second: [epoch ms, latency ms | -1 for loss] */
 type Sample = [number, number];
 
-type Stored = { startedAt: number; samples: Sample[] };
+/** Periods when the computer was asleep: [from epoch ms, to epoch ms] */
+type Sleep = [number, number];
+type Stored = { startedAt: number; samples: Sample[]; sleeps?: Sleep[] };
+
+/** A gap this long between one-second ticks means the machine was suspended. */
+const SLEEP_GAP_MS = 5000;
+const SLATE = "#8a94b0";
 
 export const Route = createFileRoute("/stability-test")({
   component: StabilityTestPage,
@@ -39,7 +45,7 @@ export const Route = createFileRoute("/stability-test")({
         },
         {
           q: "Does the test need to stay open for 24 hours?",
-          a: "Yes. The browser tab must stay open and the machine awake for the full run. If you close the tab the recording pauses and resumes with the saved history when you return.",
+          a: "The tab must stay open. If the computer goes to sleep (common on work laptops), the sleep period is detected and recorded separately, shown in grey on the timeline, and not counted as packet loss or downtime. Recording continues automatically when the computer wakes.",
         },
       ],
     }),
@@ -76,6 +82,9 @@ function StabilityTestPage() {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const samplesRef = useRef<Sample[]>([]);
+  const [sleeps, setSleeps] = useState<Sleep[]>([]);
+  const sleepsRef = useRef<Sleep[]>([]);
+  const lastTickRef = useRef<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Restore any previous recording from this machine.
@@ -87,6 +96,9 @@ function StabilityTestPage() {
       samplesRef.current = kept;
       setSamples(kept);
       setStartedAt(stored.startedAt);
+      const keptSleeps = (stored.sleeps ?? []).filter((z) => z[1] >= cutoff);
+      sleepsRef.current = keptSleeps;
+      setSleeps(keptSleeps);
     }
   }, []);
 
@@ -94,7 +106,11 @@ function StabilityTestPage() {
     try {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ startedAt: start, samples: samplesRef.current } satisfies Stored),
+        JSON.stringify({
+          startedAt: start,
+          samples: samplesRef.current,
+          sleeps: sleepsRef.current,
+        } satisfies Stored),
       );
     } catch {
       /* quota — keep recording in memory */
@@ -105,8 +121,17 @@ function StabilityTestPage() {
   useEffect(() => {
     if (!running || startedAt === null) return;
     let cancelled = false;
+    lastTickRef.current = null;
 
     const probe = async () => {
+      const tick = Date.now();
+      const last = lastTickRef.current;
+      lastTickRef.current = tick;
+      if (last !== null && tick - last > SLEEP_GAP_MS) {
+        sleepsRef.current = [...sleepsRef.current, [last, tick] as Sleep];
+        setSleeps(sleepsRef.current);
+        persist(startedAt);
+      }
       const t0 = performance.now();
       let latency = -1;
       try {
@@ -122,6 +147,8 @@ function StabilityTestPage() {
         latency = -1;
       }
       if (cancelled) return;
+      // A probe that spanned a sleep/suspend is not a real measurement — drop it.
+      if (Date.now() - tick > SLEEP_GAP_MS) return;
       const cutoff = Date.now() - DAY_MS;
       const next = [...samplesRef.current, [Date.now(), latency] as Sample].filter(
         (s) => s[0] >= cutoff,
@@ -163,6 +190,7 @@ function StabilityTestPage() {
         jitterN++;
       }
     }
+    const sleepMs = sleeps.reduce((a, z) => a + (z[1] - z[0]), 0);
     const jitter = jitterN ? jitterSum / jitterN : null;
     const loss = samples.length ? (lost / samples.length) * 100 : 0;
     const spikes = avg !== null ? ok.filter((v) => v > Math.max(avg * 2, avg + 50)).length : 0;
@@ -195,8 +223,9 @@ function StabilityTestPage() {
       spikes,
       uptime: samples.length ? (ok.length / samples.length) * 100 : 100,
       outages: outages.reverse(),
+      sleepMs,
     };
-  }, [samples]);
+  }, [samples, sleeps]);
 
   // Timeline chart.
   useEffect(() => {
@@ -246,6 +275,14 @@ function StabilityTestPage() {
     const xOf = (t: number) => ((t - start) / (end - start)) * w;
     const yOf = (v: number) => (h - 18) * (1 - Math.min(v, maxY) / maxY);
 
+    // Computer asleep bands
+    ctx.fillStyle = "rgba(138,148,176,0.25)";
+    for (const [from, to] of sleeps) {
+      const x1 = Math.max(0, xOf(from));
+      const x2 = Math.min(w, xOf(to));
+      if (x2 > x1) ctx.fillRect(x1, 0, Math.max(1.5, x2 - x1), h - 18);
+    }
+
     // Loss markers
     ctx.fillStyle = RED;
     for (const [t, v] of samples) {
@@ -270,12 +307,14 @@ function StabilityTestPage() {
       } else ctx.lineTo(x, y);
     }
     ctx.stroke();
-  }, [samples, startedAt]);
+  }, [samples, startedAt, sleeps]);
 
   const start = useCallback(() => {
     const t = Date.now();
     samplesRef.current = [];
     setSamples([]);
+    sleepsRef.current = [];
+    setSleeps([]);
     setStartedAt(t);
     setRunning(true);
     persist(t);
@@ -292,6 +331,8 @@ function StabilityTestPage() {
     setRunning(false);
     samplesRef.current = [];
     setSamples([]);
+    sleepsRef.current = [];
+    setSleeps([]);
     setStartedAt(null);
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -306,6 +347,10 @@ function StabilityTestPage() {
       ...samples.map(
         ([t, v]) => `${new Date(t).toISOString()},${v < 0 ? "" : v},${v < 0 ? "loss" : "ok"}`,
       ),
+      ...sleeps.map(
+        ([from, to]) =>
+          `${new Date(from).toISOString()},,computer_asleep_until_${new Date(to).toISOString()}`,
+      ),
     ].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -314,7 +359,7 @@ function StabilityTestPage() {
     a.download = `pulse-speed-stability-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [samples]);
+  }, [samples, sleeps]);
 
   const elapsed = startedAt ? Math.min(now - startedAt, DAY_MS) : 0;
   const remaining = startedAt ? Math.max(0, DAY_MS - (now - startedAt)) : DAY_MS;
@@ -447,6 +492,11 @@ function StabilityTestPage() {
         />
         <Metric label="Uptime" value={`${stats.uptime.toFixed(3)}%`} />
         <Metric label="Samples recorded" value={stats.count.toLocaleString()} />
+        <Metric
+          label="Computer asleep"
+          value={`${fmtDuration(stats.sleepMs)} (${sleeps.length}x)`}
+          color={SLATE}
+        />
       </div>
 
       {/* Timeline */}
@@ -474,7 +524,8 @@ function StabilityTestPage() {
           </h2>
           <div style={{ fontSize: 12, color: TEXT_MUTED }}>
             <span style={{ color: TEAL }}>■</span> latency &nbsp;
-            <span style={{ color: RED }}>■</span> packet loss / dropout
+            <span style={{ color: RED }}>■</span> packet loss / dropout &nbsp;
+            <span style={{ color: SLATE }}>■</span> computer asleep
           </div>
         </div>
         <canvas ref={canvasRef} style={{ width: "100%", height: 240, display: "block" }} />
@@ -493,6 +544,30 @@ function StabilityTestPage() {
         <h2 style={{ fontSize: 15, fontWeight: 700, color: TEXT_SEC, marginTop: 0 }}>
           Dropouts &amp; downtime
         </h2>
+        {sleeps.length > 0 && (
+          <div style={{ marginBottom: 10 }}>
+            {[...sleeps].reverse().slice(0, 50).map(([from, to]) => (
+              <div
+                key={`sleep-${from}`}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 13,
+                  color: TEXT_SEC,
+                  padding: "6px 0",
+                  borderBottom: `1px solid ${BORDER}`,
+                }}
+              >
+                <span>
+                  {new Date(from).toLocaleTimeString()} – {new Date(to).toLocaleTimeString()}
+                </span>
+                <span style={{ color: SLATE, fontWeight: 600 }}>
+                  Computer asleep {fmtDuration(to - from)} (not counted as loss)
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
         {stats.outages.length === 0 ? (
           <p style={{ color: TEXT_MUTED, fontSize: 13, margin: 0 }}>
             No dropouts recorded so far. Every second-by-second probe succeeded.
@@ -559,7 +634,8 @@ function StabilityTestPage() {
           be audible as choppy audio.
         </p>
         <p style={{ color: TEXT_MUTED }}>
-          Keep this tab open for the full 24 hours and stop the machine from sleeping. Results are
+          Keep this tab open for the full 24 hours. If the computer sleeps, that time is recorded
+          separately in grey and excluded from packet loss and uptime. Results are
           written to this browser's local storage, so only the person using this machine can see
           them.
         </p>
