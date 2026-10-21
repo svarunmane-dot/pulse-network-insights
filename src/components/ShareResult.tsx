@@ -278,6 +278,15 @@ export default function ShareResult(props: ShareResultProps) {
     }
   };
 
+  const onCopyText = async () => {
+    try {
+      await navigator.clipboard.writeText(textSummary(props));
+      flash("Text copied — paste it into your ticket, Slack or chat.");
+    } catch {
+      flash("Copy blocked by the browser. Use Download instead.");
+    }
+  };
+
   const onShare = async () => {
     try {
       const blob = await build();
