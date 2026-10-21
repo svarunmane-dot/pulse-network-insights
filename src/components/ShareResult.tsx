@@ -278,6 +278,15 @@ export default function ShareResult(props: ShareResultProps) {
     }
   };
 
+  const onCopyText = async () => {
+    try {
+      await navigator.clipboard.writeText(textSummary(props));
+      flash("Text copied — paste it into your ticket, Slack or chat.");
+    } catch {
+      flash("Copy blocked by the browser. Use Download instead.");
+    }
+  };
+
   const onShare = async () => {
     try {
       const blob = await build();
@@ -333,6 +342,7 @@ export default function ShareResult(props: ShareResultProps) {
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
         <button type="button" style={btn} onClick={onDownload}>⬇ Download image</button>
         <button type="button" style={btn} onClick={onCopy}>⧉ Copy image</button>
+        <button type="button" style={btn} onClick={onCopyText}>⌨ Copy as text</button>
         <button type="button" style={btn} onClick={onShare}>↗ Share</button>
         <button type="button" style={btn} onClick={onEmail}>✉ Email result</button>
         <button type="button" style={{ ...btn, borderColor: "rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.75)" }} onClick={onPreview}>
