@@ -19,7 +19,26 @@ type Sample = [number, number];
 
 /** Periods when the computer was asleep: [from epoch ms, to epoch ms] */
 type Sleep = [number, number];
-type Stored = { startedAt: number; samples: Sample[]; sleeps?: Sleep[] };
+type TargetId = "edge" | "google" | "cloudflare";
+type Stored = { startedAt: number; samples: Sample[]; sleeps?: Sleep[]; target?: TargetId };
+
+const TARGETS: Record<TargetId, { label: string; short: string; url: (ts: number) => string }> = {
+  edge: {
+    label: "Pulse Speed Edge (default)",
+    short: "Pulse Speed Edge",
+    url: (ts) => `/favicon.png?stability=${ts}`,
+  },
+  google: {
+    label: "Google DNS (8.8.8.8)",
+    short: "8.8.8.8",
+    url: (ts) => `https://8.8.8.8/resolve?name=example.com&_=${ts}`,
+  },
+  cloudflare: {
+    label: "Cloudflare DNS (1.1.1.1)",
+    short: "1.1.1.1",
+    url: (ts) => `https://1.1.1.1/dns-query?name=example.com&ct=application/dns-json&_=${ts}`,
+  },
+};
 
 /** A gap this long between one-second ticks means the machine was suspended. */
 const SLEEP_GAP_MS = 5000;
