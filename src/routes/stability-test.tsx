@@ -19,7 +19,27 @@ type Sample = [number, number];
 
 /** Periods when the computer was asleep: [from epoch ms, to epoch ms] */
 type Sleep = [number, number];
-type Stored = { startedAt: number; samples: Sample[]; sleeps?: Sleep[] };
+type TargetId = "edge" | "google" | "cloudflare";
+type Stored = { startedAt: number; samples: Sample[]; sleeps?: Sleep[]; target?: TargetId };
+
+const TARGETS: Record<TargetId, { label: string; short: string; url: (ts: number) => string; noCors?: boolean }> = {
+  edge: {
+    label: "Pulse Speed Edge (default)",
+    short: "Pulse Speed Edge",
+    url: (ts) => `/favicon.png?stability=${ts}`,
+  },
+  google: {
+    label: "Google DNS (8.8.8.8)",
+    short: "8.8.8.8",
+    url: (ts) => `https://8.8.8.8/resolve?name=example.com&_=${ts}`,
+  },
+  cloudflare: {
+    label: "Cloudflare DNS (1.1.1.1)",
+    short: "1.1.1.1",
+    url: (ts) => `https://1.1.1.1/cdn-cgi/trace?_=${ts}`,
+    noCors: true,
+  },
+};
 
 /** A gap this long between one-second ticks means the machine was suspended. */
 const SLEEP_GAP_MS = 5000;
@@ -83,6 +103,9 @@ function StabilityTestPage() {
   const [now, setNow] = useState(() => Date.now());
   const samplesRef = useRef<Sample[]>([]);
   const [sleeps, setSleeps] = useState<Sleep[]>([]);
+  const [target, setTarget] = useState<TargetId>("edge");
+  const targetRef = useRef<TargetId>("edge");
+  targetRef.current = target;
   const sleepsRef = useRef<Sleep[]>([]);
   const lastTickRef = useRef<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -99,6 +122,7 @@ function StabilityTestPage() {
       const keptSleeps = (stored.sleeps ?? []).filter((z) => z[1] >= cutoff);
       sleepsRef.current = keptSleeps;
       setSleeps(keptSleeps);
+      if (stored.target && TARGETS[stored.target]) setTarget(stored.target);
     }
   }, []);
 
@@ -110,6 +134,7 @@ function StabilityTestPage() {
           startedAt: start,
           samples: samplesRef.current,
           sleeps: sleepsRef.current,
+          target: targetRef.current,
         } satisfies Stored),
       );
     } catch {
@@ -137,12 +162,13 @@ function StabilityTestPage() {
       try {
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), 3000);
-        const res = await fetch(`/favicon.png?stability=${Date.now()}`, {
+        const res = await fetch(TARGETS[targetRef.current].url(Date.now()), {
           cache: "no-store",
+          mode: TARGETS[targetRef.current].noCors ? "no-cors" : "cors",
           signal: ctrl.signal,
         });
         clearTimeout(timer);
-        if (res.ok) latency = Math.round((performance.now() - t0) * 10) / 10;
+        if (res.ok || res.type === "opaque") latency = Math.round((performance.now() - t0) * 10) / 10;
       } catch {
         latency = -1;
       }
@@ -343,6 +369,7 @@ function StabilityTestPage() {
 
   const exportCsv = useCallback(() => {
     const csv = [
+      `# destination: ${TARGETS[target].label}`,
       "timestamp_iso,latency_ms,status",
       ...samples.map(
         ([t, v]) => `${new Date(t).toISOString()},${v < 0 ? "" : v},${v < 0 ? "loss" : "ok"}`,
@@ -359,7 +386,7 @@ function StabilityTestPage() {
     a.download = `pulse-speed-stability-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [samples, sleeps]);
+  }, [samples, sleeps, target]);
 
   const elapsed = startedAt ? Math.min(now - startedAt, DAY_MS) : 0;
   const remaining = startedAt ? Math.max(0, DAY_MS - (now - startedAt)) : DAY_MS;
@@ -420,7 +447,37 @@ function StabilityTestPage() {
           marginBottom: 18,
         }}
       >
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+          <label style={{ color: TEXT_MUTED, fontSize: 13 }}>
+            Destination{" "}
+            <select
+              value={target}
+              disabled={running}
+              onChange={(e) => {
+                const v = e.target.value as TargetId;
+                setTarget(v);
+                targetRef.current = v;
+                if (startedAt !== null) persist(startedAt);
+              }}
+              title={running ? "Pause the test to change destination" : undefined}
+              style={{
+                marginLeft: 6,
+                padding: "9px 10px",
+                borderRadius: 10,
+                background: "#0d1120",
+                color: TEXT_SEC,
+                border: `1px solid ${BORDER}`,
+                fontSize: 13,
+                cursor: running ? "not-allowed" : "pointer",
+              }}
+            >
+              {(Object.keys(TARGETS) as TargetId[]).map((id) => (
+                <option key={id} value={id}>
+                  {TARGETS[id].label}
+                </option>
+              ))}
+            </select>
+          </label>
           {!running && (
             <button onClick={startedAt ? resume : start} style={btn(true)}>
               {startedAt ? "Resume recording" : "Start 24 hour test"}
@@ -451,7 +508,7 @@ function StabilityTestPage() {
             <span style={{ color: TEXT_MUTED }}>left</span> {fmtDuration(remaining)}
           </div>
           <div style={{ color: running ? TEAL : TEXT_MUTED, fontWeight: 600 }}>
-            {running ? "● Recording every second" : startedAt ? "Paused" : "Idle"}
+            {running ? `● Probing ${TARGETS[target].short} every second` : startedAt ? "Paused" : "Idle"}
           </div>
         </div>
       </div>
@@ -597,7 +654,7 @@ function StabilityTestPage() {
       {stats.count > 0 && (
         <ShareResult
           title="24 Hour Network Stability Test"
-          subtitle={`${fmtDuration(elapsed)} recorded · ${stats.count.toLocaleString()} samples`}
+          subtitle={`${fmtDuration(elapsed)} recorded · ${stats.count.toLocaleString()} samples · to ${TARGETS[target].short}`}
           stats={[
             { label: "Avg latency", value: fmtMs(stats.avg) },
             { label: "Jitter", value: fmtMs(stats.jitter) },
@@ -607,6 +664,7 @@ function StabilityTestPage() {
             { label: "Dropouts", value: String(stats.outages.length) },
           ]}
           rows={[
+            { label: "Destination", value: TARGETS[target].short },
             { label: "Latency spikes", value: String(stats.spikes) },
             { label: "Successful probes", value: stats.ok.toLocaleString() },
             { label: "Failed probes", value: stats.lost.toLocaleString() },
