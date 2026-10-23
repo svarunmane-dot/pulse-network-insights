@@ -22,7 +22,7 @@ type Sleep = [number, number];
 type TargetId = "edge" | "google" | "cloudflare";
 type Stored = { startedAt: number; samples: Sample[]; sleeps?: Sleep[]; target?: TargetId };
 
-const TARGETS: Record<TargetId, { label: string; short: string; url: (ts: number) => string }> = {
+const TARGETS: Record<TargetId, { label: string; short: string; url: (ts: number) => string; noCors?: boolean }> = {
   edge: {
     label: "Pulse Speed Edge (default)",
     short: "Pulse Speed Edge",
@@ -36,7 +36,8 @@ const TARGETS: Record<TargetId, { label: string; short: string; url: (ts: number
   cloudflare: {
     label: "Cloudflare DNS (1.1.1.1)",
     short: "1.1.1.1",
-    url: (ts) => `https://1.1.1.1/dns-query?name=example.com&ct=application/dns-json&_=${ts}`,
+    url: (ts) => `https://1.1.1.1/cdn-cgi/trace?_=${ts}`,
+    noCors: true,
   },
 };
 
@@ -163,10 +164,11 @@ function StabilityTestPage() {
         const timer = setTimeout(() => ctrl.abort(), 3000);
         const res = await fetch(TARGETS[targetRef.current].url(Date.now()), {
           cache: "no-store",
+          mode: TARGETS[targetRef.current].noCors ? "no-cors" : "cors",
           signal: ctrl.signal,
         });
         clearTimeout(timer);
-        if (res.ok) latency = Math.round((performance.now() - t0) * 10) / 10;
+        if (res.ok || res.type === "opaque") latency = Math.round((performance.now() - t0) * 10) / 10;
       } catch {
         latency = -1;
       }
